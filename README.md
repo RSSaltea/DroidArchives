@@ -12,10 +12,6 @@ python -m http.server 8000
 
 Then open `http://localhost:8000`. Directly opening `index.html` will not work because the app loads local JSON data with `fetch`.
 
-## Publish on GitHub Pages
-
-Push this folder to a GitHub repository, then open **Settings → Pages** and choose **Deploy from a branch**, your main branch, and `/ (root)`. The hash-based routes work without custom rewrites.
-
 ## Data
 
 - `data/droids.json` contains droid rarity, type, cost, variant, and income data.
