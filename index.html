@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A community-built Droid Tycoon wiki and base planner.">
+  <title>Droid Archives</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#/">
+      <span class="brand-mark">D</span>
+      <span><strong>Droid Archives</strong><small>Tycoon wiki & planner</small></span>
+    </a>
+    <button class="menu-button" id="menuButton" aria-label="Toggle navigation">☰</button>
+    <nav id="nav">
+      <a href="#/">Homepage</a><a href="#/droids">Droids</a><a href="#/base">Base</a>
+    </nav>
+    <button class="theme-button" id="themeButton" aria-label="Switch colour theme" title="Switch colour theme">☀</button>
+    <label class="header-search"><span>⌕</span><input id="globalSearch" placeholder="Search the archives…" autocomplete="off"></label>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <p class="side-title">Navigation</p>
+      <a href="#/">⌂ <span>Homepage</span></a>
+      <a href="#/droids">◉ <span>All droids</span></a>
+      <a href="#/base">▦ <span>Base</span></a>
+      <div class="side-rule"></div>
+      <div id="baseSidebarControls"></div>
+      <p class="side-title">Droid types</p>
+      <a href="#/droids?type=WORKER"><i class="type-dot worker"></i><span>Worker</span></a>
+      <a href="#/droids?type=ASTROMECH"><i class="type-dot astro"></i><span>Astromech</span></a>
+      <a href="#/droids?type=BATTLE"><i class="type-dot battle"></i><span>Battle</span></a>
+    </aside>
+    <main id="app" tabindex="-1"><div class="loading">Loading archive data…</div></main>
+  </div>
+  <footer>Unofficial community tool for Fortnite: Droid Tycoon · Data last checked 28 June 2026</footer>
+  <div id="toast" role="status"></div>
+  <div id="modalRoot"></div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
