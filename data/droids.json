@@ -1700,7 +1700,7 @@
                                     }
                      },
         "special":  {
-                        "incomeBoostPercent":  0.15,
+                        "incomePercent":  0.15,
                         "onlyDefaultVariant":  true,
                         "cannotSell":  true,
                         "maxQuantity":  1
@@ -1733,7 +1733,7 @@
                                     }
                      },
         "special":  {
-                        "incomeBoostPercent":  0.15,
+                        "incomePercent":  0.15,
                         "onlyDefaultVariant":  true,
                         "cannotSell":  true,
                         "maxQuantity":  1
@@ -1766,7 +1766,7 @@
                                     }
                      },
         "special":  {
-                        "incomeBoostPercent":  0.25,
+                        "incomePercent":  0.25,
                         "onlyDefaultVariant":  true,
                         "cannotSell":  true,
                         "maxQuantity":  1
@@ -1799,7 +1799,7 @@
                                     }
                      },
         "special":  {
-                        "incomeBoostPercent":  0.15,
+                        "incomePercent":  0.15,
                         "onlyDefaultVariant":  true,
                         "cannotSell":  true,
                         "maxQuantity":  1
@@ -1832,7 +1832,7 @@
                                     }
                      },
         "special":  {
-                        "incomeBoostPercent":  0.15,
+                        "incomePercent":  0.15,
                         "onlyDefaultVariant":  true,
                         "cannotSell":  true,
                         "maxQuantity":  1
@@ -1865,7 +1865,7 @@
                                     }
                      },
         "special":  {
-                        "incomeBoostPercent":  0.15,
+                        "incomePercent":  0.15,
                         "onlyDefaultVariant":  true,
                         "cannotSell":  true,
                         "maxQuantity":  1
