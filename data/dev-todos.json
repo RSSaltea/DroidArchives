@@ -13,5 +13,15 @@
     "id": "Add blueprint timer",
     "text": "Add Blueprint Timers",
     "done": true
+  },
+  {
+    "id": "Add Google Drive API",
+    "text": "Add Google Drive API integration",
+    "done": true
+  },
+  {
+    "id": "Add Optimise",
+    "text": "Add Optimise Base functionality",
+    "done": true
   }
 ]
