@@ -7,11 +7,11 @@
   {
     "id": "Add event",
     "text": "Add Event Timer",
-    "done": false
+    "done": true
   },
   {
     "id": "Add blueprint timer",
     "text": "Add Blueprint Timers",
-    "done": false
+    "done": true
   }
 ]
