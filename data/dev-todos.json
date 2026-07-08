@@ -3,5 +3,15 @@
     "id": "Add Nova Shop",
     "text": "Add Nova Shop and the upgrades.",
     "done": false
+  },
+  {
+    "id": "Add event",
+    "text": "Add Event Timer",
+    "done": false
+  },
+  {
+    "id": "Add blueprint timer",
+    "text": "Add Blueprint Timers",
+    "done": false
   }
 ]
