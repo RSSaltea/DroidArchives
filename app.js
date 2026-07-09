@@ -213,13 +213,22 @@ function optimisedPlacements(baseP,plan){
   for(const unit of units){const key=`${unit.source}:${unit.unit}`,target=assigned.get(key);if(target)claim(unit,target.station,target.slot)}
   const bestFuture=new Map();
   for(const unit of units){if(assigned.has(`${unit.source}:${unit.unit}`))continue;const previous=bestFuture.get(unit.name);if(!previous||VARIANTS.indexOf(unit.variant)>VARIANTS.indexOf(previous.variant))bestFuture.set(unit.name,{variant:unit.variant,key:`${unit.source}:${unit.unit}`})}
+  const candidates=[];
   for(const unit of units){
     const key=`${unit.source}:${unit.unit}`;
     if(assigned.has(key))continue;
     const d=state.droids.find(x=>x.name===unit.name),cycleStatus=d?droidCycleStatus(d,unit.variant,bestFuture.get(unit.name)?.key===key):{kind:'unused'};
     if(cycleStatus.kind==='unused'&&!isIconic(d)){sell.push({...unit,sellReason:cycleStatus.label});continue}
     const productiveFallback=d?.type?[d.type,...['WORKER','ASTROMECH','BATTLE'].filter(x=>x!==d.type)]:['WORKER','ASTROMECH','BATTLE'],fallbacks=['LOUNGE','COMPANION','BUILD',...productiveFallback],old=current.get(key),betterStorageOpen=old?.station==='BUILD'&&['LOUNGE','COMPANION'].some(station=>free(station)>=0);
-    if(old&&fallbacks.includes(old.station)&&canKeep(old.station,old.slot)&&!betterStorageOpen){claim(unit,old.station,old.slot);continue}
+    candidates.push({unit,fallbacks,old,betterStorageOpen,kept:false})
+  }
+  for(const item of candidates){
+    const {unit,fallbacks,old,betterStorageOpen}=item;
+    if(old&&fallbacks.includes(old.station)&&canKeep(old.station,old.slot)&&!betterStorageOpen){claim(unit,old.station,old.slot);item.kept=true}
+  }
+  for(const item of candidates){
+    if(item.kept)continue;
+    const {unit,fallbacks}=item;
     let station='',slot=-1;
     for(const fallback of fallbacks){slot=free(fallback);if(slot>=0){claim(unit,fallback,slot);station=fallback;break}}
     if(!station)overflow.push(unit)
