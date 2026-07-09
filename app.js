@@ -109,7 +109,7 @@ function normalizeCloudDoc(doc){doc=normalizeProfileDoc(doc);doc.ui=doc.ui||{};r
 function cloudDocFromLocalProfiles(){updateActiveLocalProfile();const local=ensureLocalDoc();return normalizeCloudDoc({...local,ui:{theme:state.theme}})}
 const supabaseReady=()=>Boolean(supabaseConfig.url&&supabaseConfig.anonKey&&window.supabase);
 const supabaseTable=()=>supabaseConfig.table||'droid_archive_profiles';
-const authRedirectUrl=()=>location.hostname==='localhost'||location.hostname==='127.0.0.1'?PUBLIC_SITE_URL:`${location.origin}${location.pathname}`;
+const authRedirectUrl=()=>PUBLIC_SITE_URL;
 function rowToCloudDoc(row){return normalizeCloudDoc({app:'Droid Archives',version:1,updatedAt:row.updated_at,activeProfileId:row.active_profile_id,ui:row.ui||{},profiles:row.profiles||[]})}
 function cloudDocToRow(){return{user_id:state.cloud.user.id,email:state.cloud.user.email||'',profiles:state.cloud.doc.profiles,active_profile_id:state.cloud.doc.activeProfileId,ui:{theme:state.theme},updated_at:new Date().toISOString()}}
 async function loadSupabaseConfig(){try{const response=await fetch(`${SUPABASE_CONFIG_PATH}?${Date.now()}`);if(response.ok){const config=await response.json();supabaseConfig={...supabaseConfig,url:config.url||'',anonKey:config.anonKey||config.anon_key||'',table:config.table||supabaseConfig.table}}}catch{}}
