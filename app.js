@@ -238,8 +238,10 @@ function optimisedPlacements(baseP,plan){
     for(const fallback of fallbacks){slot=free(fallback);if(slot>=0){claim(unit,fallback,slot);station=fallback;break}}
     if(!station)overflow.push(unit)
   }
-  const stablePlaced=stabiliseProjectedPlacements(baseP,placed),rows=[...stablePlaced,...overflow].map(x=>({name:x.name,variant:x.variant,qty:1,...(x.station?{preferred:x.station,preferredSlot:x.slot}:{}),...(x.lockedCompanion?{lockedCompanion:true}:{})}));
-  return{placed:stablePlaced,overflow,sell,rows}
+  const stablePlaced=stabiliseProjectedPlacements(baseP,placed),rebirthPick=stablePlaced.reduce((map,x)=>{const previous=map.get(x.name),key=`${x.source}:${x.unit}`;if(!previous||VARIANTS.indexOf(x.variant)>VARIANTS.indexOf(previous.variant))map.set(x.name,{variant:x.variant,key});return map},new Map()),finalPlaced=[],finalSell=[...sell];
+  for(const x of stablePlaced){const d=state.droids.find(y=>y.name===x.name),status=d?droidCycleStatus(d,x.variant,rebirthPick.get(x.name)?.key===`${x.source}:${x.unit}`):{kind:'unused'};if(['BUILD','LOUNGE','COMPANION'].includes(x.station)&&status.kind==='unused'&&!isIconic(d)&&!x.lockedCompanion)finalSell.push({...x,sellReason:status.label});else finalPlaced.push(x)}
+  const rows=[...finalPlaced,...overflow].map(x=>({name:x.name,variant:x.variant,qty:1,...(x.station?{preferred:x.station,preferredSlot:x.slot}:{}),...(x.lockedCompanion?{lockedCompanion:true}:{})}));
+  return{placed:finalPlaced,overflow,sell:finalSell,rows}
 }
 function applyOptimisedLayout(plan){const projected=optimisedPlacements(placements(),plan);if(projected.sell.length&&!confirm(`Apply this layout and remove ${projected.sell.length} droid${projected.sell.length===1?'':'s'} from Sell?`))return;state.owned=projected.rows;save();location.hash='#/base';toast('Optimised layout applied')}
 const unitName=x=>`${x.name} ${variantLabel(x.variant)}`;
