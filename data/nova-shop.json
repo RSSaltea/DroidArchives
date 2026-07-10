@@ -18,6 +18,50 @@
       "name": "Cosmetic"
     }
   ],
+  "calculators": {
+    "scrap": {
+      "title": "Scrap calculator",
+      "description": "Estimated credits from Scrap Station drops using current Base credits per second and the tracked Scrap Value upgrade.",
+      "upgradeId": "scrap-value",
+      "defaultSeconds": 1,
+      "drops": [
+        {
+          "id": "scrap-a",
+          "name": "Scrap drop"
+        },
+        {
+          "id": "scrap-b",
+          "name": "Scrap drop"
+        },
+        {
+          "id": "full-swing",
+          "name": "Full swing"
+        }
+      ],
+      "qualities": [
+        {
+          "id": "default",
+          "name": "Default",
+          "multipliers": [1, 1, 20.025]
+        },
+        {
+          "id": "gold",
+          "name": "Gold",
+          "multipliers": [2.002, 2.002, 40.052]
+        },
+        {
+          "id": "diamond",
+          "name": "Diamond",
+          "multipliers": [3.337, 3.337, 79.054]
+        },
+        {
+          "id": "rainbow",
+          "name": "Rainbow",
+          "multipliers": [6.674, 6.674, 199.643]
+        }
+      ]
+    }
+  },
   "upgrades": [
     {
       "id": "max-health",
@@ -475,43 +519,53 @@
       "levels": [
         {
           "level": 1,
-          "cost": 25
+          "cost": 25,
+          "scrapSeconds": 0.5
         },
         {
           "level": 2,
-          "cost": 55
+          "cost": 55,
+          "scrapSeconds": 1
         },
         {
           "level": 3,
-          "cost": 85
+          "cost": 85,
+          "scrapSeconds": 1
         },
         {
           "level": 4,
-          "cost": 115
+          "cost": 115,
+          "scrapSeconds": 1
         },
         {
           "level": 5,
-          "cost": 145
+          "cost": 145,
+          "scrapSeconds": 1
         },
         {
           "level": 6,
-          "cost": 175
+          "cost": 175,
+          "scrapSeconds": 1
         },
         {
           "level": 7,
-          "cost": 205
+          "cost": 205,
+          "scrapSeconds": 1
         },
         {
           "level": 8,
-          "cost": 235
+          "cost": 235,
+          "scrapSeconds": 1
         },
         {
           "level": 9,
-          "cost": 265
+          "cost": 265,
+          "scrapSeconds": 1
         },
         {
           "level": 10,
-          "cost": 295
+          "cost": 295,
+          "scrapSeconds": 1
         }
       ]
     },
