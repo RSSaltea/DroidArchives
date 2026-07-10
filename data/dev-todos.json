@@ -2,7 +2,7 @@
   {
     "id": "Add Nova Shop",
     "text": "Add Nova Shop and the upgrades.",
-    "done": false
+    "done": true
   },
   {
     "id": "Add event",
@@ -23,5 +23,15 @@
     "id": "Add Optimise",
     "text": "Add Optimise Base functionality",
     "done": true
+  },
+  {
+    "id": "Switch Login System",
+    "text": "Switch to new login system (Supabase)",
+    "done": true
+  },
+  {
+    "id": "Fix Nova Shop Icons",
+    "text": "Fix Nova Shop Icons",
+    "done": false
   }
 ]
