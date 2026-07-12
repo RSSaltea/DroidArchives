@@ -1870,5 +1870,38 @@
                         "cannotSell":  true,
                         "maxQuantity":  1
                     }
+    },
+    {
+        "name":  "C3-PO",
+        "rarity":  "ICONIC",
+        "type":  "WORKER",
+        "variants":  {
+                         "DEFAULT":  {
+                                         "cost":  0,
+                                         "income":  0
+                                     },
+                         "GOLD":  {
+                                      "cost":  0,
+                                      "income":  0
+                                  },
+                         "DIAMOND":  {
+                                         "cost":  0,
+                                         "income":  0
+                                     },
+                         "RAINBOW":  {
+                                         "cost":  0,
+                                         "income":  0
+                                     },
+                         "BESKAR":  {
+                                        "cost":  0,
+                                        "income":  0
+                                    }
+                     },
+        "special":  {
+                        "incomePercent":  0.25,
+                        "onlyDefaultVariant":  true,
+                        "cannotSell":  true,
+                        "maxQuantity":  1
+                    }
     }
 ]

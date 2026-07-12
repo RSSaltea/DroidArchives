@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "notes": [
+    {
+      "id": "2026-07-12-c3po-iconic",
+      "date": "2026-07-12",
+      "title": "C3-PO joins Droid Archives",
+      "summary": "C3-PO has been added as a new iconic Worker droid.",
+      "changes": [
+        "Added C3-PO as an iconic Worker droid.",
+        "C3-PO provides 25%/s income while placed in a productive station.",
+        "Added his Companion passive: 2x Droid Sell Value.",
+        "Added support for update popups and patch notes."
+      ],
+      "showOnStartup": true,
+      "todo": {
+        "id": "Add C3-PO",
+        "text": "Add C3-PO iconic droid and patch notes.",
+        "done": true
+      }
+    }
+  ]
+}
