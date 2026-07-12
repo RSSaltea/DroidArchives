@@ -192,10 +192,21 @@ function optimiseBase(p,currentIncome){
       usedUnits.add(icon.key);usedSlots.add(`${open.station}:${open.slot}`);assignments.push({key:icon.key,name:icon.name,variant:icon.variant,station:open.station,slot:open.slot,value:0,iconic:true})
     }
     if(!valid)continue;
-    const iconicRate=assignments.reduce((sum,x)=>sum+iconicIncome(state.droids.find(d=>d.name===x.name)),0),pairs=[];
-    for(const unit of regular){const base=unit.droid.variants[unit.variant]?.income||0;for(const slot of slots){const slotKey=`${slot.station}:${slot.slot}`;if(usedSlots.has(slotKey))continue;pairs.push({unit,slot,value:base*((unit.droid.type===slot.station?1.1:1)+iconicRate)*effectiveMultiplier()})}}
-    pairs.sort((a,b)=>b.value-a.value);
-    for(const pair of pairs){const slotKey=`${pair.slot.station}:${pair.slot.slot}`;if(usedUnits.has(pair.unit.key)||usedSlots.has(slotKey))continue;usedUnits.add(pair.unit.key);usedSlots.add(slotKey);assignments.push({key:pair.unit.key,name:pair.unit.name,variant:pair.unit.variant,station:pair.slot.station,slot:pair.slot.slot,value:pair.value})}
+    const iconicRate=assignments.reduce((sum,x)=>sum+iconicIncome(state.droids.find(d=>d.name===x.name)),0),stations=['WORKER','ASTROMECH','BATTLE'],available=Object.fromEntries(stations.map(station=>[station,slots.filter(slot=>slot.station===station&&!usedSlots.has(`${slot.station}:${slot.slot}`))])),caps=Object.fromEntries(stations.map(station=>[station,available[station].length])),keyFor=counts=>`${counts.WORKER},${counts.ASTROMECH},${counts.BATTLE}`;
+    let dp=new Map([[keyFor({WORKER:0,ASTROMECH:0,BATTLE:0}),{value:0,counts:{WORKER:0,ASTROMECH:0,BATTLE:0},picks:[]}]]);
+    for(const unit of regular.filter(unit=>!usedUnits.has(unit.key))){
+      const next=new Map(dp);
+      for(const state of dp.values()){
+        for(const station of stations){
+          if(state.counts[station]>=caps[station])continue;
+          const base=unit.droid.variants[unit.variant]?.income||0,value=base*((unit.droid.type===station?1.1:1)+iconicRate)*effectiveMultiplier(),counts={...state.counts,[station]:state.counts[station]+1},key=keyFor(counts),candidate={value:state.value+value,counts,picks:[...state.picks,{unit,station,value}]};
+          if(!next.has(key)||candidate.value>next.get(key).value)next.set(key,candidate)
+        }
+      }
+      dp=next
+    }
+    const chosen=[...dp.values()].sort((a,b)=>b.value-a.value)[0],stationUse={WORKER:0,ASTROMECH:0,BATTLE:0};
+    for(const pick of chosen.picks){const slot=available[pick.station][stationUse[pick.station]++],slotKey=`${slot.station}:${slot.slot}`;usedUnits.add(pick.unit.key);usedSlots.add(slotKey);assignments.push({key:pick.unit.key,name:pick.unit.name,variant:pick.unit.variant,station:slot.station,slot:slot.slot,value:pick.value})}
     const income=assignments.reduce((sum,x)=>sum+x.value,0);
     if(income>best.income)best={income,assignments}
   }
