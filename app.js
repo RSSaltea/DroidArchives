@@ -198,7 +198,7 @@ function slotProductionHtml(d,variant,station,baseIncome,iconicIncomeTotal){
   return earns?`<span>${variant} · Base ${fmt(baseRate)}/s</span><span class="adjusted-production">Adjusted ${fmt(adjustedRate)}/s</span><span class="production-breakdown">×${effectiveMultiplier().toFixed(2)} base multiplier · ×${adjustment.toFixed(2)} output</span>`:`<span>${variant} · Base ${fmt(baseRate)}/s</span><span class="adjusted-production">Would earn ${fmt(potentialRate)}/s</span><span class="production-breakdown">No contribution here</span>`
 }
 function optimiseBase(p,currentIncome){
-  const lockedKeys=new Set(p.placed.filter(x=>x.station==='COMPANION'&&x.lockedCompanion).map(x=>`${x.source}:${x.unit}`)),slots=productiveStations(),units=expandedOwned().map(x=>({...x,key:`${x.source}:${x.unit}`,droid:state.droids.find(d=>d.name===x.name)})).filter(x=>x.droid&&!lockedKeys.has(x.key)),iconics=units.filter(x=>iconicIncome(x.droid)>0).sort((a,b)=>iconicIncome(b.droid)-iconicIncome(a.droid)),regular=units.filter(x=>!iconicIncome(x.droid));
+  const lockedKeys=new Set(p.placed.filter(x=>x.station==='COMPANION'&&x.lockedCompanion).map(x=>`${x.source}:${x.unit}`)),slots=productiveStations(),currentPosition=new Map(p.placed.map(x=>[`${x.source}:${x.unit}`,x])),units=expandedOwned().map(x=>({...x,key:`${x.source}:${x.unit}`,droid:state.droids.find(d=>d.name===x.name)})).filter(x=>x.droid&&!lockedKeys.has(x.key)),iconics=units.filter(x=>iconicIncome(x.droid)>0).sort((a,b)=>iconicIncome(b.droid)-iconicIncome(a.droid)),regular=units.filter(x=>!iconicIncome(x.droid));
   let best={income:0,assignments:[]};
   for(let mask=0;mask<(1<<iconics.length);mask++){
     const usedUnits=new Set(),usedSlots=new Set(),assignments=[],selected=iconics.filter((_,i)=>mask&(1<<i));
@@ -210,22 +210,24 @@ function optimiseBase(p,currentIncome){
     }
     if(!valid)continue;
     const iconicRate=assignments.reduce((sum,x)=>sum+iconicIncome(state.droids.find(d=>d.name===x.name)),0),stations=['WORKER','ASTROMECH','BATTLE'],available=Object.fromEntries(stations.map(station=>[station,slots.filter(slot=>slot.station===station&&!usedSlots.has(`${slot.station}:${slot.slot}`))])),caps=Object.fromEntries(stations.map(station=>[station,available[station].length])),keyFor=counts=>`${counts.WORKER},${counts.ASTROMECH},${counts.BATTLE}`;
-    let dp=new Map([[keyFor({WORKER:0,ASTROMECH:0,BATTLE:0}),{value:0,counts:{WORKER:0,ASTROMECH:0,BATTLE:0},picks:[]}]]);
+    const tieScore=(unit,station)=>{const old=currentPosition.get(unit.key);return(old?.station===station?10000:0)+(unit.droid.type===station?1000:0)+(old&&['WORKER','ASTROMECH','BATTLE'].includes(old.station)&&station!==old.station?-10:0)};
+    let dp=new Map([[keyFor({WORKER:0,ASTROMECH:0,BATTLE:0}),{value:0,stability:0,counts:{WORKER:0,ASTROMECH:0,BATTLE:0},picks:[]}]]);
     for(const unit of regular.filter(unit=>!usedUnits.has(unit.key))){
       const next=new Map(dp);
       for(const state of dp.values()){
         for(const station of stations){
           if(state.counts[station]>=caps[station])continue;
-          const base=unit.droid.variants[unit.variant]?.income||0,value=base*((unit.droid.type===station?1.1:1)+iconicRate)*effectiveMultiplier(),counts={...state.counts,[station]:state.counts[station]+1},key=keyFor(counts),candidate={value:state.value+value,counts,picks:[...state.picks,{unit,station,value}]};
-          if(!next.has(key)||candidate.value>next.get(key).value)next.set(key,candidate)
+          const base=unit.droid.variants[unit.variant]?.income||0,value=base*((unit.droid.type===station?1.1:1)+iconicRate)*effectiveMultiplier(),counts={...state.counts,[station]:state.counts[station]+1},key=keyFor(counts),candidate={value:state.value+value,stability:state.stability+tieScore(unit,station),counts,picks:[...state.picks,{unit,station,value}]},previous=next.get(key);
+          if(!previous||candidate.value>previous.value+1e-6||Math.abs(candidate.value-previous.value)<=1e-6&&candidate.stability>previous.stability)next.set(key,candidate)
         }
       }
       dp=next
     }
-    const chosen=[...dp.values()].sort((a,b)=>b.value-a.value)[0],stationUse={WORKER:0,ASTROMECH:0,BATTLE:0};
+    const chosen=[...dp.values()].sort((a,b)=>(b.value-a.value)||(b.stability-a.stability))[0],stationUse={WORKER:0,ASTROMECH:0,BATTLE:0};
     for(const pick of chosen.picks){const slot=available[pick.station][stationUse[pick.station]++],slotKey=`${slot.station}:${slot.slot}`;usedUnits.add(pick.unit.key);usedSlots.add(slotKey);assignments.push({key:pick.unit.key,name:pick.unit.name,variant:pick.unit.variant,station:slot.station,slot:slot.slot,value:pick.value})}
     const income=assignments.reduce((sum,x)=>sum+x.value,0);
-    if(income>best.income)best={income,assignments}
+    const stability=chosen.stability+assignments.reduce((sum,x)=>{const old=currentPosition.get(x.key);return sum+(old?.station===x.station?10000:0)+(old?.station===x.station&&old?.slot===x.slot?1000:0)},0);
+    if(income>best.income+1e-6||Math.abs(income-best.income)<=1e-6&&stability>(best.stability||0))best={income,stability,assignments}
   }
   best.assignments=stabiliseAssignments(best.assignments,p);
   const current=new Map(p.placed.map(x=>[`${x.source}:${x.unit}`,x])),wanted=new Map(best.assignments.map(x=>[x.key,x])),firstOpen=station=>stationSlotIndices(station).find(i=>!p.placed.some(x=>x.station===station&&x.slot===i))??-1,moves=best.assignments.filter(x=>current.get(x.key)?.station!==x.station).map(x=>{const old=current.get(x.key),sourceLabel=old?old.station:'Roster',displaced=p.placed.find(y=>y.station===x.station&&`${y.source}:${y.unit}`!==x.key&&wanted.get(`${y.source}:${y.unit}`)?.station!==x.station),open=firstOpen(x.station),targetSlot=displaced?displaced.slot:open>=0?open:x.slot,targetLabel=displaced?`${x.station} slot holding ${displaced.name} ${variantLabel(displaced.variant)}`:`empty ${x.station} slot`;return{unit:{...x,slot:targetSlot},current:sourceLabel,targetStation:x.station,targetSlot,targetLabel,displaced:displaced?{key:`${displaced.source}:${displaced.unit}`,name:displaced.name,variant:displaced.variant,target:sourceLabel}:null}});
