@@ -18,6 +18,24 @@
         "text": "Add C-3PO iconic droid and patch notes.",
         "done": true
       }
+    },
+    {
+      "id": "2026-07-12-lucky-droid-recommendations",
+      "date": "2026-07-12",
+      "title": "Lucky Droid recommendations",
+      "summary": "Added a Lucky Droid Recommendation page for choosing the best daily 4% upgrade gamble.",
+      "changes": [
+        "Added a Lucky Droid tab to the top navigation and sidebar.",
+        "Added Rebirth based recommendations that prioritise future rebirth progress and upgrade-chip savings.",
+        "Added Credit based recommendations that prioritise the biggest credits-per-hour gain.",
+        "Each recommendation can be clicked for a breakdown of why it was chosen."
+      ],
+      "showOnStartup": true,
+      "todo": {
+        "id": "Add Lucky Droid Recommendation",
+        "text": "Add Lucky Droid Recommendation page.",
+        "done": true
+      }
     }
   ]
 }

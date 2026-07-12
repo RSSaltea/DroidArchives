@@ -6,6 +6,7 @@
   "startsAt": "2026-07-11T20:00:00Z",
   "durationHours": 24,
   "repeatGapDays": 6,
+  "repeatCount": 1,
   "homepage": true,
   "image": "assets/events/c-3po-event.png"
 }
