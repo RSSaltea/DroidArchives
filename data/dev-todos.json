@@ -30,6 +30,11 @@
     "done": true
   },
   {
+    "id": "Add Lucky Droid rarity chances",
+    "text": "Factor rarity-based Lucky Droid upgrade chances into recommendations.",
+    "done": true
+  },
+  {
     "id": "Fix Nova Shop Icons",
     "text": "Fix Nova Shop Icons",
     "done": false

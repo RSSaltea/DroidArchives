@@ -2,6 +2,23 @@
   "version": 1,
   "notes": [
     {
+      "id": "2026-07-12-lucky-rarity-chances",
+      "date": "2026-07-12",
+      "title": "Lucky Droid rarity chances",
+      "summary": "Lucky Droid recommendations now include Mythics and score upgrades by their rarity-based success chance.",
+      "changes": [
+        "Added Mythic droids to Lucky Droid recommendations.",
+        "Lucky upgrade odds are now Common 32%, Rare 16%, Epic 8%, Legendary 4%, and Mythic 2%.",
+        "Rebirth and Credit recommendations now rank by expected value instead of using one flat chance."
+      ],
+      "showOnStartup": true,
+      "todo": {
+        "id": "Add Lucky Droid rarity chances",
+        "text": "Factor rarity-based Lucky Droid upgrade chances into recommendations.",
+        "done": true
+      }
+    },
+    {
       "id": "2026-07-12-c3po-iconic",
       "date": "2026-07-12",
       "title": "C-3PO joins Droid Archives",
