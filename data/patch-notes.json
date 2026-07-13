@@ -2,6 +2,26 @@
   "version": 1,
   "notes": [
     {
+      "id": "2026-07-13-rebirth-credit-polish",
+      "date": "2026-07-13",
+      "title": "Rebirth and credit display polish",
+      "summary": "Improved Rebirth planning displays and fixed a random scroll jump.",
+      "changes": [
+        "Added a Rebirth page toggle for showing or hiding completed rebirths.",
+        "Base Rebirth Outlook now shows the next rebirth, its credit cost, and the droids required.",
+        "Needed later in this cycle now shows credit costs beside each rebirth heading.",
+        "Credit amounts now use the local Credits icon.",
+        "Rarity badges on Droids and Droidex pages now use their proper rarity colours.",
+        "Fixed the page randomly jumping back to the top during same-page updates."
+      ],
+      "showOnStartup": true,
+      "todo": {
+        "id": "Polish rebirth credit displays",
+        "text": "Add completed rebirth toggle, credit icons, next rebirth outlook, and fix page jump.",
+        "done": true
+      }
+    },
+    {
       "id": "2026-07-13-rebirth-goal",
       "date": "2026-07-13",
       "title": "Rebirth goal planning",
