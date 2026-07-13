@@ -44,7 +44,7 @@
         "variant": "DEFAULT"
       },
       {
-        "droidName": "BU-4D",
+        "droidName": "B-U4D",
         "variant": "DEFAULT"
       },
       {
@@ -76,7 +76,7 @@
     "creditsCost": 5350000,
     "requiredDroids": [
       {
-        "droidName": "BU-4D",
+        "droidName": "B-U4D",
         "variant": "GOLD"
       },
       {
@@ -120,7 +120,7 @@
         "variant": "DIAMOND"
       },
       {
-        "droidName": "BU-4D",
+        "droidName": "B-U4D",
         "variant": "DIAMOND"
       }
     ]
