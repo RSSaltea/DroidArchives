@@ -1,4 +1,4 @@
-[
+﻿[
     {
         "name":  "MOUSE",
         "rarity":  "COMMON",
@@ -23,7 +23,11 @@
                          "BESKAR":  {
                                         "cost":  15200,
                                         "income":  24
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -50,7 +54,11 @@
                          "BESKAR":  {
                                         "cost":  17600,
                                         "income":  24
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -77,7 +85,11 @@
                          "BESKAR":  {
                                         "cost":  48000,
                                         "income":  48
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -104,7 +116,11 @@
                          "BESKAR":  {
                                         "cost":  32000,
                                         "income":  36
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -131,7 +147,11 @@
                          "BESKAR":  {
                                         "cost":  32000,
                                         "income":  36
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -158,7 +178,11 @@
                          "BESKAR":  {
                                         "cost":  32000,
                                         "income":  36
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -185,7 +209,11 @@
                          "BESKAR":  {
                                         "cost":  48000,
                                         "income":  48
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -212,7 +240,11 @@
                          "BESKAR":  {
                                         "cost":  80000,
                                         "income":  72
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -239,7 +271,11 @@
                          "BESKAR":  {
                                         "cost":  64000,
                                         "income":  60
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -266,7 +302,11 @@
                          "BESKAR":  {
                                         "cost":  48000,
                                         "income":  36
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -293,7 +333,11 @@
                          "BESKAR":  {
                                         "cost":  64000,
                                         "income":  48
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -320,7 +364,11 @@
                          "BESKAR":  {
                                         "cost":  400000,
                                         "income":  180
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -347,7 +395,11 @@
                          "BESKAR":  {
                                         "cost":  1410000,
                                         "income":  504
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -374,7 +426,11 @@
                          "BESKAR":  {
                                         "cost":  1600000,
                                         "income":  552
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -401,7 +457,11 @@
                          "BESKAR":  {
                                         "cost":  2080000,
                                         "income":  696
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -428,7 +488,11 @@
                          "BESKAR":  {
                                         "cost":  688000,
                                         "income":  276
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -455,7 +519,11 @@
                          "BESKAR":  {
                                         "cost":  992000,
                                         "income":  372
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -482,7 +550,11 @@
                          "BESKAR":  {
                                         "cost":  480000,
                                         "income":  204
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -509,7 +581,11 @@
                          "BESKAR":  {
                                         "cost":  1180000,
                                         "income":  432
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -536,7 +612,11 @@
                          "BESKAR":  {
                                         "cost":  1760000,
                                         "income":  600
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -563,7 +643,11 @@
                          "BESKAR":  {
                                         "cost":  1920000,
                                         "income":  648
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -590,7 +674,11 @@
                          "BESKAR":  {
                                         "cost":  2400000,
                                         "income":  792
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -617,7 +705,11 @@
                          "BESKAR":  {
                                         "cost":  576000,
                                         "income":  216
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -644,7 +736,11 @@
                          "BESKAR":  {
                                         "cost":  832000,
                                         "income":  324
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -671,7 +767,11 @@
                          "BESKAR":  {
                                         "cost":  2240000,
                                         "income":  744
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -698,7 +798,11 @@
                          "BESKAR":  {
                                         "cost":  112500000,
                                         "income":  4080
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -725,7 +829,11 @@
                          "BESKAR":  {
                                         "cost":  262500000,
                                         "income":  8160
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -752,7 +860,11 @@
                          "BESKAR":  {
                                         "cost":  675000000,
                                         "income":  19380
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -779,7 +891,11 @@
                          "BESKAR":  {
                                         "cost":  600000000,
                                         "income":  17340
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -806,7 +922,11 @@
                          "BESKAR":  {
                                         "cost":  450000000,
                                         "income":  13260
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -833,7 +953,11 @@
                          "BESKAR":  {
                                         "cost":  787500000,
                                         "income":  22440
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -860,7 +984,11 @@
                          "BESKAR":  {
                                         "cost":  150000000,
                                         "income":  5100
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -887,7 +1015,11 @@
                          "BESKAR":  {
                                         "cost":  412500000,
                                         "income":  12240
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -914,7 +1046,11 @@
                          "BESKAR":  {
                                         "cost":  337500000,
                                         "income":  10200
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -941,7 +1077,11 @@
                          "BESKAR":  {
                                         "cost":  375000000,
                                         "income":  11220
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -968,7 +1108,11 @@
                          "BESKAR":  {
                                         "cost":  187500000,
                                         "income":  6120
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -995,7 +1139,11 @@
                          "BESKAR":  {
                                         "cost":  225000000,
                                         "income":  7140
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -1022,7 +1170,11 @@
                          "BESKAR":  {
                                         "cost":  750000000,
                                         "income":  20400
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -1049,7 +1201,11 @@
                          "BESKAR":  {
                                         "cost":  487500000,
                                         "income":  14280
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -1076,7 +1232,11 @@
                          "BESKAR":  {
                                         "cost":  562500000,
                                         "income":  16320
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -1103,7 +1263,11 @@
                          "BESKAR":  {
                                         "cost":  637500000,
                                         "income":  18360
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -1130,7 +1294,11 @@
                          "BESKAR":  {
                                         "cost":  300000000,
                                         "income":  9180
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -1157,7 +1325,11 @@
                          "BESKAR":  {
                                         "cost":  525000000,
                                         "income":  15300
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -1184,7 +1356,11 @@
                          "BESKAR":  {
                                         "cost":  8800000000,
                                         "income":  23328
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -1211,7 +1387,11 @@
                          "BESKAR":  {
                                         "cost":  11600000000,
                                         "income":  29856
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -1238,7 +1418,11 @@
                          "BESKAR":  {
                                         "cost":  10400000000,
                                         "income":  36000
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -1265,7 +1449,11 @@
                          "BESKAR":  {
                                         "cost":  11200000000,
                                         "income":  31200
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -1292,7 +1480,11 @@
                          "BESKAR":  {
                                         "cost":  14800000000,
                                         "income":  36000
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -1319,7 +1511,11 @@
                          "BESKAR":  {
                                         "cost":  12400000000,
                                         "income":  31296
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -1346,7 +1542,11 @@
                          "BESKAR":  {
                                         "cost":  12000000000,
                                         "income":  30240
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -1373,7 +1573,11 @@
                          "BESKAR":  {
                                         "cost":  14800000000,
                                         "income":  36000
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -1400,7 +1604,11 @@
                          "BESKAR":  {
                                         "cost":  144000000000,
                                         "income":  70400
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -1427,7 +1635,11 @@
                          "BESKAR":  {
                                         "cost":  163200000000,
                                         "income":  81600
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -1454,7 +1666,11 @@
                          "BESKAR":  {
                                         "cost":  240000000000,
                                         "income":  115200
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -1481,7 +1697,11 @@
                          "BESKAR":  {
                                         "cost":  201600000000,
                                         "income":  104000
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -1508,7 +1728,11 @@
                          "BESKAR":  {
                                         "cost":  182400000000,
                                         "income":  92800
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -1535,7 +1759,11 @@
                          "BESKAR":  {
                                         "cost":  182400000000,
                                         "income":  92800
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -1562,7 +1790,11 @@
                          "BESKAR":  {
                                         "cost":  144000000000,
                                         "income":  70400
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -1589,7 +1821,11 @@
                          "BESKAR":  {
                                         "cost":  240000000000,
                                         "income":  115200
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -1616,7 +1852,11 @@
                          "BESKAR":  {
                                         "cost":  201600000000,
                                         "income":  104000
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -1643,7 +1883,11 @@
                          "BESKAR":  {
                                         "cost":  182400000000,
                                         "income":  92800
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {
@@ -1670,7 +1914,11 @@
                          "BESKAR":  {
                                         "cost":  240000000000,
                                         "income":  115200
-                                    }
+                                    },
+                         "GALACTIC":  {
+                                          "cost":  0,
+                                          "income":  0
+                                      }
                      }
     },
     {

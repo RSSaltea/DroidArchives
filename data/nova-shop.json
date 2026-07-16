@@ -1,830 +1,885 @@
-{
-  "source": "https://docs.google.com/spreadsheets/d/1otLCKSCMKICMlnefirQ8KZhh_rdZTd5Mp8h0UYFUiqg/edit?gid=1548395368#gid=1548395368",
-  "currency": {
-    "name": "Nova Crystal",
-    "icon": "assets/events/nova-crystal.png"
-  },
-  "categories": [
-    {
-      "id": "core",
-      "name": "Core Upgrades"
-    },
-    {
-      "id": "workshop",
-      "name": "Workshop"
-    },
-    {
-      "id": "cosmetic",
-      "name": "Cosmetic"
-    }
-  ],
-  "calculators": {
-    "scrap": {
-      "title": "Scrap calculator",
-      "description": "Estimated credits from Scrap Station drops using current Base credits per second and the tracked Scrap Value upgrade. Hits are normal swings; Break is the larger payout when the scrap breaks or is one-shot.",
-      "upgradeId": "scrap-value",
-      "defaultSeconds": 1,
-      "drops": [
-        {
-          "id": "hit",
-          "name": "Hit"
-        },
-        {
-          "id": "break",
-          "name": "Break"
-        }
-      ],
-      "qualities": [
-        {
-          "id": "default",
-          "name": "Default",
-          "multipliers": [1.027, 20.546]
-        },
-        {
-          "id": "gold",
-          "name": "Gold",
-          "multipliers": [2.053, 41.094]
-        },
-        {
-          "id": "diamond",
-          "name": "Diamond",
-          "multipliers": [3.425, 82.192]
-        },
-        {
-          "id": "rainbow",
-          "name": "Rainbow",
-          "multipliers": [6.847, 205.46]
-        }
-      ]
-    }
-  },
-  "upgrades": [
-    {
-      "id": "max-health",
-      "name": "Max Health",
-      "category": "core",
-      "icon": "?",
-      "description": "Gain +25 Max HP per level.",
-      "levels": [
-        {
-          "level": 1,
-          "cost": 1
-        },
-        {
-          "level": 2,
-          "cost": 6
-        },
-        {
-          "level": 3,
-          "cost": 13
-        },
-        {
-          "level": 4,
-          "cost": 19
-        },
-        {
-          "level": 5,
-          "cost": 25
-        },
-        {
-          "level": 6,
-          "cost": 31
-        },
-        {
-          "level": 7,
-          "cost": 37
-        },
-        {
-          "level": 8,
-          "cost": 43
-        }
-      ]
-    },
-    {
-      "id": "damage",
-      "name": "Damage",
-      "category": "core",
-      "icon": "??",
-      "description": "Increase your damage bonus.",
-      "levels": [
-        {
-          "level": 1,
-          "cost": 1
-        },
-        {
-          "level": 2,
-          "cost": 13
-        },
-        {
-          "level": 3,
-          "cost": 25
-        },
-        {
-          "level": 4,
-          "cost": 37
-        },
-        {
-          "level": 5,
-          "cost": 49
-        },
-        {
-          "level": 6,
-          "cost": 61
-        },
-        {
-          "level": 7,
-          "cost": 73
-        },
-        {
-          "level": 8,
-          "cost": 85
-        }
-      ]
-    },
-    {
-      "id": "credits",
-      "name": "Credits",
-      "category": "core",
-      "icon": "?",
-      "description": "Unlock extra credit multiplier levels in-game.",
-      "levels": [
-        {
-          "level": 1,
-          "cost": 2
-        },
-        {
-          "level": 2,
-          "cost": 6
-        },
-        {
-          "level": 3,
-          "cost": 10
-        },
-        {
-          "level": 4,
-          "cost": 14
-        },
-        {
-          "level": 5,
-          "cost": 18
-        },
-        {
-          "level": 6,
-          "cost": 22
-        },
-        {
-          "level": 7,
-          "cost": 26
-        },
-        {
-          "level": 8,
-          "cost": 30
-        },
-        {
-          "level": 9,
-          "cost": 34
-        },
-        {
-          "level": 10,
-          "cost": 38
-        },
-        {
-          "level": 11,
-          "cost": 42
-        },
-        {
-          "level": 12,
-          "cost": 46
-        },
-        {
-          "level": 13,
-          "cost": 50
-        },
-        {
-          "level": 14,
-          "cost": 54
-        },
-        {
-          "level": 15,
-          "cost": 58
-        },
-        {
-          "level": 16,
-          "cost": 62
-        },
-        {
-          "level": 17,
-          "cost": 66
-        },
-        {
-          "level": 18,
-          "cost": 70
-        }
-      ]
-    },
-    {
-      "id": "flawless-charm",
-      "name": "Flawless Charm",
-      "category": "core",
-      "icon": "?",
-      "description": "Improves flawless-related bonuses.",
-      "levels": [
-        {
-          "level": 1,
-          "cost": 500
-        }
-      ]
-    },
-    {
-      "id": "movement-speed",
-      "name": "Movement Speed",
-      "category": "core",
-      "icon": "?",
-      "description": "Increase movement speed.",
-      "levels": [
-        {
-          "level": 1,
-          "cost": 1
-        },
-        {
-          "level": 2,
-          "cost": 2
-        },
-        {
-          "level": 3,
-          "cost": 4
-        },
-        {
-          "level": 4,
-          "cost": 6
-        },
-        {
-          "level": 5,
-          "cost": 8
-        },
-        {
-          "level": 6,
-          "cost": 10
-        },
-        {
-          "level": 7,
-          "cost": 12
-        },
-        {
-          "level": 8,
-          "cost": 14
-        },
-        {
-          "level": 9,
-          "cost": 16
-        },
-        {
-          "level": 10,
-          "cost": 18
-        },
-        {
-          "level": 11,
-          "cost": 20
-        },
-        {
-          "level": 12,
-          "cost": 22
-        },
-        {
-          "level": 13,
-          "cost": 24
-        },
-        {
-          "level": 14,
-          "cost": 26
-        },
-        {
-          "level": 15,
-          "cost": 28
-        },
-        {
-          "level": 16,
-          "cost": 30
-        },
-        {
-          "level": 17,
-          "cost": 32
-        },
-        {
-          "level": 18,
-          "cost": 34
-        }
-      ]
-    },
-    {
-      "id": "double-daily-quests",
-      "name": "Double Daily Quests",
-      "category": "core",
-      "icon": "?",
-      "description": "Adds a daily quest reroll/duplicate reward utility.",
-      "levels": [
-        {
-          "level": 1,
-          "cost": 75
-        }
-      ]
-    },
-    {
-      "id": "pickaxe-mastery",
-      "name": "Pickaxe Mastery",
-      "category": "core",
-      "icon": "?",
-      "description": "Improve pickaxe progression.",
-      "levels": [
-        {
-          "level": 1,
-          "cost": 5
-        },
-        {
-          "level": 2,
-          "cost": 10
-        },
-        {
-          "level": 3,
-          "cost": 15
-        },
-        {
-          "level": 4,
-          "cost": 20
-        },
-        {
-          "level": 5,
-          "cost": 25
-        },
-        {
-          "level": 6,
-          "cost": 30
-        },
-        {
-          "level": 7,
-          "cost": 35
-        },
-        {
-          "level": 8,
-          "cost": 40
-        },
-        {
-          "level": 9,
-          "cost": 45
-        },
-        {
-          "level": 10,
-          "cost": 50
-        },
-        {
-          "level": 11,
-          "cost": 55
-        }
-      ]
-    },
-    {
-      "id": "jawa-bartering",
-      "name": "Jawa Bartering",
-      "category": "core",
-      "icon": "?",
-      "description": "Improve Jawa barter value.",
-      "levels": [
-        {
-          "level": 1,
-          "cost": 5
-        },
-        {
-          "level": 2,
-          "cost": 15
-        },
-        {
-          "level": 3,
-          "cost": 30
-        },
-        {
-          "level": 4,
-          "cost": 45
-        },
-        {
-          "level": 5,
-          "cost": 60
-        }
-      ]
-    },
-    {
-      "id": "super-crates",
-      "name": "Super Crates",
-      "category": "core",
-      "icon": "?",
-      "description": "Unlock additional Super Crate rewards.",
-      "levels": [
-        {
-          "level": 1,
-          "cost": 10
-        },
-        {
-          "level": 2,
-          "cost": 25
-        },
-        {
-          "level": 3,
-          "cost": 50
-        }
-      ]
-    },
-    {
-      "id": "lounge-slot",
-      "name": "Lounge Slot",
-      "category": "workshop",
-      "icon": "?",
-      "description": "Unlock an extra Lounge slot in your base.",
-      "levels": [
-        {
-          "level": 1,
-          "cost": 1
-        },
-        {
-          "level": 2,
-          "cost": 30
-        },
-        {
-          "level": 3,
-          "cost": 60
-        },
-        {
-          "level": 4,
-          "cost": 90
-        }
-      ]
-    },
-    {
-      "id": "upgrade-chip-scrap",
-      "name": "Upgrade Chip Scrap",
-      "category": "workshop",
-      "icon": "?",
-      "description": "Improve upgrade chip scrap returns.",
-      "levels": [
-        {
-          "level": 1,
-          "cost": 2
-        },
-        {
-          "level": 2,
-          "cost": 5
-        },
-        {
-          "level": 3,
-          "cost": 10
-        },
-        {
-          "level": 4,
-          "cost": 15
-        },
-        {
-          "level": 5,
-          "cost": 20
-        },
-        {
-          "level": 6,
-          "cost": 25
-        },
-        {
-          "level": 7,
-          "cost": 30
-        },
-        {
-          "level": 8,
-          "cost": 35
-        },
-        {
-          "level": 9,
-          "cost": 40
-        },
-        {
-          "level": 10,
-          "cost": 45
-        }
-      ]
-    },
-    {
-      "id": "scrap-value",
-      "name": "Scrap Value",
-      "category": "workshop",
-      "icon": "?",
-      "description": "Increase scrap value.",
-      "levels": [
-        {
-          "level": 1,
-          "cost": 25,
-          "scrapSeconds": 0.5
-        },
-        {
-          "level": 2,
-          "cost": 55,
-          "scrapSeconds": 1
-        },
-        {
-          "level": 3,
-          "cost": 85,
-          "scrapSeconds": 1.5
-        },
-        {
-          "level": 4,
-          "cost": 115,
-          "scrapSeconds": 2
-        },
-        {
-          "level": 5,
-          "cost": 145,
-          "scrapSeconds": 2.5
-        },
-        {
-          "level": 6,
-          "cost": 175,
-          "scrapSeconds": 3
-        },
-        {
-          "level": 7,
-          "cost": 205,
-          "scrapSeconds": 3.5
-        },
-        {
-          "level": 8,
-          "cost": 235,
-          "scrapSeconds": 4
-        },
-        {
-          "level": 9,
-          "cost": 265,
-          "scrapSeconds": 4.5
-        },
-        {
-          "level": 10,
-          "cost": 295,
-          "scrapSeconds": 5
-        }
-      ]
-    },
-    {
-      "id": "blueprint-scrap",
-      "name": "Blueprint Scrap",
-      "category": "workshop",
-      "icon": "?",
-      "description": "Improve blueprint scrap returns.",
-      "levels": [
-        {
-          "level": 1,
-          "cost": 1
-        },
-        {
-          "level": 2,
-          "cost": 12
-        },
-        {
-          "level": 3,
-          "cost": 24
-        },
-        {
-          "level": 4,
-          "cost": 36
-        }
-      ]
-    },
-    {
-      "id": "crafting-speed",
-      "name": "Crafting Speed",
-      "category": "workshop",
-      "icon": "?",
-      "description": "Increase droid crafting speed.",
-      "levels": [
-        {
-          "level": 1,
-          "cost": 3
-        },
-        {
-          "level": 2,
-          "cost": 18
-        },
-        {
-          "level": 3,
-          "cost": 33
-        },
-        {
-          "level": 4,
-          "cost": 48
-        },
-        {
-          "level": 5,
-          "cost": 63
-        },
-        {
-          "level": 6,
-          "cost": 78
-        },
-        {
-          "level": 7,
-          "cost": 93
-        },
-        {
-          "level": 8,
-          "cost": 108
-        },
-        {
-          "level": 9,
-          "cost": 123
-        },
-        {
-          "level": 10,
-          "cost": 138
-        }
-      ]
-    },
-    {
-      "id": "blueprint-storage",
-      "name": "Blueprint Storage",
-      "category": "workshop",
-      "icon": "?",
-      "description": "Unlock a Blueprint Storage slot. Blueprints can be moved into Build slots to become droids.",
-      "levels": [
-        {
-          "level": 1,
-          "cost": 10
-        },
-        {
-          "level": 2,
-          "cost": 75
-        },
-        {
-          "level": 3,
-          "cost": 150
-        }
-      ]
-    },
-    {
-      "id": "collect-all",
-      "name": "Collect All",
-      "category": "workshop",
-      "icon": "?",
-      "description": "Unlock collect-all quality of life.",
-      "levels": [
-        {
-          "level": 1,
-          "cost": 3
-        },
-        {
-          "level": 2,
-          "cost": 25
-        },
-        {
-          "level": 3,
-          "cost": 100
-        }
-      ]
-    },
-    {
-      "id": "rebirth-droid-alert",
-      "name": "Rebirth Droid Alert",
-      "category": "workshop",
-      "icon": "!",
-      "description": "Adds alerts for rebirth droids.",
-      "levels": [
-        {
-          "level": 1,
-          "cost": 10
-        }
-      ]
-    },
-    {
-      "id": "blueprint-vendor",
-      "name": "Blueprint Vendor",
-      "category": "workshop",
-      "icon": "?",
-      "description": "Unlock or improve blueprint vendor access.",
-      "levels": [
-        {
-          "level": 1,
-          "cost": 10
-        }
-      ]
-    },
-    {
-      "id": "nova-crystal-base-paint",
-      "name": "Nova Crystal Base Paint",
-      "category": "cosmetic",
-      "icon": "?",
-      "description": "Unlock cosmetic base paint.",
-      "levels": [
-        {
-          "level": 1,
-          "cost": 30
-        },
-        {
-          "level": 2,
-          "cost": 120
-        },
-        {
-          "level": 3,
-          "cost": 400
-        }
-      ]
-    }
-  ],
-  "rebirthRewards": [
-    {
-      "rebirth": 12,
-      "novaCrystals": 11,
-      "creditMultPercent": 22,
-      "xpMultPercent": 110
-    },
-    {
-      "rebirth": 13,
-      "novaCrystals": 16,
-      "creditMultPercent": 32,
-      "xpMultPercent": 160
-    },
-    {
-      "rebirth": 14,
-      "novaCrystals": 22,
-      "creditMultPercent": 44,
-      "xpMultPercent": 220
-    },
-    {
-      "rebirth": 15,
-      "novaCrystals": 29,
-      "creditMultPercent": 58,
-      "xpMultPercent": 290
-    },
-    {
-      "rebirth": 16,
-      "novaCrystals": 37,
-      "creditMultPercent": 74,
-      "xpMultPercent": 370
-    },
-    {
-      "rebirth": 17,
-      "novaCrystals": 46,
-      "creditMultPercent": 92,
-      "xpMultPercent": 460
-    },
-    {
-      "rebirth": 18,
-      "novaCrystals": 56,
-      "creditMultPercent": 112,
-      "xpMultPercent": 560
-    },
-    {
-      "rebirth": 19,
-      "novaCrystals": 67,
-      "creditMultPercent": 134,
-      "xpMultPercent": 670
-    },
-    {
-      "rebirth": 20,
-      "novaCrystals": 79,
-      "creditMultPercent": 158,
-      "xpMultPercent": 790
-    },
-    {
-      "rebirth": 21,
-      "novaCrystals": 92,
-      "creditMultPercent": 184,
-      "xpMultPercent": 920
-    },
-    {
-      "rebirth": 22,
-      "novaCrystals": 106,
-      "creditMultPercent": 212,
-      "xpMultPercent": 1060
-    },
-    {
-      "rebirth": 23,
-      "novaCrystals": 121,
-      "creditMultPercent": 242,
-      "xpMultPercent": 1210
-    },
-    {
-      "rebirth": 24,
-      "novaCrystals": 137,
-      "creditMultPercent": 274,
-      "xpMultPercent": 1370
-    },
-    {
-      "rebirth": 25,
-      "novaCrystals": 154,
-      "creditMultPercent": 308,
-      "xpMultPercent": 1540
-    },
-    {
-      "rebirth": 26,
-      "novaCrystals": 172,
-      "creditMultPercent": 344,
-      "xpMultPercent": 1720
-    },
-    {
-      "rebirth": 27,
-      "novaCrystals": 191,
-      "creditMultPercent": 382,
-      "xpMultPercent": 1910
-    }
-  ]
+﻿{
+    "source":  "https://docs.google.com/spreadsheets/d/1otLCKSCMKICMlnefirQ8KZhh_rdZTd5Mp8h0UYFUiqg/edit?gid=1548395368#gid=1548395368",
+    "currency":  {
+                     "name":  "Nova Crystal",
+                     "icon":  "assets/events/nova-crystal.png"
+                 },
+    "categories":  [
+                       {
+                           "id":  "featured",
+                           "name":  "Featured"
+                       },
+                       {
+                           "id":  "core",
+                           "name":  "Core Upgrades"
+                       },
+                       {
+                           "id":  "workshop",
+                           "name":  "Workshop"
+                       },
+                       {
+                           "id":  "cosmetic",
+                           "name":  "Cosmetic"
+                       }
+                   ],
+    "calculators":  {
+                        "scrap":  {
+                                      "title":  "Scrap calculator",
+                                      "description":  "Estimated credits from Scrap Station drops using current Base credits per second and the tracked Scrap Value upgrade. Hits are normal swings; Break is the larger payout when the scrap breaks or is one-shot.",
+                                      "upgradeId":  "scrap-value",
+                                      "defaultSeconds":  1,
+                                      "drops":  [
+                                                    {
+                                                        "id":  "hit",
+                                                        "name":  "Hit"
+                                                    },
+                                                    {
+                                                        "id":  "break",
+                                                        "name":  "Break"
+                                                    }
+                                                ],
+                                      "qualities":  [
+                                                        {
+                                                            "id":  "default",
+                                                            "name":  "Default",
+                                                            "multipliers":  [
+                                                                                1.027,
+                                                                                20.546
+                                                                            ]
+                                                        },
+                                                        {
+                                                            "id":  "gold",
+                                                            "name":  "Gold",
+                                                            "multipliers":  [
+                                                                                2.053,
+                                                                                41.094
+                                                                            ]
+                                                        },
+                                                        {
+                                                            "id":  "diamond",
+                                                            "name":  "Diamond",
+                                                            "multipliers":  [
+                                                                                3.425,
+                                                                                82.192
+                                                                            ]
+                                                        },
+                                                        {
+                                                            "id":  "rainbow",
+                                                            "name":  "Rainbow",
+                                                            "multipliers":  [
+                                                                                6.847,
+                                                                                205.46
+                                                                            ]
+                                                        }
+                                                    ]
+                                  }
+                    },
+    "upgrades":  [
+                     {
+                         "id":  "critical-chance",
+                         "name":  "Critical Chance",
+                         "category":  "featured",
+                         "icon":  "✦",
+                         "description":  "Increase critical hit chance. This upgrade has no known cap; costs after level 1 are not confirmed.",
+                         "uncapped":  true,
+                         "levels":  [
+                                        {
+                                            "level":  1,
+                                            "cost":  60
+                                        }
+                                    ]
+                     },
+                     {
+                         "id":  "critical-amount",
+                         "name":  "Critical Amount",
+                         "category":  "featured",
+                         "icon":  "✹",
+                         "description":  "Increase critical hit amount. This upgrade has no known cap; costs after level 1 are not confirmed.",
+                         "uncapped":  true,
+                         "levels":  [
+                                        {
+                                            "level":  1,
+                                            "cost":  30
+                                        }
+                                    ]
+                     },
+                     {
+                         "id":  "companion-slot",
+                         "name":  "Companion Slot",
+                         "category":  "featured",
+                         "icon":  "☷+",
+                         "description":  "Unlock a Companion slot. Coming soon.",
+                         "comingSoon":  true,
+                         "levels":  [
+
+                                    ]
+                     },
+                     {
+                         "id":  "max-health",
+                         "name":  "Max Health",
+                         "category":  "core",
+                         "icon":  "?",
+                         "description":  "Gain +25 Max HP per level.",
+                         "levels":  [
+                                        {
+                                            "level":  1,
+                                            "cost":  1
+                                        },
+                                        {
+                                            "level":  2,
+                                            "cost":  6
+                                        },
+                                        {
+                                            "level":  3,
+                                            "cost":  13
+                                        },
+                                        {
+                                            "level":  4,
+                                            "cost":  19
+                                        },
+                                        {
+                                            "level":  5,
+                                            "cost":  25
+                                        },
+                                        {
+                                            "level":  6,
+                                            "cost":  31
+                                        },
+                                        {
+                                            "level":  7,
+                                            "cost":  37
+                                        },
+                                        {
+                                            "level":  8,
+                                            "cost":  43
+                                        }
+                                    ]
+                     },
+                     {
+                         "id":  "damage",
+                         "name":  "Damage",
+                         "category":  "core",
+                         "icon":  "??",
+                         "description":  "Increase your damage bonus.",
+                         "levels":  [
+                                        {
+                                            "level":  1,
+                                            "cost":  1
+                                        },
+                                        {
+                                            "level":  2,
+                                            "cost":  13
+                                        },
+                                        {
+                                            "level":  3,
+                                            "cost":  25
+                                        },
+                                        {
+                                            "level":  4,
+                                            "cost":  37
+                                        },
+                                        {
+                                            "level":  5,
+                                            "cost":  49
+                                        },
+                                        {
+                                            "level":  6,
+                                            "cost":  61
+                                        },
+                                        {
+                                            "level":  7,
+                                            "cost":  73
+                                        },
+                                        {
+                                            "level":  8,
+                                            "cost":  85
+                                        }
+                                    ]
+                     },
+                     {
+                         "id":  "credits",
+                         "name":  "Credits",
+                         "category":  "core",
+                         "icon":  "?",
+                         "description":  "Unlock extra credit multiplier levels in-game.",
+                         "levels":  [
+                                        {
+                                            "level":  1,
+                                            "cost":  2
+                                        },
+                                        {
+                                            "level":  2,
+                                            "cost":  6
+                                        },
+                                        {
+                                            "level":  3,
+                                            "cost":  10
+                                        },
+                                        {
+                                            "level":  4,
+                                            "cost":  14
+                                        },
+                                        {
+                                            "level":  5,
+                                            "cost":  18
+                                        },
+                                        {
+                                            "level":  6,
+                                            "cost":  22
+                                        },
+                                        {
+                                            "level":  7,
+                                            "cost":  26
+                                        },
+                                        {
+                                            "level":  8,
+                                            "cost":  30
+                                        },
+                                        {
+                                            "level":  9,
+                                            "cost":  34
+                                        },
+                                        {
+                                            "level":  10,
+                                            "cost":  38
+                                        },
+                                        {
+                                            "level":  11,
+                                            "cost":  42
+                                        },
+                                        {
+                                            "level":  12,
+                                            "cost":  46
+                                        },
+                                        {
+                                            "level":  13,
+                                            "cost":  50
+                                        },
+                                        {
+                                            "level":  14,
+                                            "cost":  54
+                                        },
+                                        {
+                                            "level":  15,
+                                            "cost":  58
+                                        },
+                                        {
+                                            "level":  16,
+                                            "cost":  62
+                                        },
+                                        {
+                                            "level":  17,
+                                            "cost":  66
+                                        },
+                                        {
+                                            "level":  18,
+                                            "cost":  70
+                                        }
+                                    ]
+                     },
+                     {
+                         "id":  "flawless-charm",
+                         "name":  "Flawless Charm",
+                         "category":  "core",
+                         "icon":  "?",
+                         "description":  "Improves flawless-related bonuses.",
+                         "levels":  [
+                                        {
+                                            "level":  1,
+                                            "cost":  500
+                                        }
+                                    ]
+                     },
+                     {
+                         "id":  "movement-speed",
+                         "name":  "Movement Speed",
+                         "category":  "core",
+                         "icon":  "?",
+                         "description":  "Increase movement speed.",
+                         "levels":  [
+                                        {
+                                            "level":  1,
+                                            "cost":  1
+                                        },
+                                        {
+                                            "level":  2,
+                                            "cost":  2
+                                        },
+                                        {
+                                            "level":  3,
+                                            "cost":  4
+                                        },
+                                        {
+                                            "level":  4,
+                                            "cost":  6
+                                        },
+                                        {
+                                            "level":  5,
+                                            "cost":  8
+                                        },
+                                        {
+                                            "level":  6,
+                                            "cost":  10
+                                        },
+                                        {
+                                            "level":  7,
+                                            "cost":  12
+                                        },
+                                        {
+                                            "level":  8,
+                                            "cost":  14
+                                        },
+                                        {
+                                            "level":  9,
+                                            "cost":  16
+                                        },
+                                        {
+                                            "level":  10,
+                                            "cost":  18
+                                        },
+                                        {
+                                            "level":  11,
+                                            "cost":  20
+                                        },
+                                        {
+                                            "level":  12,
+                                            "cost":  22
+                                        },
+                                        {
+                                            "level":  13,
+                                            "cost":  24
+                                        },
+                                        {
+                                            "level":  14,
+                                            "cost":  26
+                                        },
+                                        {
+                                            "level":  15,
+                                            "cost":  28
+                                        },
+                                        {
+                                            "level":  16,
+                                            "cost":  30
+                                        },
+                                        {
+                                            "level":  17,
+                                            "cost":  32
+                                        },
+                                        {
+                                            "level":  18,
+                                            "cost":  34
+                                        }
+                                    ]
+                     },
+                     {
+                         "id":  "double-daily-quests",
+                         "name":  "Double Daily Quests",
+                         "category":  "core",
+                         "icon":  "?",
+                         "description":  "Adds a daily quest reroll/duplicate reward utility.",
+                         "levels":  [
+                                        {
+                                            "level":  1,
+                                            "cost":  75
+                                        }
+                                    ]
+                     },
+                     {
+                         "id":  "pickaxe-mastery",
+                         "name":  "Pickaxe Mastery",
+                         "category":  "core",
+                         "icon":  "?",
+                         "description":  "Improve pickaxe progression.",
+                         "levels":  [
+                                        {
+                                            "level":  1,
+                                            "cost":  5
+                                        },
+                                        {
+                                            "level":  2,
+                                            "cost":  10
+                                        },
+                                        {
+                                            "level":  3,
+                                            "cost":  15
+                                        },
+                                        {
+                                            "level":  4,
+                                            "cost":  20
+                                        },
+                                        {
+                                            "level":  5,
+                                            "cost":  25
+                                        },
+                                        {
+                                            "level":  6,
+                                            "cost":  30
+                                        },
+                                        {
+                                            "level":  7,
+                                            "cost":  35
+                                        },
+                                        {
+                                            "level":  8,
+                                            "cost":  40
+                                        },
+                                        {
+                                            "level":  9,
+                                            "cost":  45
+                                        },
+                                        {
+                                            "level":  10,
+                                            "cost":  50
+                                        },
+                                        {
+                                            "level":  11,
+                                            "cost":  55
+                                        }
+                                    ]
+                     },
+                     {
+                         "id":  "jawa-bartering",
+                         "name":  "Jawa Bartering",
+                         "category":  "core",
+                         "icon":  "?",
+                         "description":  "Improve Jawa barter value.",
+                         "levels":  [
+                                        {
+                                            "level":  1,
+                                            "cost":  5
+                                        },
+                                        {
+                                            "level":  2,
+                                            "cost":  15
+                                        },
+                                        {
+                                            "level":  3,
+                                            "cost":  30
+                                        },
+                                        {
+                                            "level":  4,
+                                            "cost":  45
+                                        },
+                                        {
+                                            "level":  5,
+                                            "cost":  60
+                                        }
+                                    ]
+                     },
+                     {
+                         "id":  "super-crates",
+                         "name":  "Super Crates",
+                         "category":  "core",
+                         "icon":  "?",
+                         "description":  "Unlock additional Super Crate rewards.",
+                         "levels":  [
+                                        {
+                                            "level":  1,
+                                            "cost":  10
+                                        },
+                                        {
+                                            "level":  2,
+                                            "cost":  25
+                                        },
+                                        {
+                                            "level":  3,
+                                            "cost":  50
+                                        }
+                                    ]
+                     },
+                     {
+                         "id":  "lounge-slot",
+                         "name":  "Lounge Slot",
+                         "category":  "workshop",
+                         "icon":  "?",
+                         "description":  "Unlock an extra Lounge slot in your base.",
+                         "levels":  [
+                                        {
+                                            "level":  1,
+                                            "cost":  1
+                                        },
+                                        {
+                                            "level":  2,
+                                            "cost":  30
+                                        },
+                                        {
+                                            "level":  3,
+                                            "cost":  60
+                                        },
+                                        {
+                                            "level":  4,
+                                            "cost":  90
+                                        }
+                                    ]
+                     },
+                     {
+                         "id":  "upgrade-chip-scrap",
+                         "name":  "Upgrade Chip Scrap",
+                         "category":  "workshop",
+                         "icon":  "?",
+                         "description":  "Improve upgrade chip scrap returns.",
+                         "levels":  [
+                                        {
+                                            "level":  1,
+                                            "cost":  2
+                                        },
+                                        {
+                                            "level":  2,
+                                            "cost":  5
+                                        },
+                                        {
+                                            "level":  3,
+                                            "cost":  10
+                                        },
+                                        {
+                                            "level":  4,
+                                            "cost":  15
+                                        },
+                                        {
+                                            "level":  5,
+                                            "cost":  20
+                                        },
+                                        {
+                                            "level":  6,
+                                            "cost":  25
+                                        },
+                                        {
+                                            "level":  7,
+                                            "cost":  30
+                                        },
+                                        {
+                                            "level":  8,
+                                            "cost":  35
+                                        },
+                                        {
+                                            "level":  9,
+                                            "cost":  40
+                                        },
+                                        {
+                                            "level":  10,
+                                            "cost":  45
+                                        }
+                                    ]
+                     },
+                     {
+                         "id":  "scrap-value",
+                         "name":  "Scrap Value",
+                         "category":  "workshop",
+                         "icon":  "?",
+                         "description":  "Increase scrap value.",
+                         "levels":  [
+                                        {
+                                            "level":  1,
+                                            "cost":  25,
+                                            "scrapSeconds":  0.5
+                                        },
+                                        {
+                                            "level":  2,
+                                            "cost":  55,
+                                            "scrapSeconds":  1
+                                        },
+                                        {
+                                            "level":  3,
+                                            "cost":  85,
+                                            "scrapSeconds":  1.5
+                                        },
+                                        {
+                                            "level":  4,
+                                            "cost":  115,
+                                            "scrapSeconds":  2
+                                        },
+                                        {
+                                            "level":  5,
+                                            "cost":  145,
+                                            "scrapSeconds":  2.5
+                                        },
+                                        {
+                                            "level":  6,
+                                            "cost":  175,
+                                            "scrapSeconds":  3
+                                        },
+                                        {
+                                            "level":  7,
+                                            "cost":  205,
+                                            "scrapSeconds":  3.5
+                                        },
+                                        {
+                                            "level":  8,
+                                            "cost":  235,
+                                            "scrapSeconds":  4
+                                        },
+                                        {
+                                            "level":  9,
+                                            "cost":  265,
+                                            "scrapSeconds":  4.5
+                                        },
+                                        {
+                                            "level":  10,
+                                            "cost":  295,
+                                            "scrapSeconds":  5
+                                        }
+                                    ]
+                     },
+                     {
+                         "id":  "blueprint-scrap",
+                         "name":  "Blueprint Scrap",
+                         "category":  "workshop",
+                         "icon":  "?",
+                         "description":  "Improve blueprint scrap returns.",
+                         "levels":  [
+                                        {
+                                            "level":  1,
+                                            "cost":  1
+                                        },
+                                        {
+                                            "level":  2,
+                                            "cost":  12
+                                        },
+                                        {
+                                            "level":  3,
+                                            "cost":  24
+                                        },
+                                        {
+                                            "level":  4,
+                                            "cost":  36
+                                        }
+                                    ]
+                     },
+                     {
+                         "id":  "crafting-speed",
+                         "name":  "Crafting Speed",
+                         "category":  "workshop",
+                         "icon":  "?",
+                         "description":  "Increase droid crafting speed.",
+                         "levels":  [
+                                        {
+                                            "level":  1,
+                                            "cost":  3
+                                        },
+                                        {
+                                            "level":  2,
+                                            "cost":  18
+                                        },
+                                        {
+                                            "level":  3,
+                                            "cost":  33
+                                        },
+                                        {
+                                            "level":  4,
+                                            "cost":  48
+                                        },
+                                        {
+                                            "level":  5,
+                                            "cost":  63
+                                        },
+                                        {
+                                            "level":  6,
+                                            "cost":  78
+                                        },
+                                        {
+                                            "level":  7,
+                                            "cost":  93
+                                        },
+                                        {
+                                            "level":  8,
+                                            "cost":  108
+                                        },
+                                        {
+                                            "level":  9,
+                                            "cost":  123
+                                        },
+                                        {
+                                            "level":  10,
+                                            "cost":  138
+                                        }
+                                    ]
+                     },
+                     {
+                         "id":  "blueprint-storage",
+                         "name":  "Blueprint Storage",
+                         "category":  "workshop",
+                         "icon":  "?",
+                         "description":  "Unlock a Blueprint Storage slot. Blueprints can be moved into Build slots to become droids.",
+                         "levels":  [
+                                        {
+                                            "level":  1,
+                                            "cost":  10
+                                        },
+                                        {
+                                            "level":  2,
+                                            "cost":  75
+                                        },
+                                        {
+                                            "level":  3,
+                                            "cost":  150
+                                        }
+                                    ]
+                     },
+                     {
+                         "id":  "collect-all",
+                         "name":  "Collect All",
+                         "category":  "workshop",
+                         "icon":  "?",
+                         "description":  "Unlock collect-all quality of life.",
+                         "levels":  [
+                                        {
+                                            "level":  1,
+                                            "cost":  3
+                                        },
+                                        {
+                                            "level":  2,
+                                            "cost":  25
+                                        },
+                                        {
+                                            "level":  3,
+                                            "cost":  100
+                                        }
+                                    ]
+                     },
+                     {
+                         "id":  "rebirth-droid-alert",
+                         "name":  "Rebirth Droid Alert",
+                         "category":  "workshop",
+                         "icon":  "!",
+                         "description":  "Adds alerts for rebirth droids.",
+                         "levels":  [
+                                        {
+                                            "level":  1,
+                                            "cost":  10
+                                        }
+                                    ]
+                     },
+                     {
+                         "id":  "blueprint-vendor",
+                         "name":  "Blueprint Vendor",
+                         "category":  "workshop",
+                         "icon":  "?",
+                         "description":  "Unlock or improve blueprint vendor access.",
+                         "levels":  [
+                                        {
+                                            "level":  1,
+                                            "cost":  10
+                                        }
+                                    ]
+                     },
+                     {
+                         "id":  "nova-crystal-base-paint",
+                         "name":  "Nova Crystal Base Paint",
+                         "category":  "cosmetic",
+                         "icon":  "?",
+                         "description":  "Unlock cosmetic base paint.",
+                         "levels":  [
+                                        {
+                                            "level":  1,
+                                            "cost":  30
+                                        },
+                                        {
+                                            "level":  2,
+                                            "cost":  120
+                                        },
+                                        {
+                                            "level":  3,
+                                            "cost":  400
+                                        }
+                                    ]
+                     }
+                 ],
+    "rebirthRewards":  [
+                           {
+                               "rebirth":  12,
+                               "novaCrystals":  11,
+                               "creditMultPercent":  22,
+                               "xpMultPercent":  110
+                           },
+                           {
+                               "rebirth":  13,
+                               "novaCrystals":  16,
+                               "creditMultPercent":  32,
+                               "xpMultPercent":  160
+                           },
+                           {
+                               "rebirth":  14,
+                               "novaCrystals":  22,
+                               "creditMultPercent":  44,
+                               "xpMultPercent":  220
+                           },
+                           {
+                               "rebirth":  15,
+                               "novaCrystals":  29,
+                               "creditMultPercent":  58,
+                               "xpMultPercent":  290
+                           },
+                           {
+                               "rebirth":  16,
+                               "novaCrystals":  37,
+                               "creditMultPercent":  74,
+                               "xpMultPercent":  370
+                           },
+                           {
+                               "rebirth":  17,
+                               "novaCrystals":  46,
+                               "creditMultPercent":  92,
+                               "xpMultPercent":  460
+                           },
+                           {
+                               "rebirth":  18,
+                               "novaCrystals":  56,
+                               "creditMultPercent":  112,
+                               "xpMultPercent":  560
+                           },
+                           {
+                               "rebirth":  19,
+                               "novaCrystals":  67,
+                               "creditMultPercent":  134,
+                               "xpMultPercent":  670
+                           },
+                           {
+                               "rebirth":  20,
+                               "novaCrystals":  79,
+                               "creditMultPercent":  158,
+                               "xpMultPercent":  790
+                           },
+                           {
+                               "rebirth":  21,
+                               "novaCrystals":  92,
+                               "creditMultPercent":  184,
+                               "xpMultPercent":  920
+                           },
+                           {
+                               "rebirth":  22,
+                               "novaCrystals":  106,
+                               "creditMultPercent":  212,
+                               "xpMultPercent":  1060
+                           },
+                           {
+                               "rebirth":  23,
+                               "novaCrystals":  121,
+                               "creditMultPercent":  242,
+                               "xpMultPercent":  1210
+                           },
+                           {
+                               "rebirth":  24,
+                               "novaCrystals":  137,
+                               "creditMultPercent":  274,
+                               "xpMultPercent":  1370
+                           },
+                           {
+                               "rebirth":  25,
+                               "novaCrystals":  154,
+                               "creditMultPercent":  308,
+                               "xpMultPercent":  1540
+                           },
+                           {
+                               "rebirth":  26,
+                               "novaCrystals":  172,
+                               "creditMultPercent":  344,
+                               "xpMultPercent":  1720
+                           },
+                           {
+                               "rebirth":  27,
+                               "novaCrystals":  191,
+                               "creditMultPercent":  382,
+                               "xpMultPercent":  1910
+                           }
+                       ]
 }
