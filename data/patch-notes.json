@@ -2,6 +2,27 @@
   "version": 1,
   "notes": [
     {
+      "id": "2026-07-17-galactic-nova-featured",
+      "date": "2026-07-17",
+      "title": "Galactic variants and Nova Featured",
+      "summary": "Added Galactic quality support, updated spawn timers, and added the new Nova Shop Featured upgrades.",
+      "changes": [
+        "Added Galactic as a new quality above Beskar for all non-Iconic droids.",
+        "Galactic droid costs and income are shown as Coming Soon until the values are confirmed.",
+        "Rebirth checks now treat Galactic as valid for Beskar and lower quality requirements.",
+        "Added a Nova Shop Featured tab with Critical Chance, Critical Amount, and Companion Slot.",
+        "Critical Chance and Critical Amount are tracked as uncapped upgrades with known first costs of 60 and 30 Nova Crystals.",
+        "Replaced the Rainbow spawn timer with a Galactic Coming Soon timer and updated Beskar to every 15 minutes.",
+        "Iconic droids now add to Base as Default without asking for a variant."
+      ],
+      "showOnStartup": true,
+      "todo": {
+        "id": "Add Galactic and Nova Featured",
+        "text": "Add Galactic variant support, Nova Featured upgrades, timer updates, and Iconic default-only adding.",
+        "done": true
+      }
+    },
+    {
       "id": "2026-07-13-rebirth-credit-polish",
       "date": "2026-07-13",
       "title": "Rebirth and credit display polish",
