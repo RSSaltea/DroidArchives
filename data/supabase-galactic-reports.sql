@@ -9,9 +9,15 @@ create table if not exists public.galactic_reports (
   report_kind text not null check (report_kind in ('buy_cost','earn_amount')),
   value_raw text not null,
   value numeric not null check (value >= 0),
+  screenshot_url text,
+  report_group_id uuid,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table public.galactic_reports
+  add column if not exists screenshot_url text,
+  add column if not exists report_group_id uuid;
 
 create table if not exists public.galactic_report_mods (
   email text primary key,
@@ -71,4 +77,3 @@ using (
   lower(email) = lower(auth.jwt() ->> 'email')
   or lower(auth.jwt() ->> 'email') = 'xraffo@gmail.com'
 );
-

@@ -2,6 +2,24 @@
   "version": 1,
   "notes": [
     {
+      "id": "2026-07-17-galactic-report-modal",
+      "date": "2026-07-17",
+      "title": "Galactic report modal",
+      "summary": "Updated Galactic Reports so players can submit several values at once with proof links.",
+      "changes": [
+        "Changed Galactic Reports from an inline form to a popup with a searchable droid picker.",
+        "Added multi-droid submissions so one report can include several Buy Cost or Earn Amount values.",
+        "Added optional screenshot proof links, limited to Gyazo or Discord image links.",
+        "Blocked Imgur proof links with a note that Imgur is blocked in the UK."
+      ],
+      "showOnStartup": true,
+      "todo": {
+        "id": "Update Galactic Reports modal",
+        "text": "Make Galactic Reports use a popup picker with multiple rows and screenshot proof links.",
+        "done": true
+      }
+    },
+    {
       "id": "2026-07-17-galactic-reports",
       "date": "2026-07-17",
       "title": "Galactic Reports",
