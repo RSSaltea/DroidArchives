@@ -2,6 +2,24 @@
   "version": 1,
   "notes": [
     {
+      "id": "2026-07-17-galactic-reports",
+      "date": "2026-07-17",
+      "title": "Galactic Reports",
+      "summary": "Added a community report page for Galactic droid costs and earn amounts.",
+      "changes": [
+        "Added a Galactic Reports tab where players can submit Buy Cost or Earn Amount values for non-Iconic droids.",
+        "Inputs accept full numbers and shorthand values, such as 12400 or 12.4k.",
+        "Signed-in players only see their own submissions, while the admin can view, edit, and delete all reports.",
+        "Added moderator support so trusted users can view the full report list without edit controls."
+      ],
+      "showOnStartup": true,
+      "todo": {
+        "id": "Add Galactic Reports",
+        "text": "Add Galactic droid cost and income reporting with admin and moderator views.",
+        "done": true
+      }
+    },
+    {
       "id": "2026-07-17-galactic-nova-featured",
       "date": "2026-07-17",
       "title": "Galactic variants and Nova Featured",
