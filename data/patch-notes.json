@@ -2,6 +2,23 @@
   "version": 1,
   "notes": [
     {
+      "id": "2026-07-18-collapsible-base-panels",
+      "date": "2026-07-18",
+      "title": "Collapsible Base panels",
+      "summary": "Added collapse controls for the larger Base helper panels.",
+      "changes": [
+        "Made the Scrap calculator collapsible on Base and Nova Shop.",
+        "Made the Base Rebirth outlook collapsible.",
+        "Collapsed panel choices are remembered on the device."
+      ],
+      "showOnStartup": true,
+      "todo": {
+        "id": "Make Base helper panels collapsible",
+        "text": "Add collapse controls for the Scrap calculator and Rebirth outlook panels.",
+        "done": true
+      }
+    },
+    {
       "id": "2026-07-17-galactic-report-modal",
       "date": "2026-07-17",
       "title": "Galactic report modal",
