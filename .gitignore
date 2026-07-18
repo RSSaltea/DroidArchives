@@ -4,3 +4,35 @@ reference-app.js
 droids-Bi8YBzf7.js
 rebirth-BeWzK9hr.js
 superRebirthRewards-CgMNMGB4.js
+
+# Local agent and editor settings
+.agents/
+.vscode/
+.idea/
+*.code-workspace
+
+# Operating-system metadata
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Dependencies and generated output
+node_modules/
+dist/
+coverage/
+.cache/
+
+# Logs, temporary files and backups
+*.log
+*.tmp
+*.bak
+*.swp
+*~
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# User-created Base exports
+droid-archives-base-*.json

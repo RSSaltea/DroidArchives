@@ -484,5 +484,32 @@
         "variant": "BESKAR"
       }
     ]
+  },
+  {
+    "to": 28,
+    "creditsCost": 45000000000000,
+    "requiredDroids": [
+      { "droidName": "RIC", "variant": "RAINBOW" },
+      { "droidName": "MO-TRAK", "variant": "BESKAR" },
+      { "droidName": "BB9", "variant": "GALACTIC" }
+    ]
+  },
+  {
+    "to": 29,
+    "creditsCost": 68000000000000,
+    "requiredDroids": [
+      { "droidName": "IG", "variant": "BESKAR" },
+      { "droidName": "MECHA-DROID", "variant": "GALACTIC" },
+      { "droidName": "OPTI-STRIKE", "variant": "GALACTIC" }
+    ]
+  },
+  {
+    "to": 30,
+    "creditsCost": 100000000000000,
+    "requiredDroids": [
+      { "droidName": "R7", "variant": "GALACTIC" },
+      { "droidName": "LEP", "variant": "BESKAR" },
+      { "droidName": "DRFT-R", "variant": "GALACTIC" }
+    ]
   }
 ]

@@ -880,6 +880,24 @@
                                "novaCrystals":  191,
                                "creditMultPercent":  382,
                                "xpMultPercent":  1910
+                           },
+                           {
+                               "rebirth":  28,
+                               "novaCrystals":  211,
+                               "creditMultPercent":  422,
+                               "xpMultPercent":  2110
+                           },
+                           {
+                               "rebirth":  29,
+                               "novaCrystals":  232,
+                               "creditMultPercent":  464,
+                               "xpMultPercent":  2320
+                           },
+                           {
+                               "rebirth":  30,
+                               "novaCrystals":  254,
+                               "creditMultPercent":  508,
+                               "xpMultPercent":  2540
                            }
                        ]
 }

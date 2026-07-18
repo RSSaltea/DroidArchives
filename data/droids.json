@@ -1,2155 +1,2527 @@
-﻿[
-    {
-        "name":  "MOUSE",
-        "rarity":  "COMMON",
-        "type":  "WORKER",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  950,
-                                         "income":  2
-                                     },
-                         "GOLD":  {
-                                      "cost":  3800,
-                                      "income":  4
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  7600,
-                                         "income":  8
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  15200,
-                                         "income":  16
-                                     },
-                         "BESKAR":  {
-                                        "cost":  15200,
-                                        "income":  24
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "PIT",
-        "rarity":  "COMMON",
-        "type":  "WORKER",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  1100,
-                                         "income":  2
-                                     },
-                         "GOLD":  {
-                                      "cost":  4400,
-                                      "income":  4
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  8800,
-                                         "income":  8
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  17600,
-                                         "income":  16
-                                     },
-                         "BESKAR":  {
-                                        "cost":  17600,
-                                        "income":  24
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "GONK",
-        "rarity":  "COMMON",
-        "type":  "WORKER",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  3000,
-                                         "income":  4
-                                     },
-                         "GOLD":  {
-                                      "cost":  12000,
-                                      "income":  8
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  24000,
-                                         "income":  16
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  48000,
-                                         "income":  32
-                                     },
-                         "BESKAR":  {
-                                        "cost":  48000,
-                                        "income":  48
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "CB",
-        "rarity":  "COMMON",
-        "type":  "ASTROMECH",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  2000,
-                                         "income":  3
-                                     },
-                         "GOLD":  {
-                                      "cost":  8000,
-                                      "income":  6
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  16000,
-                                         "income":  12
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  32000,
-                                         "income":  24
-                                     },
-                         "BESKAR":  {
-                                        "cost":  32000,
-                                        "income":  36
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "R3",
-        "rarity":  "COMMON",
-        "type":  "ASTROMECH",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  2000,
-                                         "income":  3
-                                     },
-                         "GOLD":  {
-                                      "cost":  8000,
-                                      "income":  6
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  16000,
-                                         "income":  12
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  32000,
-                                         "income":  24
-                                     },
-                         "BESKAR":  {
-                                        "cost":  32000,
-                                        "income":  36
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "R5",
-        "rarity":  "COMMON",
-        "type":  "ASTROMECH",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  2000,
-                                         "income":  3
-                                     },
-                         "GOLD":  {
-                                      "cost":  8000,
-                                      "income":  6
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  16000,
-                                         "income":  12
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  32000,
-                                         "income":  24
-                                     },
-                         "BESKAR":  {
-                                        "cost":  32000,
-                                        "income":  36
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "R8",
-        "rarity":  "COMMON",
-        "type":  "ASTROMECH",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  3000,
-                                         "income":  4
-                                     },
-                         "GOLD":  {
-                                      "cost":  12000,
-                                      "income":  8
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  24000,
-                                         "income":  16
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  48000,
-                                         "income":  32
-                                     },
-                         "BESKAR":  {
-                                        "cost":  48000,
-                                        "income":  48
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "IMPERIAL PROBE",
-        "rarity":  "COMMON",
-        "type":  "BATTLE",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  5000,
-                                         "income":  6
-                                     },
-                         "GOLD":  {
-                                      "cost":  20000,
-                                      "income":  12
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  40000,
-                                         "income":  24
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  80000,
-                                         "income":  48
-                                     },
-                         "BESKAR":  {
-                                        "cost":  80000,
-                                        "income":  72
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "B1 BATTLE",
-        "rarity":  "COMMON",
-        "type":  "BATTLE",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  4000,
-                                         "income":  5
-                                     },
-                         "GOLD":  {
-                                      "cost":  16000,
-                                      "income":  10
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  32000,
-                                         "income":  20
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  64000,
-                                         "income":  40
-                                     },
-                         "BESKAR":  {
-                                        "cost":  64000,
-                                        "income":  60
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "DRK-1 PROBE",
-        "rarity":  "COMMON",
-        "type":  "BATTLE",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  3000,
-                                         "income":  3
-                                     },
-                         "GOLD":  {
-                                      "cost":  12000,
-                                      "income":  6
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  24000,
-                                         "income":  12
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  48000,
-                                         "income":  24
-                                     },
-                         "BESKAR":  {
-                                        "cost":  48000,
-                                        "income":  36
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "ID10",
-        "rarity":  "COMMON",
-        "type":  "BATTLE",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  4000,
-                                         "income":  4
-                                     },
-                         "GOLD":  {
-                                      "cost":  16000,
-                                      "income":  8
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  32000,
-                                         "income":  16
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  64000,
-                                         "income":  32
-                                     },
-                         "BESKAR":  {
-                                        "cost":  64000,
-                                        "income":  48
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "BDX EXPLORER",
-        "rarity":  "RARE",
-        "type":  "WORKER",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  25000,
-                                         "income":  15
-                                     },
-                         "GOLD":  {
-                                      "cost":  100000,
-                                      "income":  30
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  200000,
-                                         "income":  60
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  400000,
-                                         "income":  120
-                                     },
-                         "BESKAR":  {
-                                        "cost":  400000,
-                                        "income":  180
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "ARG",
-        "rarity":  "RARE",
-        "type":  "WORKER",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  88000,
-                                         "income":  42
-                                     },
-                         "GOLD":  {
-                                      "cost":  352000,
-                                      "income":  84
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  704000,
-                                         "income":  168
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  1410000,
-                                         "income":  336
-                                     },
-                         "BESKAR":  {
-                                        "cost":  1410000,
-                                        "income":  504
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "SENATE HOVERCAM",
-        "rarity":  "RARE",
-        "type":  "WORKER",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  100000,
-                                         "income":  46
-                                     },
-                         "GOLD":  {
-                                      "cost":  400000,
-                                      "income":  92
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  800000,
-                                         "income":  184
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  1600000,
-                                         "income":  368
-                                     },
-                         "BESKAR":  {
-                                        "cost":  1600000,
-                                        "income":  552
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "B-U4D",
-        "rarity":  "RARE",
-        "type":  "WORKER",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  130000,
-                                         "income":  58
-                                     },
-                         "GOLD":  {
-                                      "cost":  520000,
-                                      "income":  116
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  1040000,
-                                         "income":  232
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  2080000,
-                                         "income":  464
-                                     },
-                         "BESKAR":  {
-                                        "cost":  2080000,
-                                        "income":  696
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "BAL-CORE",
-        "rarity":  "RARE",
-        "type":  "WORKER",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  43000,
-                                         "income":  23
-                                     },
-                         "GOLD":  {
-                                      "cost":  172000,
-                                      "income":  46
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  344000,
-                                         "income":  92
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  688000,
-                                         "income":  184
-                                     },
-                         "BESKAR":  {
-                                        "cost":  688000,
-                                        "income":  276
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "ROLL-R",
-        "rarity":  "RARE",
-        "type":  "WORKER",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  62000,
-                                         "income":  31
-                                     },
-                         "GOLD":  {
-                                      "cost":  248000,
-                                      "income":  62
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  496000,
-                                         "income":  124
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  992000,
-                                         "income":  248
-                                     },
-                         "BESKAR":  {
-                                        "cost":  992000,
-                                        "income":  372
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "2BB",
-        "rarity":  "RARE",
-        "type":  "ASTROMECH",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  30000,
-                                         "income":  17
-                                     },
-                         "GOLD":  {
-                                      "cost":  120000,
-                                      "income":  34
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  240000,
-                                         "income":  68
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  480000,
-                                         "income":  136
-                                     },
-                         "BESKAR":  {
-                                        "cost":  480000,
-                                        "income":  204
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "A-LT",
-        "rarity":  "RARE",
-        "type":  "ASTROMECH",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  74000,
-                                         "income":  36
-                                     },
-                         "GOLD":  {
-                                      "cost":  296000,
-                                      "income":  72
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  592000,
-                                         "income":  144
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  1180000,
-                                         "income":  288
-                                     },
-                         "BESKAR":  {
-                                        "cost":  1180000,
-                                        "income":  432
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "R4",
-        "rarity":  "RARE",
-        "type":  "ASTROMECH",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  110000,
-                                         "income":  50
-                                     },
-                         "GOLD":  {
-                                      "cost":  440000,
-                                      "income":  100
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  880000,
-                                         "income":  200
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  1760000,
-                                         "income":  400
-                                     },
-                         "BESKAR":  {
-                                        "cost":  1760000,
-                                        "income":  600
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "R9",
-        "rarity":  "RARE",
-        "type":  "ASTROMECH",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  120000,
-                                         "income":  54
-                                     },
-                         "GOLD":  {
-                                      "cost":  480000,
-                                      "income":  108
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  960000,
-                                         "income":  216
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  1920000,
-                                         "income":  432
-                                     },
-                         "BESKAR":  {
-                                        "cost":  1920000,
-                                        "income":  648
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "B1 SECURITY",
-        "rarity":  "RARE",
-        "type":  "BATTLE",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  150000,
-                                         "income":  66
-                                     },
-                         "GOLD":  {
-                                      "cost":  600000,
-                                      "income":  132
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  1200000,
-                                         "income":  264
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  2400000,
-                                         "income":  528
-                                     },
-                         "BESKAR":  {
-                                        "cost":  2400000,
-                                        "income":  792
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "NAV-EX",
-        "rarity":  "RARE",
-        "type":  "BATTLE",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  36000,
-                                         "income":  18
-                                     },
-                         "GOLD":  {
-                                      "cost":  144000,
-                                      "income":  36
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  288000,
-                                         "income":  72
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  576000,
-                                         "income":  144
-                                     },
-                         "BESKAR":  {
-                                        "cost":  576000,
-                                        "income":  216
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "VECT-ARM",
-        "rarity":  "RARE",
-        "type":  "BATTLE",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  52000,
-                                         "income":  27
-                                     },
-                         "GOLD":  {
-                                      "cost":  208000,
-                                      "income":  54
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  416000,
-                                         "income":  108
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  832000,
-                                         "income":  216
-                                     },
-                         "BESKAR":  {
-                                        "cost":  832000,
-                                        "income":  324
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "HOV-R",
-        "rarity":  "RARE",
-        "type":  "BATTLE",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  140000,
-                                         "income":  62
-                                     },
-                         "GOLD":  {
-                                      "cost":  560000,
-                                      "income":  124
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  1120000,
-                                         "income":  248
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  2240000,
-                                         "income":  496
-                                     },
-                         "BESKAR":  {
-                                        "cost":  2240000,
-                                        "income":  744
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "GROUNDMECH",
-        "rarity":  "EPIC",
-        "type":  "WORKER",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  900000,
-                                         "income":  120
-                                     },
-                         "GOLD":  {
-                                      "cost":  3600000,
-                                      "income":  240
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  7200000,
-                                         "income":  480
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  14400000,
-                                         "income":  960
-                                     },
-                         "BESKAR":  {
-                                        "cost":  112500000,
-                                        "income":  4080
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "LO",
-        "rarity":  "EPIC",
-        "type":  "WORKER",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  2100000,
-                                         "income":  240
-                                     },
-                         "GOLD":  {
-                                      "cost":  8400000,
-                                      "income":  480
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  16800000,
-                                         "income":  960
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  33600000,
-                                         "income":  1920
-                                     },
-                         "BESKAR":  {
-                                        "cost":  262500000,
-                                        "income":  8160
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "AMP WALKER",
-        "rarity":  "EPIC",
-        "type":  "WORKER",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  5400000,
-                                         "income":  570
-                                     },
-                         "GOLD":  {
-                                      "cost":  21600000,
-                                      "income":  1140
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  43200000,
-                                         "income":  2280
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  86400000,
-                                         "income":  4560
-                                     },
-                         "BESKAR":  {
-                                        "cost":  675000000,
-                                        "income":  19380
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "SEN-TRI",
-        "rarity":  "EPIC",
-        "type":  "WORKER",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  4800000,
-                                         "income":  510
-                                     },
-                         "GOLD":  {
-                                      "cost":  19200000,
-                                      "income":  1020
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  38400000,
-                                         "income":  2040
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  76800000,
-                                         "income":  4080
-                                     },
-                         "BESKAR":  {
-                                        "cost":  600000000,
-                                        "income":  17340
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "OPTI-POD",
-        "rarity":  "EPIC",
-        "type":  "WORKER",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  3600000,
-                                         "income":  390
-                                     },
-                         "GOLD":  {
-                                      "cost":  14400000,
-                                      "income":  780
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  28800000,
-                                         "income":  1560
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  57600000,
-                                         "income":  3120
-                                     },
-                         "BESKAR":  {
-                                        "cost":  450000000,
-                                        "income":  13260
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "GUNRUNNER",
-        "rarity":  "EPIC",
-        "type":  "WORKER",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  12600000,
-                                         "income":  660
-                                     },
-                         "GOLD":  {
-                                      "cost":  25200000,
-                                      "income":  1320
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  50400000,
-                                         "income":  2640
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  100800000,
-                                         "income":  5280
-                                     },
-                         "BESKAR":  {
-                                        "cost":  787500000,
-                                        "income":  22440
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "BB",
-        "rarity":  "EPIC",
-        "type":  "ASTROMECH",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  1200000,
-                                         "income":  150
-                                     },
-                         "GOLD":  {
-                                      "cost":  4800000,
-                                      "income":  300
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  9600000,
-                                         "income":  600
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  19200000,
-                                         "income":  1200
-                                     },
-                         "BESKAR":  {
-                                        "cost":  150000000,
-                                        "income":  5100
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "R2",
-        "rarity":  "EPIC",
-        "type":  "ASTROMECH",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  3300000,
-                                         "income":  360
-                                     },
-                         "GOLD":  {
-                                      "cost":  13200000,
-                                      "income":  720
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  26400000,
-                                         "income":  1440
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  52800000,
-                                         "income":  2880
-                                     },
-                         "BESKAR":  {
-                                        "cost":  412500000,
-                                        "income":  12240
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "R6",
-        "rarity":  "EPIC",
-        "type":  "ASTROMECH",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  2700000,
-                                         "income":  300
-                                     },
-                         "GOLD":  {
-                                      "cost":  10800000,
-                                      "income":  600
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  21600000,
-                                         "income":  1200
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  43200000,
-                                         "income":  2400
-                                     },
-                         "BESKAR":  {
-                                        "cost":  337500000,
-                                        "income":  10200
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "TRAK-R",
-        "rarity":  "EPIC",
-        "type":  "ASTROMECH",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  3000000,
-                                         "income":  330
-                                     },
-                         "GOLD":  {
-                                      "cost":  12000000,
-                                      "income":  660
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  24000000,
-                                         "income":  1320
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  48000000,
-                                         "income":  2640
-                                     },
-                         "BESKAR":  {
-                                        "cost":  375000000,
-                                        "income":  11220
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "ORB-WALKER",
-        "rarity":  "EPIC",
-        "type":  "ASTROMECH",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  1500000,
-                                         "income":  180
-                                     },
-                         "GOLD":  {
-                                      "cost":  6000000,
-                                      "income":  360
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  12000000,
-                                         "income":  720
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  24000000,
-                                         "income":  1440
-                                     },
-                         "BESKAR":  {
-                                        "cost":  187500000,
-                                        "income":  6120
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "UTIL-TEC",
-        "rarity":  "EPIC",
-        "type":  "ASTROMECH",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  1800000,
-                                         "income":  210
-                                     },
-                         "GOLD":  {
-                                      "cost":  7200000,
-                                      "income":  420
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  14400000,
-                                         "income":  840
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  28800000,
-                                         "income":  1680
-                                     },
-                         "BESKAR":  {
-                                        "cost":  225000000,
-                                        "income":  7140
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "B1 HEAVY",
-        "rarity":  "EPIC",
-        "type":  "BATTLE",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  6000000,
-                                         "income":  630
-                                     },
-                         "GOLD":  {
-                                      "cost":  24000000,
-                                      "income":  1260
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  48000000,
-                                         "income":  2520
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  96000000,
-                                         "income":  5040
-                                     },
-                         "BESKAR":  {
-                                        "cost":  750000000,
-                                        "income":  20400
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "B2 SUPER",
-        "rarity":  "EPIC",
-        "type":  "BATTLE",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  3900000,
-                                         "income":  420
-                                     },
-                         "GOLD":  {
-                                      "cost":  15600000,
-                                      "income":  840
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  31200000,
-                                         "income":  1680
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  62400000,
-                                         "income":  3360
-                                     },
-                         "BESKAR":  {
-                                        "cost":  487500000,
-                                        "income":  14280
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "B2 HEAVY",
-        "rarity":  "EPIC",
-        "type":  "BATTLE",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  4500000,
-                                         "income":  480
-                                     },
-                         "GOLD":  {
-                                      "cost":  18000000,
-                                      "income":  960
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  36000000,
-                                         "income":  1920
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  72000000,
-                                         "income":  3840
-                                     },
-                         "BESKAR":  {
-                                        "cost":  562500000,
-                                        "income":  16320
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "STRIKE-ORB",
-        "rarity":  "EPIC",
-        "type":  "BATTLE",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  5100000,
-                                         "income":  540
-                                     },
-                         "GOLD":  {
-                                      "cost":  20400000,
-                                      "income":  1080
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  40800000,
-                                         "income":  2160
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  81600000,
-                                         "income":  4320
-                                     },
-                         "BESKAR":  {
-                                        "cost":  637500000,
-                                        "income":  18360
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "HAUL-R",
-        "rarity":  "EPIC",
-        "type":  "BATTLE",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  2400000,
-                                         "income":  270
-                                     },
-                         "GOLD":  {
-                                      "cost":  9600000,
-                                      "income":  540
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  19200000,
-                                         "income":  1080
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  38400000,
-                                         "income":  2160
-                                     },
-                         "BESKAR":  {
-                                        "cost":  300000000,
-                                        "income":  9180
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "LNG-SHOT",
-        "rarity":  "EPIC",
-        "type":  "BATTLE",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  4200000,
-                                         "income":  450
-                                     },
-                         "GOLD":  {
-                                      "cost":  16800000,
-                                      "income":  900
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  33600000,
-                                         "income":  1800
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  67200000,
-                                         "income":  3600
-                                     },
-                         "BESKAR":  {
-                                        "cost":  525000000,
-                                        "income":  15300
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "PROTO-ROLLER",
-        "rarity":  "LEGENDARY",
-        "type":  "WORKER",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  22000000,
-                                         "income":  972
-                                     },
-                         "GOLD":  {
-                                      "cost":  88000000,
-                                      "income":  1944
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  176000000,
-                                         "income":  3888
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  352000000,
-                                         "income":  7776
-                                     },
-                         "BESKAR":  {
-                                        "cost":  8800000000,
-                                        "income":  23328
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "MECHA-DROID",
-        "rarity":  "LEGENDARY",
-        "type":  "WORKER",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  29000000,
-                                         "income":  1244
-                                     },
-                         "GOLD":  {
-                                      "cost":  116000000,
-                                      "income":  2488
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  232000000,
-                                         "income":  4976
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  464000000,
-                                         "income":  9952
-                                     },
-                         "BESKAR":  {
-                                        "cost":  11600000000,
-                                        "income":  29856
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "MONO-WALKER",
-        "rarity":  "LEGENDARY",
-        "type":  "WORKER",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  26000000,
-                                         "income":  1500
-                                     },
-                         "GOLD":  {
-                                      "cost":  104000000,
-                                      "income":  3000
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  208000000,
-                                         "income":  6000
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  416000000,
-                                         "income":  12000
-                                     },
-                         "BESKAR":  {
-                                        "cost":  10400000000,
-                                        "income":  36000
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "BB9",
-        "rarity":  "LEGENDARY",
-        "type":  "ASTROMECH",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  28000000,
-                                         "income":  1300
-                                     },
-                         "GOLD":  {
-                                      "cost":  112000000,
-                                      "income":  2600
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  224000000,
-                                         "income":  5200
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  448000000,
-                                         "income":  10400
-                                     },
-                         "BESKAR":  {
-                                        "cost":  11200000000,
-                                        "income":  31200
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "R7",
-        "rarity":  "LEGENDARY",
-        "type":  "ASTROMECH",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  37000000,
-                                         "income":  1500
-                                     },
-                         "GOLD":  {
-                                      "cost":  148000000,
-                                      "income":  3000
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  296000000,
-                                         "income":  6000
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  592000000,
-                                         "income":  12000
-                                     },
-                         "BESKAR":  {
-                                        "cost":  14800000000,
-                                        "income":  36000
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "B2-RP",
-        "rarity":  "LEGENDARY",
-        "type":  "BATTLE",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  31000000,
-                                         "income":  1304
-                                     },
-                         "GOLD":  {
-                                      "cost":  124000000,
-                                      "income":  2608
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  248000000,
-                                         "income":  5216
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  496000000,
-                                         "income":  10432
-                                     },
-                         "BESKAR":  {
-                                        "cost":  12400000000,
-                                        "income":  31296
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "CYCLO-GRAV",
-        "rarity":  "LEGENDARY",
-        "type":  "BATTLE",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  30000000,
-                                         "income":  1260
-                                     },
-                         "GOLD":  {
-                                      "cost":  120000000,
-                                      "income":  2520
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  240000000,
-                                         "income":  5040
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  480000000,
-                                         "income":  10080
-                                     },
-                         "BESKAR":  {
-                                        "cost":  12000000000,
-                                        "income":  30240
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "OPTI-STRIKE",
-        "rarity":  "LEGENDARY",
-        "type":  "BATTLE",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  37000000,
-                                         "income":  1500
-                                     },
-                         "GOLD":  {
-                                      "cost":  148000000,
-                                      "income":  3000
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  296000000,
-                                         "income":  6000
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  592000000,
-                                         "income":  12000
-                                     },
-                         "BESKAR":  {
-                                        "cost":  14800000000,
-                                        "income":  36000
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "SNOW MOUSE",
-        "rarity":  "MYTHIC",
-        "type":  "WORKER",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  180000000,
-                                         "income":  4400
-                                     },
-                         "GOLD":  {
-                                      "cost":  720000000,
-                                      "income":  8800
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  1440000000,
-                                         "income":  17600
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  4320000000,
-                                         "income":  35200
-                                     },
-                         "BESKAR":  {
-                                        "cost":  144000000000,
-                                        "income":  70400
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "RIC",
-        "rarity":  "MYTHIC",
-        "type":  "WORKER",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  204000000,
-                                         "income":  5100
-                                     },
-                         "GOLD":  {
-                                      "cost":  816000000,
-                                      "income":  10200
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  1632000000,
-                                         "income":  20400
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  4896000000,
-                                         "income":  40800
-                                     },
-                         "BESKAR":  {
-                                        "cost":  163200000000,
-                                        "income":  81600
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "LOADLIFTER",
-        "rarity":  "MYTHIC",
-        "type":  "WORKER",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  300000000,
-                                         "income":  7200
-                                     },
-                         "GOLD":  {
-                                      "cost":  1200000000,
-                                      "income":  14400
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  2400000000,
-                                         "income":  28800
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  7200000000,
-                                         "income":  57600
-                                     },
-                         "BESKAR":  {
-                                        "cost":  240000000000,
-                                        "income":  115200
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "LEP",
-        "rarity":  "MYTHIC",
-        "type":  "WORKER",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  252000000,
-                                         "income":  6500
-                                     },
-                         "GOLD":  {
-                                      "cost":  1008000000,
-                                      "income":  13000
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  2016000000,
-                                         "income":  26000
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  6048000000,
-                                         "income":  52000
-                                     },
-                         "BESKAR":  {
-                                        "cost":  201600000000,
-                                        "income":  104000
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "RIC-1200",
-        "rarity":  "MYTHIC",
-        "type":  "WORKER",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  228000000,
-                                         "income":  5800
-                                     },
-                         "GOLD":  {
-                                      "cost":  912000000,
-                                      "income":  11600
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  1824000000,
-                                         "income":  23200
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  5472000000,
-                                         "income":  46400
-                                     },
-                         "BESKAR":  {
-                                        "cost":  182400000000,
-                                        "income":  92800
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "DRFT-R",
-        "rarity":  "MYTHIC",
-        "type":  "ASTROMECH",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  228000000,
-                                         "income":  5800
-                                     },
-                         "GOLD":  {
-                                      "cost":  912000000,
-                                      "income":  11600
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  1824000000,
-                                         "income":  23200
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  5472000000,
-                                         "income":  46400
-                                     },
-                         "BESKAR":  {
-                                        "cost":  182400000000,
-                                        "income":  92800
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "CYCLENS",
-        "rarity":  "MYTHIC",
-        "type":  "ASTROMECH",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  180000000,
-                                         "income":  4400
-                                     },
-                         "GOLD":  {
-                                      "cost":  720000000,
-                                      "income":  8800
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  1440000000,
-                                         "income":  17600
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  4320000000,
-                                         "income":  35200
-                                     },
-                         "BESKAR":  {
-                                        "cost":  144000000000,
-                                        "income":  70400
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "MO-TRAK",
-        "rarity":  "MYTHIC",
-        "type":  "ASTROMECH",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  300000000,
-                                         "income":  7200
-                                     },
-                         "GOLD":  {
-                                      "cost":  1200000000,
-                                      "income":  14400
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  2400000000,
-                                         "income":  28800
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  7200000000,
-                                         "income":  57600
-                                     },
-                         "BESKAR":  {
-                                        "cost":  240000000000,
-                                        "income":  115200
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "TRI-TEK",
-        "rarity":  "MYTHIC",
-        "type":  "ASTROMECH",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  252000000,
-                                         "income":  6500
-                                     },
-                         "GOLD":  {
-                                      "cost":  1008000000,
-                                      "income":  13000
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  2016000000,
-                                         "income":  26000
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  6048000000,
-                                         "income":  52000
-                                     },
-                         "BESKAR":  {
-                                        "cost":  201600000000,
-                                        "income":  104000
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "IG",
-        "rarity":  "MYTHIC",
-        "type":  "BATTLE",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  228000000,
-                                         "income":  5800
-                                     },
-                         "GOLD":  {
-                                      "cost":  912000000,
-                                      "income":  11600
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  1824000000,
-                                         "income":  23200
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  5472000000,
-                                         "income":  46400
-                                     },
-                         "BESKAR":  {
-                                        "cost":  182400000000,
-                                        "income":  92800
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "KX",
-        "rarity":  "MYTHIC",
-        "type":  "BATTLE",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  300000000,
-                                         "income":  7200
-                                     },
-                         "GOLD":  {
-                                      "cost":  1200000000,
-                                      "income":  14400
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  2400000000,
-                                         "income":  28800
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  7200000000,
-                                         "income":  57600
-                                     },
-                         "BESKAR":  {
-                                        "cost":  240000000000,
-                                        "income":  115200
-                                    },
-                         "GALACTIC":  {
-                                          "cost":  0,
-                                          "income":  0
-                                      }
-                     }
-    },
-    {
-        "name":  "BB-8",
-        "rarity":  "ICONIC",
-        "type":  "ASTROMECH",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  0,
-                                         "income":  0
-                                     },
-                         "GOLD":  {
-                                      "cost":  0,
-                                      "income":  0
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  0,
-                                         "income":  0
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  0,
-                                         "income":  0
-                                     },
-                         "BESKAR":  {
-                                        "cost":  0,
-                                        "income":  0
-                                    }
-                     },
-        "special":  {
-                        "incomePercent":  0.15,
-                        "onlyDefaultVariant":  true,
-                        "cannotSell":  true,
-                        "maxQuantity":  1
-                    }
-    },
-    {
-        "name":  "CB-23",
-        "rarity":  "ICONIC",
-        "type":  "ASTROMECH",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  0,
-                                         "income":  0
-                                     },
-                         "GOLD":  {
-                                      "cost":  0,
-                                      "income":  0
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  0,
-                                         "income":  0
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  0,
-                                         "income":  0
-                                     },
-                         "BESKAR":  {
-                                        "cost":  0,
-                                        "income":  0
-                                    }
-                     },
-        "special":  {
-                        "incomePercent":  0.15,
-                        "onlyDefaultVariant":  true,
-                        "cannotSell":  true,
-                        "maxQuantity":  1
-                    }
-    },
-    {
-        "name":  "R2-D2",
-        "rarity":  "ICONIC",
-        "type":  "ASTROMECH",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  0,
-                                         "income":  0
-                                     },
-                         "GOLD":  {
-                                      "cost":  0,
-                                      "income":  0
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  0,
-                                         "income":  0
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  0,
-                                         "income":  0
-                                     },
-                         "BESKAR":  {
-                                        "cost":  0,
-                                        "income":  0
-                                    }
-                     },
-        "special":  {
-                        "incomePercent":  0.25,
-                        "onlyDefaultVariant":  true,
-                        "cannotSell":  true,
-                        "maxQuantity":  1
-                    }
-    },
-    {
-        "name":  "MISTER BONES",
-        "rarity":  "ICONIC",
-        "type":  "BATTLE",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  0,
-                                         "income":  0
-                                     },
-                         "GOLD":  {
-                                      "cost":  0,
-                                      "income":  0
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  0,
-                                         "income":  0
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  0,
-                                         "income":  0
-                                     },
-                         "BESKAR":  {
-                                        "cost":  0,
-                                        "income":  0
-                                    }
-                     },
-        "special":  {
-                        "incomePercent":  0.15,
-                        "onlyDefaultVariant":  true,
-                        "cannotSell":  true,
-                        "maxQuantity":  1
-                    }
-    },
-    {
-        "name":  "IG-11 MARSHAL",
-        "rarity":  "ICONIC",
-        "type":  "BATTLE",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  0,
-                                         "income":  0
-                                     },
-                         "GOLD":  {
-                                      "cost":  0,
-                                      "income":  0
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  0,
-                                         "income":  0
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  0,
-                                         "income":  0
-                                     },
-                         "BESKAR":  {
-                                        "cost":  0,
-                                        "income":  0
-                                    }
-                     },
-        "special":  {
-                        "incomePercent":  0.15,
-                        "onlyDefaultVariant":  true,
-                        "cannotSell":  true,
-                        "maxQuantity":  1
-                    }
-    },
-    {
-        "name":  "DJ R-3X",
-        "rarity":  "ICONIC",
-        "type":  "WORKER",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  0,
-                                         "income":  0
-                                     },
-                         "GOLD":  {
-                                      "cost":  0,
-                                      "income":  0
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  0,
-                                         "income":  0
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  0,
-                                         "income":  0
-                                     },
-                         "BESKAR":  {
-                                        "cost":  0,
-                                        "income":  0
-                                    }
-                     },
-        "special":  {
-                        "incomePercent":  0.15,
-                        "onlyDefaultVariant":  true,
-                        "cannotSell":  true,
-                        "maxQuantity":  1
-                    }
-    },
-    {
-        "name":  "C-3PO",
-        "rarity":  "ICONIC",
-        "type":  "WORKER",
-        "variants":  {
-                         "DEFAULT":  {
-                                         "cost":  0,
-                                         "income":  0
-                                     },
-                         "GOLD":  {
-                                      "cost":  0,
-                                      "income":  0
-                                  },
-                         "DIAMOND":  {
-                                         "cost":  0,
-                                         "income":  0
-                                     },
-                         "RAINBOW":  {
-                                         "cost":  0,
-                                         "income":  0
-                                     },
-                         "BESKAR":  {
-                                        "cost":  0,
-                                        "income":  0
-                                    }
-                     },
-        "special":  {
-                        "incomePercent":  0.25,
-                        "onlyDefaultVariant":  true,
-                        "cannotSell":  true,
-                        "maxQuantity":  1
-                    }
+[
+  {
+    "name": "MOUSE",
+    "rarity": "COMMON",
+    "type": "WORKER",
+    "variants": {
+      "DEFAULT": {
+        "cost": 950,
+        "income": 2,
+        "craftingSeconds": 30.159
+      },
+      "GOLD": {
+        "cost": 3800,
+        "income": 4,
+        "craftingSeconds": 120.636
+      },
+      "DIAMOND": {
+        "cost": 7600,
+        "income": 8,
+        "craftingSeconds": 211.113
+      },
+      "RAINBOW": {
+        "cost": 15200,
+        "income": 16,
+        "craftingSeconds": 301.59
+      },
+      "BESKAR": {
+        "cost": 15200,
+        "income": 24,
+        "craftingSeconds": 241.272
+      },
+      "GALACTIC": {
+        "cost": 19000,
+        "income": 48,
+        "craftingSeconds": 452.385
+      }
     }
+  },
+  {
+    "name": "PIT",
+    "rarity": "COMMON",
+    "type": "WORKER",
+    "variants": {
+      "DEFAULT": {
+        "cost": 1100,
+        "income": 2,
+        "craftingSeconds": 30.159
+      },
+      "GOLD": {
+        "cost": 4400,
+        "income": 4,
+        "craftingSeconds": 120.636
+      },
+      "DIAMOND": {
+        "cost": 8800,
+        "income": 8,
+        "craftingSeconds": 211.113
+      },
+      "RAINBOW": {
+        "cost": 17600,
+        "income": 16,
+        "craftingSeconds": 301.59
+      },
+      "BESKAR": {
+        "cost": 17600,
+        "income": 24,
+        "craftingSeconds": 241.272
+      },
+      "GALACTIC": {
+        "cost": 22000,
+        "income": 48,
+        "craftingSeconds": 452.385
+      }
+    }
+  },
+  {
+    "name": "GONK",
+    "rarity": "COMMON",
+    "type": "WORKER",
+    "variants": {
+      "DEFAULT": {
+        "cost": 3000,
+        "income": 4,
+        "craftingSeconds": 33.318
+      },
+      "GOLD": {
+        "cost": 12000,
+        "income": 8,
+        "craftingSeconds": 133.272
+      },
+      "DIAMOND": {
+        "cost": 24000,
+        "income": 16,
+        "craftingSeconds": 233.226
+      },
+      "RAINBOW": {
+        "cost": 48000,
+        "income": 32,
+        "craftingSeconds": 333.18
+      },
+      "BESKAR": {
+        "cost": 48000,
+        "income": 48,
+        "craftingSeconds": 266.544
+      },
+      "GALACTIC": {
+        "cost": 60000,
+        "income": 96,
+        "craftingSeconds": 499.77
+      }
+    }
+  },
+  {
+    "name": "CB",
+    "rarity": "COMMON",
+    "type": "ASTROMECH",
+    "variants": {
+      "DEFAULT": {
+        "cost": 2000,
+        "income": 3,
+        "craftingSeconds": 31.7385
+      },
+      "GOLD": {
+        "cost": 8000,
+        "income": 6,
+        "craftingSeconds": 126.954
+      },
+      "DIAMOND": {
+        "cost": 16000,
+        "income": 12,
+        "craftingSeconds": 222.1695
+      },
+      "RAINBOW": {
+        "cost": 32000,
+        "income": 24,
+        "craftingSeconds": 317.385
+      },
+      "BESKAR": {
+        "cost": 32000,
+        "income": 36,
+        "craftingSeconds": 253.908
+      },
+      "GALACTIC": {
+        "cost": 40000,
+        "income": 72,
+        "craftingSeconds": 476.0775
+      }
+    }
+  },
+  {
+    "name": "R3",
+    "rarity": "COMMON",
+    "type": "ASTROMECH",
+    "variants": {
+      "DEFAULT": {
+        "cost": 2000,
+        "income": 3,
+        "craftingSeconds": 31.7385
+      },
+      "GOLD": {
+        "cost": 8000,
+        "income": 6,
+        "craftingSeconds": 126.954
+      },
+      "DIAMOND": {
+        "cost": 16000,
+        "income": 12,
+        "craftingSeconds": 222.1695
+      },
+      "RAINBOW": {
+        "cost": 32000,
+        "income": 24,
+        "craftingSeconds": 317.385
+      },
+      "BESKAR": {
+        "cost": 32000,
+        "income": 36,
+        "craftingSeconds": 253.908
+      },
+      "GALACTIC": {
+        "cost": 40000,
+        "income": 72,
+        "craftingSeconds": 476.0775
+      }
+    }
+  },
+  {
+    "name": "R5",
+    "rarity": "COMMON",
+    "type": "ASTROMECH",
+    "variants": {
+      "DEFAULT": {
+        "cost": 2000,
+        "income": 3,
+        "craftingSeconds": 31.7385
+      },
+      "GOLD": {
+        "cost": 8000,
+        "income": 6,
+        "craftingSeconds": 126.954
+      },
+      "DIAMOND": {
+        "cost": 16000,
+        "income": 12,
+        "craftingSeconds": 222.1695
+      },
+      "RAINBOW": {
+        "cost": 32000,
+        "income": 24,
+        "craftingSeconds": 317.385
+      },
+      "BESKAR": {
+        "cost": 32000,
+        "income": 36,
+        "craftingSeconds": 253.908
+      },
+      "GALACTIC": {
+        "cost": 40000,
+        "income": 72,
+        "craftingSeconds": 476.0775
+      }
+    }
+  },
+  {
+    "name": "R8",
+    "rarity": "COMMON",
+    "type": "ASTROMECH",
+    "variants": {
+      "DEFAULT": {
+        "cost": 3000,
+        "income": 4,
+        "craftingSeconds": 33.318
+      },
+      "GOLD": {
+        "cost": 12000,
+        "income": 8,
+        "craftingSeconds": 133.272
+      },
+      "DIAMOND": {
+        "cost": 24000,
+        "income": 16,
+        "craftingSeconds": 233.226
+      },
+      "RAINBOW": {
+        "cost": 48000,
+        "income": 32,
+        "craftingSeconds": 333.18
+      },
+      "BESKAR": {
+        "cost": 48000,
+        "income": 48,
+        "craftingSeconds": 266.544
+      },
+      "GALACTIC": {
+        "cost": 60000,
+        "income": 96,
+        "craftingSeconds": 499.77
+      }
+    }
+  },
+  {
+    "name": "IMPERIAL PROBE",
+    "rarity": "COMMON",
+    "type": "BATTLE",
+    "variants": {
+      "DEFAULT": {
+        "cost": 5000,
+        "income": 6,
+        "craftingSeconds": 36.477
+      },
+      "GOLD": {
+        "cost": 20000,
+        "income": 12,
+        "craftingSeconds": 145.908
+      },
+      "DIAMOND": {
+        "cost": 40000,
+        "income": 24,
+        "craftingSeconds": 255.339
+      },
+      "RAINBOW": {
+        "cost": 80000,
+        "income": 48,
+        "craftingSeconds": 364.77
+      },
+      "BESKAR": {
+        "cost": 80000,
+        "income": 72,
+        "craftingSeconds": 291.816
+      },
+      "GALACTIC": {
+        "cost": 100000,
+        "income": 144,
+        "craftingSeconds": 547.155
+      }
+    }
+  },
+  {
+    "name": "B1 BATTLE",
+    "rarity": "COMMON",
+    "type": "BATTLE",
+    "variants": {
+      "DEFAULT": {
+        "cost": 4000,
+        "income": 5,
+        "craftingSeconds": 34.8975
+      },
+      "GOLD": {
+        "cost": 16000,
+        "income": 10,
+        "craftingSeconds": 139.59
+      },
+      "DIAMOND": {
+        "cost": 32000,
+        "income": 20,
+        "craftingSeconds": 244.2825
+      },
+      "RAINBOW": {
+        "cost": 64000,
+        "income": 40,
+        "craftingSeconds": 348.975
+      },
+      "BESKAR": {
+        "cost": 64000,
+        "income": 60,
+        "craftingSeconds": 279.18
+      },
+      "GALACTIC": {
+        "cost": 80000,
+        "income": 120,
+        "craftingSeconds": 523.4625
+      }
+    }
+  },
+  {
+    "name": "DRK-1 PROBE",
+    "rarity": "COMMON",
+    "type": "BATTLE",
+    "variants": {
+      "DEFAULT": {
+        "cost": 3000,
+        "income": 3,
+        "craftingSeconds": 31.7385
+      },
+      "GOLD": {
+        "cost": 12000,
+        "income": 6,
+        "craftingSeconds": 126.954
+      },
+      "DIAMOND": {
+        "cost": 24000,
+        "income": 12,
+        "craftingSeconds": 222.1695
+      },
+      "RAINBOW": {
+        "cost": 48000,
+        "income": 24,
+        "craftingSeconds": 317.385
+      },
+      "BESKAR": {
+        "cost": 48000,
+        "income": 36,
+        "craftingSeconds": 253.908
+      },
+      "GALACTIC": {
+        "cost": 60000,
+        "income": 72,
+        "craftingSeconds": 476.0775
+      }
+    }
+  },
+  {
+    "name": "ID10",
+    "rarity": "COMMON",
+    "type": "BATTLE",
+    "variants": {
+      "DEFAULT": {
+        "cost": 4000,
+        "income": 4,
+        "craftingSeconds": 33.318
+      },
+      "GOLD": {
+        "cost": 16000,
+        "income": 8,
+        "craftingSeconds": 133.272
+      },
+      "DIAMOND": {
+        "cost": 32000,
+        "income": 16,
+        "craftingSeconds": 233.226
+      },
+      "RAINBOW": {
+        "cost": 64000,
+        "income": 32,
+        "craftingSeconds": 333.18
+      },
+      "BESKAR": {
+        "cost": 64000,
+        "income": 48,
+        "craftingSeconds": 266.544
+      },
+      "GALACTIC": {
+        "cost": 80000,
+        "income": 96,
+        "craftingSeconds": 499.77
+      }
+    }
+  },
+  {
+    "name": "BDX EXPLORER",
+    "rarity": "RARE",
+    "type": "WORKER",
+    "variants": {
+      "DEFAULT": {
+        "cost": 25000,
+        "income": 15,
+        "craftingSeconds": 50.6925
+      },
+      "GOLD": {
+        "cost": 100000,
+        "income": 30,
+        "craftingSeconds": 202.77
+      },
+      "DIAMOND": {
+        "cost": 200000,
+        "income": 60,
+        "craftingSeconds": 354.8475
+      },
+      "RAINBOW": {
+        "cost": 400000,
+        "income": 120,
+        "craftingSeconds": 506.925
+      },
+      "BESKAR": {
+        "cost": 400000,
+        "income": 180,
+        "craftingSeconds": 405.54
+      },
+      "GALACTIC": {
+        "cost": 500000,
+        "income": 360,
+        "craftingSeconds": 760.3875
+      }
+    }
+  },
+  {
+    "name": "ARG",
+    "rarity": "RARE",
+    "type": "WORKER",
+    "variants": {
+      "DEFAULT": {
+        "cost": 88000,
+        "income": 42,
+        "craftingSeconds": 93.339
+      },
+      "GOLD": {
+        "cost": 352000,
+        "income": 84,
+        "craftingSeconds": 373.356
+      },
+      "DIAMOND": {
+        "cost": 704000,
+        "income": 168,
+        "craftingSeconds": 653.373
+      },
+      "RAINBOW": {
+        "cost": 1410000,
+        "income": 336,
+        "craftingSeconds": 933.39
+      },
+      "BESKAR": {
+        "cost": 1410000,
+        "income": 504,
+        "craftingSeconds": 746.712
+      },
+      "GALACTIC": {
+        "cost": 1760000,
+        "income": 1008,
+        "craftingSeconds": 1400.085
+      }
+    }
+  },
+  {
+    "name": "SENATE HOVERCAM",
+    "rarity": "RARE",
+    "type": "WORKER",
+    "variants": {
+      "DEFAULT": {
+        "cost": 100000,
+        "income": 46,
+        "craftingSeconds": 99.657
+      },
+      "GOLD": {
+        "cost": 400000,
+        "income": 92,
+        "craftingSeconds": 398.628
+      },
+      "DIAMOND": {
+        "cost": 800000,
+        "income": 184,
+        "craftingSeconds": 697.599
+      },
+      "RAINBOW": {
+        "cost": 1600000,
+        "income": 368,
+        "craftingSeconds": 996.57
+      },
+      "BESKAR": {
+        "cost": 1600000,
+        "income": 552,
+        "craftingSeconds": 797.256
+      },
+      "GALACTIC": {
+        "cost": 2000000,
+        "income": 1104,
+        "craftingSeconds": 1494.855
+      }
+    }
+  },
+  {
+    "name": "B-U4D",
+    "rarity": "RARE",
+    "type": "WORKER",
+    "variants": {
+      "DEFAULT": {
+        "cost": 130000,
+        "income": 58,
+        "craftingSeconds": 118.611
+      },
+      "GOLD": {
+        "cost": 520000,
+        "income": 116,
+        "craftingSeconds": 474.444
+      },
+      "DIAMOND": {
+        "cost": 1040000,
+        "income": 232,
+        "craftingSeconds": 830.277
+      },
+      "RAINBOW": {
+        "cost": 2080000,
+        "income": 464,
+        "craftingSeconds": 1186.11
+      },
+      "BESKAR": {
+        "cost": 2080000,
+        "income": 696,
+        "craftingSeconds": 948.888
+      },
+      "GALACTIC": {
+        "cost": 2600000,
+        "income": 1392,
+        "craftingSeconds": 1779.165
+      }
+    }
+  },
+  {
+    "name": "BAL-CORE",
+    "rarity": "RARE",
+    "type": "WORKER",
+    "variants": {
+      "DEFAULT": {
+        "cost": 43000,
+        "income": 23,
+        "craftingSeconds": 63.3285
+      },
+      "GOLD": {
+        "cost": 172000,
+        "income": 46,
+        "craftingSeconds": 253.314
+      },
+      "DIAMOND": {
+        "cost": 344000,
+        "income": 92,
+        "craftingSeconds": 443.2995
+      },
+      "RAINBOW": {
+        "cost": 688000,
+        "income": 184,
+        "craftingSeconds": 633.285
+      },
+      "BESKAR": {
+        "cost": 688000,
+        "income": 276,
+        "craftingSeconds": 506.628
+      },
+      "GALACTIC": {
+        "cost": 860000,
+        "income": 552,
+        "craftingSeconds": 949.9275
+      }
+    }
+  },
+  {
+    "name": "ROLL-R",
+    "rarity": "RARE",
+    "type": "WORKER",
+    "variants": {
+      "DEFAULT": {
+        "cost": 62000,
+        "income": 31,
+        "craftingSeconds": 75.9645
+      },
+      "GOLD": {
+        "cost": 248000,
+        "income": 62,
+        "craftingSeconds": 303.858
+      },
+      "DIAMOND": {
+        "cost": 496000,
+        "income": 124,
+        "craftingSeconds": 531.7515
+      },
+      "RAINBOW": {
+        "cost": 992000,
+        "income": 248,
+        "craftingSeconds": 759.645
+      },
+      "BESKAR": {
+        "cost": 992000,
+        "income": 372,
+        "craftingSeconds": 607.716
+      },
+      "GALACTIC": {
+        "cost": 1240000,
+        "income": 744,
+        "craftingSeconds": 1139.4675
+      }
+    }
+  },
+  {
+    "name": "2BB",
+    "rarity": "RARE",
+    "type": "ASTROMECH",
+    "variants": {
+      "DEFAULT": {
+        "cost": 30000,
+        "income": 17,
+        "craftingSeconds": 53.8515
+      },
+      "GOLD": {
+        "cost": 120000,
+        "income": 34,
+        "craftingSeconds": 215.406
+      },
+      "DIAMOND": {
+        "cost": 240000,
+        "income": 68,
+        "craftingSeconds": 376.9605
+      },
+      "RAINBOW": {
+        "cost": 480000,
+        "income": 136,
+        "craftingSeconds": 538.515
+      },
+      "BESKAR": {
+        "cost": 480000,
+        "income": 204,
+        "craftingSeconds": 430.812
+      },
+      "GALACTIC": {
+        "cost": 600000,
+        "income": 408,
+        "craftingSeconds": 807.7725
+      }
+    }
+  },
+  {
+    "name": "A-LT",
+    "rarity": "RARE",
+    "type": "ASTROMECH",
+    "variants": {
+      "DEFAULT": {
+        "cost": 74000,
+        "income": 36,
+        "craftingSeconds": 83.862
+      },
+      "GOLD": {
+        "cost": 296000,
+        "income": 72,
+        "craftingSeconds": 335.448
+      },
+      "DIAMOND": {
+        "cost": 592000,
+        "income": 144,
+        "craftingSeconds": 587.034
+      },
+      "RAINBOW": {
+        "cost": 1180000,
+        "income": 288,
+        "craftingSeconds": 838.62
+      },
+      "BESKAR": {
+        "cost": 1180000,
+        "income": 432,
+        "craftingSeconds": 670.896
+      },
+      "GALACTIC": {
+        "cost": 1480000,
+        "income": 864,
+        "craftingSeconds": 1257.93
+      }
+    }
+  },
+  {
+    "name": "R4",
+    "rarity": "RARE",
+    "type": "ASTROMECH",
+    "variants": {
+      "DEFAULT": {
+        "cost": 110000,
+        "income": 50,
+        "craftingSeconds": 105.975
+      },
+      "GOLD": {
+        "cost": 440000,
+        "income": 100,
+        "craftingSeconds": 423.9
+      },
+      "DIAMOND": {
+        "cost": 880000,
+        "income": 200,
+        "craftingSeconds": 741.825
+      },
+      "RAINBOW": {
+        "cost": 1760000,
+        "income": 400,
+        "craftingSeconds": 1059.75
+      },
+      "BESKAR": {
+        "cost": 1760000,
+        "income": 600,
+        "craftingSeconds": 847.8
+      },
+      "GALACTIC": {
+        "cost": 2200000,
+        "income": 1200,
+        "craftingSeconds": 1589.625
+      }
+    }
+  },
+  {
+    "name": "R9",
+    "rarity": "RARE",
+    "type": "ASTROMECH",
+    "variants": {
+      "DEFAULT": {
+        "cost": 120000,
+        "income": 54,
+        "craftingSeconds": 112.293
+      },
+      "GOLD": {
+        "cost": 480000,
+        "income": 108,
+        "craftingSeconds": 449.172
+      },
+      "DIAMOND": {
+        "cost": 960000,
+        "income": 216,
+        "craftingSeconds": 786.051
+      },
+      "RAINBOW": {
+        "cost": 1920000,
+        "income": 432,
+        "craftingSeconds": 1122.93
+      },
+      "BESKAR": {
+        "cost": 1920000,
+        "income": 648,
+        "craftingSeconds": 898.344
+      },
+      "GALACTIC": {
+        "cost": 2400000,
+        "income": 1296,
+        "craftingSeconds": 1684.395
+      }
+    }
+  },
+  {
+    "name": "B1 SECURITY",
+    "rarity": "RARE",
+    "type": "BATTLE",
+    "variants": {
+      "DEFAULT": {
+        "cost": 150000,
+        "income": 66,
+        "craftingSeconds": 131.247
+      },
+      "GOLD": {
+        "cost": 600000,
+        "income": 132,
+        "craftingSeconds": 524.988
+      },
+      "DIAMOND": {
+        "cost": 1200000,
+        "income": 264,
+        "craftingSeconds": 918.729
+      },
+      "RAINBOW": {
+        "cost": 2400000,
+        "income": 528,
+        "craftingSeconds": 1312.47
+      },
+      "BESKAR": {
+        "cost": 2400000,
+        "income": 792,
+        "craftingSeconds": 1049.976
+      },
+      "GALACTIC": {
+        "cost": 3000000,
+        "income": 1584,
+        "craftingSeconds": 1968.705
+      }
+    }
+  },
+  {
+    "name": "NAV-EX",
+    "rarity": "RARE",
+    "type": "BATTLE",
+    "variants": {
+      "DEFAULT": {
+        "cost": 36000,
+        "income": 18,
+        "craftingSeconds": 55.431
+      },
+      "GOLD": {
+        "cost": 144000,
+        "income": 36,
+        "craftingSeconds": 221.724
+      },
+      "DIAMOND": {
+        "cost": 288000,
+        "income": 72,
+        "craftingSeconds": 388.017
+      },
+      "RAINBOW": {
+        "cost": 576000,
+        "income": 144,
+        "craftingSeconds": 554.31
+      },
+      "BESKAR": {
+        "cost": 576000,
+        "income": 216,
+        "craftingSeconds": 443.448
+      },
+      "GALACTIC": {
+        "cost": 720000,
+        "income": 432,
+        "craftingSeconds": 831.465
+      }
+    }
+  },
+  {
+    "name": "VECT-ARM",
+    "rarity": "RARE",
+    "type": "BATTLE",
+    "variants": {
+      "DEFAULT": {
+        "cost": 52000,
+        "income": 27,
+        "craftingSeconds": 69.6465
+      },
+      "GOLD": {
+        "cost": 208000,
+        "income": 54,
+        "craftingSeconds": 278.586
+      },
+      "DIAMOND": {
+        "cost": 416000,
+        "income": 108,
+        "craftingSeconds": 487.5255
+      },
+      "RAINBOW": {
+        "cost": 832000,
+        "income": 216,
+        "craftingSeconds": 696.465
+      },
+      "BESKAR": {
+        "cost": 832000,
+        "income": 324,
+        "craftingSeconds": 557.172
+      },
+      "GALACTIC": {
+        "cost": 1040000,
+        "income": 648,
+        "craftingSeconds": 1044.6975
+      }
+    }
+  },
+  {
+    "name": "HOV-R",
+    "rarity": "RARE",
+    "type": "BATTLE",
+    "variants": {
+      "DEFAULT": {
+        "cost": 140000,
+        "income": 62,
+        "craftingSeconds": 124.929
+      },
+      "GOLD": {
+        "cost": 560000,
+        "income": 124,
+        "craftingSeconds": 499.716
+      },
+      "DIAMOND": {
+        "cost": 1120000,
+        "income": 248,
+        "craftingSeconds": 874.503
+      },
+      "RAINBOW": {
+        "cost": 2240000,
+        "income": 496,
+        "craftingSeconds": 1249.29
+      },
+      "BESKAR": {
+        "cost": 2240000,
+        "income": 744,
+        "craftingSeconds": 999.432
+      },
+      "GALACTIC": {
+        "cost": 2800000,
+        "income": 1488,
+        "craftingSeconds": 1873.935
+      }
+    }
+  },
+  {
+    "name": "GROUNDMECH",
+    "rarity": "EPIC",
+    "type": "WORKER",
+    "variants": {
+      "DEFAULT": {
+        "cost": 900000,
+        "income": 120,
+        "craftingSeconds": 216.54
+      },
+      "GOLD": {
+        "cost": 3600000,
+        "income": 240,
+        "craftingSeconds": 866.16
+      },
+      "DIAMOND": {
+        "cost": 7200000,
+        "income": 480,
+        "craftingSeconds": 1515.78
+      },
+      "RAINBOW": {
+        "cost": 14400000,
+        "income": 960,
+        "craftingSeconds": 2165.4
+      },
+      "BESKAR": {
+        "cost": 112500000,
+        "income": 4080,
+        "craftingSeconds": 1732.32
+      },
+      "GALACTIC": {
+        "cost": 270000000,
+        "income": 6240,
+        "craftingSeconds": 3248.1
+      }
+    }
+  },
+  {
+    "name": "LO",
+    "rarity": "EPIC",
+    "type": "WORKER",
+    "variants": {
+      "DEFAULT": {
+        "cost": 2100000,
+        "income": 240,
+        "craftingSeconds": 406.08
+      },
+      "GOLD": {
+        "cost": 8400000,
+        "income": 480,
+        "craftingSeconds": 1624.32
+      },
+      "DIAMOND": {
+        "cost": 16800000,
+        "income": 960,
+        "craftingSeconds": 2842.56
+      },
+      "RAINBOW": {
+        "cost": 33600000,
+        "income": 1920,
+        "craftingSeconds": 4060.8
+      },
+      "BESKAR": {
+        "cost": 262500000,
+        "income": 8160,
+        "craftingSeconds": 3248.64
+      },
+      "GALACTIC": {
+        "cost": 630000000,
+        "income": 12480,
+        "craftingSeconds": 6091.2
+      }
+    }
+  },
+  {
+    "name": "AMP WALKER",
+    "rarity": "EPIC",
+    "type": "WORKER",
+    "variants": {
+      "DEFAULT": {
+        "cost": 5400000,
+        "income": 570,
+        "craftingSeconds": 927.315
+      },
+      "GOLD": {
+        "cost": 21600000,
+        "income": 1140,
+        "craftingSeconds": 3709.26
+      },
+      "DIAMOND": {
+        "cost": 43200000,
+        "income": 2280,
+        "craftingSeconds": 6491.205
+      },
+      "RAINBOW": {
+        "cost": 86400000,
+        "income": 4560,
+        "craftingSeconds": 9273.15
+      },
+      "BESKAR": {
+        "cost": 675000000,
+        "income": 19380,
+        "craftingSeconds": 7418.52
+      },
+      "GALACTIC": {
+        "cost": 1620000000,
+        "income": 29640,
+        "craftingSeconds": 13909.725
+      }
+    }
+  },
+  {
+    "name": "SEN-TRI",
+    "rarity": "EPIC",
+    "type": "WORKER",
+    "variants": {
+      "DEFAULT": {
+        "cost": 4800000,
+        "income": 510,
+        "craftingSeconds": 832.545
+      },
+      "GOLD": {
+        "cost": 19200000,
+        "income": 1020,
+        "craftingSeconds": 3330.18
+      },
+      "DIAMOND": {
+        "cost": 38400000,
+        "income": 2040,
+        "craftingSeconds": 5827.815
+      },
+      "RAINBOW": {
+        "cost": 76800000,
+        "income": 4080,
+        "craftingSeconds": 8325.45
+      },
+      "BESKAR": {
+        "cost": 600000000,
+        "income": 17340,
+        "craftingSeconds": 6660.36
+      },
+      "GALACTIC": {
+        "cost": 1440000000,
+        "income": 26520,
+        "craftingSeconds": 12488.175
+      }
+    }
+  },
+  {
+    "name": "OPTI-POD",
+    "rarity": "EPIC",
+    "type": "WORKER",
+    "variants": {
+      "DEFAULT": {
+        "cost": 3600000,
+        "income": 390,
+        "craftingSeconds": 643.005
+      },
+      "GOLD": {
+        "cost": 14400000,
+        "income": 780,
+        "craftingSeconds": 2572.02
+      },
+      "DIAMOND": {
+        "cost": 28800000,
+        "income": 1560,
+        "craftingSeconds": 4501.035
+      },
+      "RAINBOW": {
+        "cost": 57600000,
+        "income": 3120,
+        "craftingSeconds": 6430.05
+      },
+      "BESKAR": {
+        "cost": 450000000,
+        "income": 13260,
+        "craftingSeconds": 5144.04
+      },
+      "GALACTIC": {
+        "cost": 1080000000,
+        "income": 20280,
+        "craftingSeconds": 9645.075
+      }
+    }
+  },
+  {
+    "name": "GUNRUNNER",
+    "rarity": "EPIC",
+    "type": "WORKER",
+    "variants": {
+      "DEFAULT": {
+        "cost": 12600000,
+        "income": 660,
+        "craftingSeconds": 1069.47
+      },
+      "GOLD": {
+        "cost": 25200000,
+        "income": 1320,
+        "craftingSeconds": 4277.88
+      },
+      "DIAMOND": {
+        "cost": 50400000,
+        "income": 2640,
+        "craftingSeconds": 7486.29
+      },
+      "RAINBOW": {
+        "cost": 100800000,
+        "income": 5280,
+        "craftingSeconds": 10694.7
+      },
+      "BESKAR": {
+        "cost": 787500000,
+        "income": 22440,
+        "craftingSeconds": 8555.76
+      },
+      "GALACTIC": {
+        "cost": 1890000000,
+        "income": 34320,
+        "craftingSeconds": 16042.05
+      }
+    }
+  },
+  {
+    "name": "BB",
+    "rarity": "EPIC",
+    "type": "ASTROMECH",
+    "variants": {
+      "DEFAULT": {
+        "cost": 1200000,
+        "income": 150,
+        "craftingSeconds": 263.925
+      },
+      "GOLD": {
+        "cost": 4800000,
+        "income": 300,
+        "craftingSeconds": 1055.7
+      },
+      "DIAMOND": {
+        "cost": 9600000,
+        "income": 600,
+        "craftingSeconds": 1847.475
+      },
+      "RAINBOW": {
+        "cost": 19200000,
+        "income": 1200,
+        "craftingSeconds": 2639.25
+      },
+      "BESKAR": {
+        "cost": 150000000,
+        "income": 5100,
+        "craftingSeconds": 2111.4
+      },
+      "GALACTIC": {
+        "cost": 360000000,
+        "income": 7800,
+        "craftingSeconds": 3958.875
+      }
+    }
+  },
+  {
+    "name": "R2",
+    "rarity": "EPIC",
+    "type": "ASTROMECH",
+    "variants": {
+      "DEFAULT": {
+        "cost": 3300000,
+        "income": 360,
+        "craftingSeconds": 595.62
+      },
+      "GOLD": {
+        "cost": 13200000,
+        "income": 720,
+        "craftingSeconds": 2382.48
+      },
+      "DIAMOND": {
+        "cost": 26400000,
+        "income": 1440,
+        "craftingSeconds": 4169.34
+      },
+      "RAINBOW": {
+        "cost": 52800000,
+        "income": 2880,
+        "craftingSeconds": 5956.2
+      },
+      "BESKAR": {
+        "cost": 412500000,
+        "income": 12240,
+        "craftingSeconds": 4764.96
+      },
+      "GALACTIC": {
+        "cost": 990000000,
+        "income": 18720,
+        "craftingSeconds": 8934.3
+      }
+    }
+  },
+  {
+    "name": "R6",
+    "rarity": "EPIC",
+    "type": "ASTROMECH",
+    "variants": {
+      "DEFAULT": {
+        "cost": 2700000,
+        "income": 300,
+        "craftingSeconds": 500.85
+      },
+      "GOLD": {
+        "cost": 10800000,
+        "income": 600,
+        "craftingSeconds": 2003.4
+      },
+      "DIAMOND": {
+        "cost": 21600000,
+        "income": 1200,
+        "craftingSeconds": 3505.95
+      },
+      "RAINBOW": {
+        "cost": 43200000,
+        "income": 2400,
+        "craftingSeconds": 5008.5
+      },
+      "BESKAR": {
+        "cost": 337500000,
+        "income": 10200,
+        "craftingSeconds": 4006.8
+      },
+      "GALACTIC": {
+        "cost": 810000000,
+        "income": 15600,
+        "craftingSeconds": 7512.75
+      }
+    }
+  },
+  {
+    "name": "TRAK-R",
+    "rarity": "EPIC",
+    "type": "ASTROMECH",
+    "variants": {
+      "DEFAULT": {
+        "cost": 3000000,
+        "income": 330,
+        "craftingSeconds": 548.235
+      },
+      "GOLD": {
+        "cost": 12000000,
+        "income": 660,
+        "craftingSeconds": 2192.94
+      },
+      "DIAMOND": {
+        "cost": 24000000,
+        "income": 1320,
+        "craftingSeconds": 3837.645
+      },
+      "RAINBOW": {
+        "cost": 48000000,
+        "income": 2640,
+        "craftingSeconds": 5482.35
+      },
+      "BESKAR": {
+        "cost": 375000000,
+        "income": 11220,
+        "craftingSeconds": 4385.88
+      },
+      "GALACTIC": {
+        "cost": 900000000,
+        "income": 17160,
+        "craftingSeconds": 8223.525
+      }
+    }
+  },
+  {
+    "name": "ORB-WALKER",
+    "rarity": "EPIC",
+    "type": "ASTROMECH",
+    "variants": {
+      "DEFAULT": {
+        "cost": 1500000,
+        "income": 180,
+        "craftingSeconds": 311.31
+      },
+      "GOLD": {
+        "cost": 6000000,
+        "income": 360,
+        "craftingSeconds": 1245.24
+      },
+      "DIAMOND": {
+        "cost": 12000000,
+        "income": 720,
+        "craftingSeconds": 2179.17
+      },
+      "RAINBOW": {
+        "cost": 24000000,
+        "income": 1440,
+        "craftingSeconds": 3113.1
+      },
+      "BESKAR": {
+        "cost": 187500000,
+        "income": 6120,
+        "craftingSeconds": 2490.48
+      },
+      "GALACTIC": {
+        "cost": 450000000,
+        "income": 9360,
+        "craftingSeconds": 4669.65
+      }
+    }
+  },
+  {
+    "name": "UTIL-TEC",
+    "rarity": "EPIC",
+    "type": "ASTROMECH",
+    "variants": {
+      "DEFAULT": {
+        "cost": 1800000,
+        "income": 210,
+        "craftingSeconds": 358.695
+      },
+      "GOLD": {
+        "cost": 7200000,
+        "income": 420,
+        "craftingSeconds": 1434.78
+      },
+      "DIAMOND": {
+        "cost": 14400000,
+        "income": 840,
+        "craftingSeconds": 2510.865
+      },
+      "RAINBOW": {
+        "cost": 28800000,
+        "income": 1680,
+        "craftingSeconds": 3586.95
+      },
+      "BESKAR": {
+        "cost": 225000000,
+        "income": 7140,
+        "craftingSeconds": 2869.56
+      },
+      "GALACTIC": {
+        "cost": 540000000,
+        "income": 10920,
+        "craftingSeconds": 5380.425
+      }
+    }
+  },
+  {
+    "name": "B1 HEAVY",
+    "rarity": "EPIC",
+    "type": "BATTLE",
+    "variants": {
+      "DEFAULT": {
+        "cost": 6000000,
+        "income": 630,
+        "craftingSeconds": 974.7
+      },
+      "GOLD": {
+        "cost": 24000000,
+        "income": 1260,
+        "craftingSeconds": 3898.8
+      },
+      "DIAMOND": {
+        "cost": 48000000,
+        "income": 2520,
+        "craftingSeconds": 6822.9
+      },
+      "RAINBOW": {
+        "cost": 96000000,
+        "income": 5040,
+        "craftingSeconds": 9747
+      },
+      "BESKAR": {
+        "cost": 750000000,
+        "income": 20400,
+        "craftingSeconds": 7797.6
+      },
+      "GALACTIC": {
+        "cost": 1800000000,
+        "income": 31200,
+        "craftingSeconds": 14620.5
+      }
+    }
+  },
+  {
+    "name": "B2 SUPER",
+    "rarity": "EPIC",
+    "type": "BATTLE",
+    "variants": {
+      "DEFAULT": {
+        "cost": 3900000,
+        "income": 420,
+        "craftingSeconds": 690.39
+      },
+      "GOLD": {
+        "cost": 15600000,
+        "income": 840,
+        "craftingSeconds": 2761.56
+      },
+      "DIAMOND": {
+        "cost": 31200000,
+        "income": 1680,
+        "craftingSeconds": 4832.73
+      },
+      "RAINBOW": {
+        "cost": 62400000,
+        "income": 3360,
+        "craftingSeconds": 6903.9
+      },
+      "BESKAR": {
+        "cost": 487500000,
+        "income": 14280,
+        "craftingSeconds": 5523.12
+      },
+      "GALACTIC": {
+        "cost": 1170000000,
+        "income": 21840,
+        "craftingSeconds": 10355.85
+      }
+    }
+  },
+  {
+    "name": "B2 HEAVY",
+    "rarity": "EPIC",
+    "type": "BATTLE",
+    "variants": {
+      "DEFAULT": {
+        "cost": 4500000,
+        "income": 480,
+        "craftingSeconds": 785.16
+      },
+      "GOLD": {
+        "cost": 18000000,
+        "income": 960,
+        "craftingSeconds": 3140.64
+      },
+      "DIAMOND": {
+        "cost": 36000000,
+        "income": 1920,
+        "craftingSeconds": 5496.12
+      },
+      "RAINBOW": {
+        "cost": 72000000,
+        "income": 3840,
+        "craftingSeconds": 7851.6
+      },
+      "BESKAR": {
+        "cost": 562500000,
+        "income": 16320,
+        "craftingSeconds": 6281.28
+      },
+      "GALACTIC": {
+        "cost": 1350000000,
+        "income": 24960,
+        "craftingSeconds": 11777.4
+      }
+    }
+  },
+  {
+    "name": "STRIKE-ORB",
+    "rarity": "EPIC",
+    "type": "BATTLE",
+    "variants": {
+      "DEFAULT": {
+        "cost": 5100000,
+        "income": 540,
+        "craftingSeconds": 879.93
+      },
+      "GOLD": {
+        "cost": 20400000,
+        "income": 1080,
+        "craftingSeconds": 3519.72
+      },
+      "DIAMOND": {
+        "cost": 40800000,
+        "income": 2160,
+        "craftingSeconds": 6159.51
+      },
+      "RAINBOW": {
+        "cost": 81600000,
+        "income": 4320,
+        "craftingSeconds": 8799.3
+      },
+      "BESKAR": {
+        "cost": 637500000,
+        "income": 18360,
+        "craftingSeconds": 7039.44
+      },
+      "GALACTIC": {
+        "cost": 1530000000,
+        "income": 28080,
+        "craftingSeconds": 13198.95
+      }
+    }
+  },
+  {
+    "name": "HAUL-R",
+    "rarity": "EPIC",
+    "type": "BATTLE",
+    "variants": {
+      "DEFAULT": {
+        "cost": 2400000,
+        "income": 270,
+        "craftingSeconds": 453.465
+      },
+      "GOLD": {
+        "cost": 9600000,
+        "income": 540,
+        "craftingSeconds": 1813.86
+      },
+      "DIAMOND": {
+        "cost": 19200000,
+        "income": 1080,
+        "craftingSeconds": 3174.255
+      },
+      "RAINBOW": {
+        "cost": 38400000,
+        "income": 2160,
+        "craftingSeconds": 4534.65
+      },
+      "BESKAR": {
+        "cost": 300000000,
+        "income": 9180,
+        "craftingSeconds": 3627.72
+      },
+      "GALACTIC": {
+        "cost": 720000000,
+        "income": 14040,
+        "craftingSeconds": 6801.975
+      }
+    }
+  },
+  {
+    "name": "LNG-SHOT",
+    "rarity": "EPIC",
+    "type": "BATTLE",
+    "variants": {
+      "DEFAULT": {
+        "cost": 4200000,
+        "income": 450,
+        "craftingSeconds": 737.775
+      },
+      "GOLD": {
+        "cost": 16800000,
+        "income": 900,
+        "craftingSeconds": 2951.1
+      },
+      "DIAMOND": {
+        "cost": 33600000,
+        "income": 1800,
+        "craftingSeconds": 5164.425
+      },
+      "RAINBOW": {
+        "cost": 67200000,
+        "income": 3600,
+        "craftingSeconds": 7377.75
+      },
+      "BESKAR": {
+        "cost": 525000000,
+        "income": 15300,
+        "craftingSeconds": 5902.2
+      },
+      "GALACTIC": {
+        "cost": 1260000000,
+        "income": 23400,
+        "craftingSeconds": 11066.625
+      }
+    }
+  },
+  {
+    "name": "PROTO-ROLLER",
+    "rarity": "LEGENDARY",
+    "type": "WORKER",
+    "variants": {
+      "DEFAULT": {
+        "cost": 22000000,
+        "income": 972,
+        "craftingSeconds": 1562.274
+      },
+      "GOLD": {
+        "cost": 88000000,
+        "income": 1944,
+        "craftingSeconds": 6249.096
+      },
+      "DIAMOND": {
+        "cost": 176000000,
+        "income": 3888,
+        "craftingSeconds": 10935.918
+      },
+      "RAINBOW": {
+        "cost": 352000000,
+        "income": 7776,
+        "craftingSeconds": 15622.74
+      },
+      "BESKAR": {
+        "cost": 8800000000,
+        "income": 23328,
+        "craftingSeconds": 12498.192
+      },
+      "GALACTIC": {
+        "cost": 52800000000,
+        "income": 58320,
+        "craftingSeconds": 23434.11
+      }
+    }
+  },
+  {
+    "name": "MECHA-DROID",
+    "rarity": "LEGENDARY",
+    "type": "WORKER",
+    "variants": {
+      "DEFAULT": {
+        "cost": 29000000,
+        "income": 1244,
+        "craftingSeconds": 1991.898
+      },
+      "GOLD": {
+        "cost": 116000000,
+        "income": 2488,
+        "craftingSeconds": 7967.592
+      },
+      "DIAMOND": {
+        "cost": 232000000,
+        "income": 4976,
+        "craftingSeconds": 13943.286
+      },
+      "RAINBOW": {
+        "cost": 464000000,
+        "income": 9952,
+        "craftingSeconds": 19918.98
+      },
+      "BESKAR": {
+        "cost": 11600000000,
+        "income": 29856,
+        "craftingSeconds": 15935.184
+      },
+      "GALACTIC": {
+        "cost": 69600000000,
+        "income": 74640,
+        "craftingSeconds": 29878.47
+      }
+    }
+  },
+  {
+    "name": "MONO-WALKER",
+    "rarity": "LEGENDARY",
+    "type": "WORKER",
+    "variants": {
+      "DEFAULT": {
+        "cost": 26000000,
+        "income": 1500,
+        "craftingSeconds": 2396.25
+      },
+      "GOLD": {
+        "cost": 104000000,
+        "income": 3000,
+        "craftingSeconds": 9585
+      },
+      "DIAMOND": {
+        "cost": 208000000,
+        "income": 6000,
+        "craftingSeconds": 16773.75
+      },
+      "RAINBOW": {
+        "cost": 416000000,
+        "income": 12000,
+        "craftingSeconds": 23962.5
+      },
+      "BESKAR": {
+        "cost": 10400000000,
+        "income": 36000,
+        "craftingSeconds": 19170
+      },
+      "GALACTIC": {
+        "cost": 88800000000,
+        "income": 90000,
+        "craftingSeconds": 35943.75
+      }
+    }
+  },
+  {
+    "name": "BB9",
+    "rarity": "LEGENDARY",
+    "type": "ASTROMECH",
+    "variants": {
+      "DEFAULT": {
+        "cost": 28000000,
+        "income": 1300,
+        "craftingSeconds": 2080.35
+      },
+      "GOLD": {
+        "cost": 112000000,
+        "income": 2600,
+        "craftingSeconds": 8321.4
+      },
+      "DIAMOND": {
+        "cost": 224000000,
+        "income": 5200,
+        "craftingSeconds": 14562.45
+      },
+      "RAINBOW": {
+        "cost": 448000000,
+        "income": 10400,
+        "craftingSeconds": 20803.5
+      },
+      "BESKAR": {
+        "cost": 11200000000,
+        "income": 31200,
+        "craftingSeconds": 16642.8
+      },
+      "GALACTIC": {
+        "cost": 67200000000,
+        "income": 78000,
+        "craftingSeconds": 31205.25
+      }
+    }
+  },
+  {
+    "name": "R7",
+    "rarity": "LEGENDARY",
+    "type": "ASTROMECH",
+    "variants": {
+      "DEFAULT": {
+        "cost": 37000000,
+        "income": 1500,
+        "craftingSeconds": 2396.25
+      },
+      "GOLD": {
+        "cost": 148000000,
+        "income": 3000,
+        "craftingSeconds": 9585
+      },
+      "DIAMOND": {
+        "cost": 296000000,
+        "income": 6000,
+        "craftingSeconds": 16773.75
+      },
+      "RAINBOW": {
+        "cost": 592000000,
+        "income": 12000,
+        "craftingSeconds": 23962.5
+      },
+      "BESKAR": {
+        "cost": 14800000000,
+        "income": 36000,
+        "craftingSeconds": 19170
+      },
+      "GALACTIC": {
+        "cost": 88800000000,
+        "income": 90000,
+        "craftingSeconds": 35943.75
+      }
+    }
+  },
+  {
+    "name": "B2-RP",
+    "rarity": "LEGENDARY",
+    "type": "BATTLE",
+    "variants": {
+      "DEFAULT": {
+        "cost": 31000000,
+        "income": 1304,
+        "craftingSeconds": 2086.668
+      },
+      "GOLD": {
+        "cost": 124000000,
+        "income": 2608,
+        "craftingSeconds": 8346.672
+      },
+      "DIAMOND": {
+        "cost": 248000000,
+        "income": 5216,
+        "craftingSeconds": 14606.676
+      },
+      "RAINBOW": {
+        "cost": 496000000,
+        "income": 10432,
+        "craftingSeconds": 20866.68
+      },
+      "BESKAR": {
+        "cost": 12400000000,
+        "income": 31296,
+        "craftingSeconds": 16693.344
+      },
+      "GALACTIC": {
+        "cost": 74400000000,
+        "income": 78240,
+        "craftingSeconds": 31300.02
+      }
+    }
+  },
+  {
+    "name": "CYCLO-GRAV",
+    "rarity": "LEGENDARY",
+    "type": "BATTLE",
+    "variants": {
+      "DEFAULT": {
+        "cost": 30000000,
+        "income": 1260,
+        "craftingSeconds": 2017.17
+      },
+      "GOLD": {
+        "cost": 120000000,
+        "income": 2520,
+        "craftingSeconds": 8068.68
+      },
+      "DIAMOND": {
+        "cost": 240000000,
+        "income": 5040,
+        "craftingSeconds": 14120.19
+      },
+      "RAINBOW": {
+        "cost": 480000000,
+        "income": 10080,
+        "craftingSeconds": 20171.7
+      },
+      "BESKAR": {
+        "cost": 12000000000,
+        "income": 30240,
+        "craftingSeconds": 16137.36
+      },
+      "GALACTIC": {
+        "cost": 72000000000,
+        "income": 75600,
+        "craftingSeconds": 30257.55
+      }
+    }
+  },
+  {
+    "name": "OPTI-STRIKE",
+    "rarity": "LEGENDARY",
+    "type": "BATTLE",
+    "variants": {
+      "DEFAULT": {
+        "cost": 37000000,
+        "income": 1500,
+        "craftingSeconds": 2396.25
+      },
+      "GOLD": {
+        "cost": 148000000,
+        "income": 3000,
+        "craftingSeconds": 9585
+      },
+      "DIAMOND": {
+        "cost": 296000000,
+        "income": 6000,
+        "craftingSeconds": 16773.75
+      },
+      "RAINBOW": {
+        "cost": 592000000,
+        "income": 12000,
+        "craftingSeconds": 23962.5
+      },
+      "BESKAR": {
+        "cost": 14800000000,
+        "income": 36000,
+        "craftingSeconds": 19170
+      },
+      "GALACTIC": {
+        "cost": 88800000000,
+        "income": 90000,
+        "craftingSeconds": 35943.75
+      }
+    }
+  },
+  {
+    "name": "SNOW MOUSE",
+    "rarity": "MYTHIC",
+    "type": "WORKER",
+    "variants": {
+      "DEFAULT": {
+        "cost": 180000000,
+        "income": 4400,
+        "craftingSeconds": 4698
+      },
+      "GOLD": {
+        "cost": 720000000,
+        "income": 8800,
+        "craftingSeconds": 18792
+      },
+      "DIAMOND": {
+        "cost": 1440000000,
+        "income": 17600,
+        "craftingSeconds": 32886
+      },
+      "RAINBOW": {
+        "cost": 4320000000,
+        "income": 35200,
+        "craftingSeconds": 46980
+      },
+      "BESKAR": {
+        "cost": 144000000000,
+        "income": 70400,
+        "craftingSeconds": 37584
+      },
+      "GALACTIC": {
+        "cost": 846000000000,
+        "income": 193600,
+        "craftingSeconds": 70470
+      }
+    }
+  },
+  {
+    "name": "RIC",
+    "rarity": "MYTHIC",
+    "type": "WORKER",
+    "variants": {
+      "DEFAULT": {
+        "cost": 204000000,
+        "income": 5100,
+        "craftingSeconds": 5139
+      },
+      "GOLD": {
+        "cost": 816000000,
+        "income": 10200,
+        "craftingSeconds": 20556
+      },
+      "DIAMOND": {
+        "cost": 1632000000,
+        "income": 20400,
+        "craftingSeconds": 35973
+      },
+      "RAINBOW": {
+        "cost": 4896000000,
+        "income": 40800,
+        "craftingSeconds": 51390
+      },
+      "BESKAR": {
+        "cost": 163200000000,
+        "income": 81600,
+        "craftingSeconds": 41112
+      },
+      "GALACTIC": {
+        "cost": 958800000000,
+        "income": 224400,
+        "craftingSeconds": 77085
+      }
+    }
+  },
+  {
+    "name": "LOADLIFTER",
+    "rarity": "MYTHIC",
+    "type": "WORKER",
+    "variants": {
+      "DEFAULT": {
+        "cost": 300000000,
+        "income": 7200,
+        "craftingSeconds": 6462
+      },
+      "GOLD": {
+        "cost": 1200000000,
+        "income": 14400,
+        "craftingSeconds": 25848
+      },
+      "DIAMOND": {
+        "cost": 2400000000,
+        "income": 28800,
+        "craftingSeconds": 45234
+      },
+      "RAINBOW": {
+        "cost": 7200000000,
+        "income": 57600,
+        "craftingSeconds": 64620
+      },
+      "BESKAR": {
+        "cost": 240000000000,
+        "income": 115200,
+        "craftingSeconds": 51696
+      },
+      "GALACTIC": {
+        "cost": 1410000000000,
+        "income": 316800,
+        "craftingSeconds": 96930
+      }
+    }
+  },
+  {
+    "name": "LEP",
+    "rarity": "MYTHIC",
+    "type": "WORKER",
+    "variants": {
+      "DEFAULT": {
+        "cost": 252000000,
+        "income": 6500,
+        "craftingSeconds": 6021
+      },
+      "GOLD": {
+        "cost": 1008000000,
+        "income": 13000,
+        "craftingSeconds": 24084
+      },
+      "DIAMOND": {
+        "cost": 2016000000,
+        "income": 26000,
+        "craftingSeconds": 42147
+      },
+      "RAINBOW": {
+        "cost": 6048000000,
+        "income": 52000,
+        "craftingSeconds": 60210
+      },
+      "BESKAR": {
+        "cost": 201600000000,
+        "income": 104000,
+        "craftingSeconds": 48168
+      },
+      "GALACTIC": {
+        "cost": 1184400000000,
+        "income": 286000,
+        "craftingSeconds": 90315
+      }
+    }
+  },
+  {
+    "name": "RIC-1200",
+    "rarity": "MYTHIC",
+    "type": "WORKER",
+    "variants": {
+      "DEFAULT": {
+        "cost": 228000000,
+        "income": 5800,
+        "craftingSeconds": 5580
+      },
+      "GOLD": {
+        "cost": 912000000,
+        "income": 11600,
+        "craftingSeconds": 22320
+      },
+      "DIAMOND": {
+        "cost": 1824000000,
+        "income": 23200,
+        "craftingSeconds": 39060
+      },
+      "RAINBOW": {
+        "cost": 5472000000,
+        "income": 46400,
+        "craftingSeconds": 55800
+      },
+      "BESKAR": {
+        "cost": 182400000000,
+        "income": 92800,
+        "craftingSeconds": 44640
+      },
+      "GALACTIC": {
+        "cost": 1071600000000,
+        "income": 255200,
+        "craftingSeconds": 83700
+      }
+    }
+  },
+  {
+    "name": "DRFT-R",
+    "rarity": "MYTHIC",
+    "type": "ASTROMECH",
+    "variants": {
+      "DEFAULT": {
+        "cost": 228000000,
+        "income": 5800,
+        "craftingSeconds": 5580
+      },
+      "GOLD": {
+        "cost": 912000000,
+        "income": 11600,
+        "craftingSeconds": 22320
+      },
+      "DIAMOND": {
+        "cost": 1824000000,
+        "income": 23200,
+        "craftingSeconds": 39060
+      },
+      "RAINBOW": {
+        "cost": 5472000000,
+        "income": 46400,
+        "craftingSeconds": 55800
+      },
+      "BESKAR": {
+        "cost": 182400000000,
+        "income": 92800,
+        "craftingSeconds": 44640
+      },
+      "GALACTIC": {
+        "cost": 1071600000000,
+        "income": 255200,
+        "craftingSeconds": 83700
+      }
+    }
+  },
+  {
+    "name": "CYCLENS",
+    "rarity": "MYTHIC",
+    "type": "ASTROMECH",
+    "variants": {
+      "DEFAULT": {
+        "cost": 180000000,
+        "income": 4400,
+        "craftingSeconds": 4698
+      },
+      "GOLD": {
+        "cost": 720000000,
+        "income": 8800,
+        "craftingSeconds": 18792
+      },
+      "DIAMOND": {
+        "cost": 1440000000,
+        "income": 17600,
+        "craftingSeconds": 32886
+      },
+      "RAINBOW": {
+        "cost": 4320000000,
+        "income": 35200,
+        "craftingSeconds": 46980
+      },
+      "BESKAR": {
+        "cost": 144000000000,
+        "income": 70400,
+        "craftingSeconds": 37584
+      },
+      "GALACTIC": {
+        "cost": 846000000000,
+        "income": 193600,
+        "craftingSeconds": 70470
+      }
+    }
+  },
+  {
+    "name": "MO-TRAK",
+    "rarity": "MYTHIC",
+    "type": "ASTROMECH",
+    "variants": {
+      "DEFAULT": {
+        "cost": 300000000,
+        "income": 7200,
+        "craftingSeconds": 6462
+      },
+      "GOLD": {
+        "cost": 1200000000,
+        "income": 14400,
+        "craftingSeconds": 25848
+      },
+      "DIAMOND": {
+        "cost": 2400000000,
+        "income": 28800,
+        "craftingSeconds": 45234
+      },
+      "RAINBOW": {
+        "cost": 7200000000,
+        "income": 57600,
+        "craftingSeconds": 64620
+      },
+      "BESKAR": {
+        "cost": 240000000000,
+        "income": 115200,
+        "craftingSeconds": 51696
+      },
+      "GALACTIC": {
+        "cost": 1410000000000,
+        "income": 316800,
+        "craftingSeconds": 96930
+      }
+    }
+  },
+  {
+    "name": "TRI-TEK",
+    "rarity": "MYTHIC",
+    "type": "ASTROMECH",
+    "variants": {
+      "DEFAULT": {
+        "cost": 252000000,
+        "income": 6500,
+        "craftingSeconds": 6021
+      },
+      "GOLD": {
+        "cost": 1008000000,
+        "income": 13000,
+        "craftingSeconds": 24084
+      },
+      "DIAMOND": {
+        "cost": 2016000000,
+        "income": 26000,
+        "craftingSeconds": 42147
+      },
+      "RAINBOW": {
+        "cost": 6048000000,
+        "income": 52000,
+        "craftingSeconds": 60210
+      },
+      "BESKAR": {
+        "cost": 201600000000,
+        "income": 104000,
+        "craftingSeconds": 48168
+      },
+      "GALACTIC": {
+        "cost": 1184400000000,
+        "income": 286000,
+        "craftingSeconds": 90315
+      }
+    }
+  },
+  {
+    "name": "IG",
+    "rarity": "MYTHIC",
+    "type": "BATTLE",
+    "variants": {
+      "DEFAULT": {
+        "cost": 228000000,
+        "income": 5800,
+        "craftingSeconds": 5580
+      },
+      "GOLD": {
+        "cost": 912000000,
+        "income": 11600,
+        "craftingSeconds": 22320
+      },
+      "DIAMOND": {
+        "cost": 1824000000,
+        "income": 23200,
+        "craftingSeconds": 39060
+      },
+      "RAINBOW": {
+        "cost": 5472000000,
+        "income": 46400,
+        "craftingSeconds": 55800
+      },
+      "BESKAR": {
+        "cost": 182400000000,
+        "income": 92800,
+        "craftingSeconds": 44640
+      },
+      "GALACTIC": {
+        "cost": 1071600000000,
+        "income": 255200,
+        "craftingSeconds": 83700
+      }
+    }
+  },
+  {
+    "name": "KX",
+    "rarity": "MYTHIC",
+    "type": "BATTLE",
+    "variants": {
+      "DEFAULT": {
+        "cost": 300000000,
+        "income": 7200,
+        "craftingSeconds": 6462
+      },
+      "GOLD": {
+        "cost": 1200000000,
+        "income": 14400,
+        "craftingSeconds": 25848
+      },
+      "DIAMOND": {
+        "cost": 2400000000,
+        "income": 28800,
+        "craftingSeconds": 45234
+      },
+      "RAINBOW": {
+        "cost": 7200000000,
+        "income": 57600,
+        "craftingSeconds": 64620
+      },
+      "BESKAR": {
+        "cost": 240000000000,
+        "income": 115200,
+        "craftingSeconds": 51696
+      },
+      "GALACTIC": {
+        "cost": 1410000000000,
+        "income": 316800,
+        "craftingSeconds": 96930
+      }
+    }
+  },
+  {
+    "name": "BB-8",
+    "rarity": "ICONIC",
+    "type": "ASTROMECH",
+    "variants": {
+      "DEFAULT": {
+        "cost": 0,
+        "income": 0
+      },
+      "GOLD": {
+        "cost": 0,
+        "income": 0
+      },
+      "DIAMOND": {
+        "cost": 0,
+        "income": 0
+      },
+      "RAINBOW": {
+        "cost": 0,
+        "income": 0
+      },
+      "BESKAR": {
+        "cost": 0,
+        "income": 0
+      }
+    },
+    "special": {
+      "incomePercent": 0.15,
+      "onlyDefaultVariant": true,
+      "cannotSell": true,
+      "maxQuantity": 1
+    }
+  },
+  {
+    "name": "CB-23",
+    "rarity": "ICONIC",
+    "type": "ASTROMECH",
+    "variants": {
+      "DEFAULT": {
+        "cost": 0,
+        "income": 0
+      },
+      "GOLD": {
+        "cost": 0,
+        "income": 0
+      },
+      "DIAMOND": {
+        "cost": 0,
+        "income": 0
+      },
+      "RAINBOW": {
+        "cost": 0,
+        "income": 0
+      },
+      "BESKAR": {
+        "cost": 0,
+        "income": 0
+      }
+    },
+    "special": {
+      "incomePercent": 0.15,
+      "onlyDefaultVariant": true,
+      "cannotSell": true,
+      "maxQuantity": 1
+    }
+  },
+  {
+    "name": "R2-D2",
+    "rarity": "ICONIC",
+    "type": "ASTROMECH",
+    "variants": {
+      "DEFAULT": {
+        "cost": 0,
+        "income": 0
+      },
+      "GOLD": {
+        "cost": 0,
+        "income": 0
+      },
+      "DIAMOND": {
+        "cost": 0,
+        "income": 0
+      },
+      "RAINBOW": {
+        "cost": 0,
+        "income": 0
+      },
+      "BESKAR": {
+        "cost": 0,
+        "income": 0
+      }
+    },
+    "special": {
+      "incomePercent": 0.25,
+      "onlyDefaultVariant": true,
+      "cannotSell": true,
+      "maxQuantity": 1
+    }
+  },
+  {
+    "name": "MISTER BONES",
+    "rarity": "ICONIC",
+    "type": "BATTLE",
+    "variants": {
+      "DEFAULT": {
+        "cost": 0,
+        "income": 0
+      },
+      "GOLD": {
+        "cost": 0,
+        "income": 0
+      },
+      "DIAMOND": {
+        "cost": 0,
+        "income": 0
+      },
+      "RAINBOW": {
+        "cost": 0,
+        "income": 0
+      },
+      "BESKAR": {
+        "cost": 0,
+        "income": 0
+      }
+    },
+    "special": {
+      "incomePercent": 0.15,
+      "onlyDefaultVariant": true,
+      "cannotSell": true,
+      "maxQuantity": 1
+    }
+  },
+  {
+    "name": "IG-11 MARSHAL",
+    "rarity": "ICONIC",
+    "type": "BATTLE",
+    "variants": {
+      "DEFAULT": {
+        "cost": 0,
+        "income": 0
+      },
+      "GOLD": {
+        "cost": 0,
+        "income": 0
+      },
+      "DIAMOND": {
+        "cost": 0,
+        "income": 0
+      },
+      "RAINBOW": {
+        "cost": 0,
+        "income": 0
+      },
+      "BESKAR": {
+        "cost": 0,
+        "income": 0
+      }
+    },
+    "special": {
+      "incomePercent": 0.15,
+      "onlyDefaultVariant": true,
+      "cannotSell": true,
+      "maxQuantity": 1
+    }
+  },
+  {
+    "name": "DJ R-3X",
+    "rarity": "ICONIC",
+    "type": "WORKER",
+    "variants": {
+      "DEFAULT": {
+        "cost": 0,
+        "income": 0
+      },
+      "GOLD": {
+        "cost": 0,
+        "income": 0
+      },
+      "DIAMOND": {
+        "cost": 0,
+        "income": 0
+      },
+      "RAINBOW": {
+        "cost": 0,
+        "income": 0
+      },
+      "BESKAR": {
+        "cost": 0,
+        "income": 0
+      }
+    },
+    "special": {
+      "incomePercent": 0.15,
+      "onlyDefaultVariant": true,
+      "cannotSell": true,
+      "maxQuantity": 1
+    }
+  },
+  {
+    "name": "C-3PO",
+    "rarity": "ICONIC",
+    "type": "WORKER",
+    "variants": {
+      "DEFAULT": {
+        "cost": 0,
+        "income": 0
+      },
+      "GOLD": {
+        "cost": 0,
+        "income": 0
+      },
+      "DIAMOND": {
+        "cost": 0,
+        "income": 0
+      },
+      "RAINBOW": {
+        "cost": 0,
+        "income": 0
+      },
+      "BESKAR": {
+        "cost": 0,
+        "income": 0
+      }
+    },
+    "special": {
+      "incomePercent": 0.25,
+      "onlyDefaultVariant": true,
+      "cannotSell": true,
+      "maxQuantity": 1
+    }
+  }
 ]

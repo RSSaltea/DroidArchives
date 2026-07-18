@@ -484,5 +484,32 @@
         "variant": "BESKAR"
       }
     ]
+  },
+  {
+    "to": 28,
+    "creditsCost": 45000000000000,
+    "requiredDroids": [
+      { "droidName": "IG", "variant": "RAINBOW" },
+      { "droidName": "KX", "variant": "BESKAR" },
+      { "droidName": "OPTI-STRIKE", "variant": "GALACTIC" }
+    ]
+  },
+  {
+    "to": 29,
+    "creditsCost": 68000000000000,
+    "requiredDroids": [
+      { "droidName": "TRI-TEK", "variant": "BESKAR" },
+      { "droidName": "R7", "variant": "GALACTIC" },
+      { "droidName": "BB9", "variant": "GALACTIC" }
+    ]
+  },
+  {
+    "to": 30,
+    "creditsCost": 100000000000000,
+    "requiredDroids": [
+      { "droidName": "MONO-WALKER", "variant": "GALACTIC" },
+      { "droidName": "CYCLENS", "variant": "BESKAR" },
+      { "droidName": "IG", "variant": "GALACTIC" }
+    ]
   }
 ]
