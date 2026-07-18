@@ -2,12 +2,29 @@
   "version": 1,
   "notes": [
     {
+      "id": "2026-07-18-persistent-droidex-filters",
+      "date": "2026-07-18",
+      "title": "Persistent Droidex filters",
+      "summary": "Added persistent collection filters for finding missing and non-flawless droids.",
+      "changes": [
+        "Changed Missing only into a toggle that remains active across Droidex tiers and page visits.",
+        "Added a Non-flawless only toggle for finding droids that can still be marked flawless.",
+        "Both filters can be enabled together and their choices are remembered on the device."
+      ],
+      "showOnStartup": true,
+      "todo": {
+        "id": "Add persistent Droidex filters",
+        "text": "Add persistent Missing only and Non-flawless only toggles to Droidex.",
+        "done": true
+      }
+    },
+    {
       "id": "2026-07-18-collapsible-base-panels",
       "date": "2026-07-18",
       "title": "Collapsible Base panels",
       "summary": "Added collapse controls for the larger Base helper panels.",
       "changes": [
-        "Made the Scrap calculator collapsible on Base and Nova Shop.",
+        "Made the Scrap calculator hideable on Base.",
         "Made the Base Rebirth outlook collapsible.",
         "Collapsed panel choices are remembered on the device."
       ],
