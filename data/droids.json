@@ -2324,7 +2324,8 @@
       "onlyDefaultVariant": true,
       "cannotSell": true,
       "maxQuantity": 1
-    }
+    },
+    "novaCrystalCost": 30
   },
   {
     "name": "CB-23",
@@ -2357,7 +2358,8 @@
       "onlyDefaultVariant": true,
       "cannotSell": true,
       "maxQuantity": 1
-    }
+    },
+    "novaCrystalCost": 75
   },
   {
     "name": "R2-D2",
@@ -2390,7 +2392,8 @@
       "onlyDefaultVariant": true,
       "cannotSell": true,
       "maxQuantity": 1
-    }
+    },
+    "novaCrystalCost": 30
   },
   {
     "name": "MISTER BONES",
@@ -2423,7 +2426,8 @@
       "onlyDefaultVariant": true,
       "cannotSell": true,
       "maxQuantity": 1
-    }
+    },
+    "novaCrystalCost": 30
   },
   {
     "name": "IG-11 MARSHAL",
@@ -2456,7 +2460,8 @@
       "onlyDefaultVariant": true,
       "cannotSell": true,
       "maxQuantity": 1
-    }
+    },
+    "novaCrystalCost": 30
   },
   {
     "name": "DJ R-3X",
@@ -2489,7 +2494,8 @@
       "onlyDefaultVariant": true,
       "cannotSell": true,
       "maxQuantity": 1
-    }
+    },
+    "novaCrystalCost": 30
   },
   {
     "name": "C-3PO",
@@ -2522,6 +2528,7 @@
       "onlyDefaultVariant": true,
       "cannotSell": true,
       "maxQuantity": 1
-    }
+    },
+    "novaCrystalCost": 30
   }
 ]

@@ -2,6 +2,28 @@
   "version": 1,
   "notes": [
     {
+      "id": "2026-07-18-galactic-nova-data-refresh",
+      "date": "2026-07-18",
+      "title": "Galactic expansion and Nova Shop overhaul",
+      "summary": "Expanded Droid Archives with complete Galactic imagery, Rebirths 28-30, refreshed droid data, and a rebuilt Nova Shop reference.",
+      "changes": [
+        "Added Galactic portraits for every non-Iconic droid, along with the missing Beskar portraits, all Mythic variant portraits, and the complete Mono-Walker portrait set.",
+        "Added Galactic production data and crafting times to droid records and individual wiki pages.",
+        "Added Rebirths 28-30 to all four Super Rebirth cycles, including their droid requirements, credit costs, Nova Crystal rewards, and multipliers.",
+        "Added Beskar to Galactic Upgrade Chip costs for Common, Rare, Epic, Legendary, and Mythic droids.",
+        "Rebuilt the Nova Shop with proper upgrade icons, current level costs and rewards, prerequisites, unlimited-level formulas, and Iconic Droid Nova Crystal prices.",
+        "Added a responsive Nova Shop layout with category navigation, upgrade selection, progress controls, and detailed level tables.",
+        "Closed Galactic Reports after receiving every value needed and added a thank-you message for contributors.",
+        "Fixed malformed quantity and requirement text in the Base roster and droid pickers."
+      ],
+      "showOnStartup": true,
+      "todo": {
+        "id": "Complete Galactic and Nova data refresh",
+        "text": "Add Galactic images and data, Rebirths 28-30, upgrade costs, and the rebuilt Nova Shop.",
+        "done": true
+      }
+    },
+    {
       "id": "2026-07-18-responsive-layout-audit",
       "date": "2026-07-18",
       "title": "Responsive layout improvements",
