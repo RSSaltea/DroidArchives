@@ -2,6 +2,24 @@
   "version": 1,
   "notes": [
     {
+      "id": "2026-07-18-responsive-layout-audit",
+      "date": "2026-07-18",
+      "title": "Responsive layout improvements",
+      "summary": "Improved layout consistency across desktop and mobile views.",
+      "changes": [
+        "Kept the Droidex search field at a consistent width when switching quality tiers.",
+        "Fixed the compact spawn timers widening and clipping pages on mobile screens.",
+        "Improved mobile layouts for filters, action bars, cards, tables, modals, and helper panels across the archive.",
+        "Kept desktop layouts as the primary presentation while adding targeted narrow-screen breakpoints."
+      ],
+      "showOnStartup": true,
+      "todo": {
+        "id": "Audit mobile layouts",
+        "text": "Review the full archive for desktop consistency and mobile usability.",
+        "done": true
+      }
+    },
+    {
       "id": "2026-07-18-persistent-droidex-filters",
       "date": "2026-07-18",
       "title": "Persistent Droidex filters",
