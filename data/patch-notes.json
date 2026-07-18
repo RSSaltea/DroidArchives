@@ -2,6 +2,18 @@
   "version": 1,
   "notes": [
     {
+      "id": "2026-07-18-public-patch-notes-page",
+      "date": "2026-07-18",
+      "title": "Public Patch Notes page",
+      "summary": "Replaced the public To Do List with a complete, expandable release history.",
+      "changes": [
+        "Replaced To Do List in the main navigation and sidebar with Patch Notes.",
+        "Added a release-history page where each update can be selected to reveal its complete list of changes.",
+        "Updated the What's New popup to link directly to Patch Notes."
+      ],
+      "showOnStartup": true
+    },
+    {
       "id": "2026-07-18-galactic-nova-data-refresh",
       "date": "2026-07-18",
       "title": "Galactic expansion and Nova Shop overhaul",

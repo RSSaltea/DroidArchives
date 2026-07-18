@@ -498,6 +498,19 @@ let novaShopPage,novaDetailPage;
 const galacticReportsOpenPage=galacticReportsPage;
 galacticReportsPage=()=>{app.innerHTML=`<div class="breadcrumbs"><a href="#/">Homepage</a> / Galactic Reports</div><section class="galactic-report-hero"><div><p class="eyebrow">Community data</p><h1>Galactic Reports</h1><p class="lead">We have everything needed, thank you for everyone who contributed!</p></div><span class="report-badge">Complete</span></section>`};
 
+async function patchNotesPage(){
+  app.querySelector('.archive-timers')?.remove();
+  patchNotesPrompted=true;
+  app.innerHTML='<div class="loading">Loading patch notes...</div>';
+  const notes=state.patchNotes.length?state.patchNotes:await loadPatchNotes();
+  state.patchNotes=notes;
+  markPatchNotesSeen(notes);
+  app.innerHTML=`<div class="breadcrumbs"><a href="#/">Homepage</a> / Patch Notes</div><section class="patch-page-head"><div><p class="eyebrow">Release history</p><h1>Patch Notes</h1><p class="lead">See what has changed in Droid Archives. Select an update to read its complete list of changes.</p></div><strong>${notes.length} update${notes.length===1?'':'s'}</strong></section><div class="patch-page-list">${notes.map((note,index)=>`<details class="patch-page-entry" ${index===0?'open':''}><summary><span class="patch-page-date">${note.date||'Update'}</span><span class="patch-page-summary"><strong>${note.title}</strong>${note.summary?`<small>${note.summary}</small>`:''}</span><span class="patch-page-toggle" aria-hidden="true">+</span></summary><div class="patch-page-body"><h2>Full update</h2>${Array.isArray(note.changes)&&note.changes.length?`<ul>${note.changes.map(change=>`<li>${change}</li>`).join('')}</ul>`:'<p>No additional details were supplied for this update.</p>'}</div></details>`).join('')||'<div class="empty">No patch notes have been published yet.</div>'}</div>`;
+}
+const showUpdateDialogOnce=showPatchNotesOnce;
+showPatchNotesOnce=()=>{showUpdateDialogOnce();const link=document.querySelector('#patchNotesTodo');if(link)link.textContent='View Patch Notes'};
+todoPage=patchNotesPage;
+
 let lastRoutePath='';
 function route(){const path=location.hash.slice(1).split('?')[0]||'/',routeChanged=path!==lastRoutePath;lastRoutePath=path;if(path==='/todo')app.querySelector('.archive-timers')?.remove();document.querySelector('.sidebar').classList.remove('mobile-open');renderBaseSidebar(()=>route());renderCloudHeader();if(path==='/')home();else if(path==='/droids')droidsPage();else if(path==='/droidex')droidexPage();else if(path==='/nova-shop')novaShopPage();else if(path.startsWith('/nova-shop/'))novaDetailPage(path.split('/')[2]);else if(path==='/galactic-reports')galacticReportsPage();else if(path==='/todo')todoPage();else if(path==='/base')basePageV2();else if(path==='/rebirth')rebirthPage();else if(path==='/optimise')optimisePage();else if(path==='/lucky-droid')luckyDroidPage();else if(path.startsWith('/droid/'))detailPage(path.split('/')[2]);else notFound();if(routeChanged){try{app.focus({preventScroll:true})}catch{app.focus()}scrollTo(0,0)}setTimeout(showPatchNotesOnce,80)}
 function applyTheme(){document.documentElement.dataset.theme=state.theme;document.querySelector('#themeButton').textContent=state.theme==='dark'?'☀':'☾';document.querySelector('#themeButton').title=`Switch to ${state.theme==='dark'?'light':'dark'} mode`}
