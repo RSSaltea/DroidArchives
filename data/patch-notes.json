@@ -2,6 +2,25 @@
   "version": 1,
   "notes": [
     {
+      "id": "2026-07-19-safe-build-slot-priority",
+      "date": "2026-07-19",
+      "title": "Safer Build-slot optimisation",
+      "summary": "Added a sell priority that frees Build slots without sacrificing droids still needed for the selected Super Rebirth Goal.",
+      "changes": [
+        "Added No further use, lowest earnings as a third Keep Build slots open sell priority.",
+        "This priority only sells droids with no remaining Rebirth use inside the selected Super Rebirth Goal, starting with the lowest earners.",
+        "Future-use droids are preserved when Lounge, Companion, and other safe storage are full, even if that means a Build slot remains occupied.",
+        "Added hover help and visible descriptions explaining the behavior and tradeoffs of every sell priority.",
+        "Saved the new priority across local profiles, Supabase profiles, exports, and imports."
+      ],
+      "showOnStartup": true,
+      "todo": {
+        "id": "Add safe Build-slot sell priority",
+        "text": "Add a no-further-use sell priority and explain every Build-slot optimisation mode.",
+        "done": true
+      }
+    },
+    {
       "id": "2026-07-18-public-patch-notes-page",
       "date": "2026-07-18",
       "title": "Public Patch Notes page",
