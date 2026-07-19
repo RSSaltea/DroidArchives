@@ -19,7 +19,7 @@ state.patchNotes=[];
 let patchNotesPrompted=false;
 const slug=s=>s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
 const fmt=n=>{if(!n)return '—';const u=[['T',1e12],['B',1e9],['M',1e6],['K',1e3]];for(const [s,v] of u)if(n>=v)return `${(n/v).toLocaleString(undefined,{maximumFractionDigits:2})}${s}`;return n.toLocaleString()};
-const SPAWN_TIMERS=[{id:'mythic',name:'Mythic Spawn',intervalMinutes:60,offsetMinutes:55,note:'Every 60 minutes',image:'assets/events/mythic-spawn.png'},{id:'beskar',name:'Beskar Spawn',intervalMinutes:15,offsetMinutes:0,note:'Every 15 minutes',image:'assets/events/beskar-spawn.png'},{id:'galactic',name:'Galactic Spawn',comingSoon:true,note:'Arriving in a future update',image:'assets/events/rainbow-spawn.png'}];
+const SPAWN_TIMERS=[{id:'mythic',name:'Mythic Spawn',intervalMinutes:60,offsetMinutes:55,note:'Every 60 minutes',image:'assets/events/mythic-spawn.png'},{id:'beskar',name:'Beskar Spawn',intervalMinutes:15,offsetMinutes:0,note:'Every 15 minutes',image:'assets/events/beskar-spawn.png'},{id:'galactic',name:'Galactic Spawn',intervalMinutes:45,offsetMinutes:0,note:'Every 45 minutes',image:'assets/events/rainbow-spawn.png'}];
 const padTime=n=>String(n).padStart(2,'0');
 function durationParts(ms){const total=Math.max(0,Math.ceil(ms/1000)),days=Math.floor(total/86400),hours=Math.floor(total%86400/3600),minutes=Math.floor(total%3600/60),seconds=total%60;return{days,hours,minutes,seconds}}
 function shortDuration(ms){const p=durationParts(ms),parts=[];if(p.days)parts.push(`${p.days}d`);if(p.hours||p.days)parts.push(`${p.hours}h`);parts.push(`${p.minutes}m`,`${p.seconds}s`);return parts.join(' ')}
