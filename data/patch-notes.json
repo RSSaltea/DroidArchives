@@ -2,6 +2,21 @@
   "version": 1,
   "notes": [
     {
+      "id": "2026-07-21-rebirth-slot-purchases",
+      "date": "2026-07-21",
+      "title": "Rebirth slot purchases",
+      "summary": "Rebirth-unlocked stations now track whether each slot has actually been purchased.",
+      "changes": [
+        "Reaching a slot's required rebirth now reveals a Purchase slot button instead of activating it immediately.",
+        "Added an Auto purchase slots setting, enabled by default, which purchases newly eligible slots whenever the selected rebirth changes.",
+        "Unpurchased slots are excluded from Base capacity, placements, and Optimise until purchased.",
+        "Slot purchases and the automatic-purchase preference are saved per profile and included in cloud saves, imports, and exports.",
+        "Super Rebirth now resets purchased rebirth slots while retaining the automatic-purchase preference.",
+        "Corrected Scrap Value level scaling so higher upgrade levels use their proper seconds of Base generation."
+      ],
+      "showOnStartup": true
+    },
+    {
       "id": "2026-07-20-planning-tools-update",
       "date": "2026-07-20",
       "title": "Smarter Base and planning tools",

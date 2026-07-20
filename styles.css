@@ -325,3 +325,9 @@ h1{font-size:29px}
 .replacement-minimum>span:first-child{height:13px;min-height:13px;line-height:13px}
 .replacement-minimum>span:first-child input[type="checkbox"]{width:12px;height:12px;margin:0}
 .replacement-controls .form-control{box-sizing:border-box;height:40px;min-height:40px;margin:0;line-height:18px}
+
+/* Rebirth slot purchases */
+.base-slot.purchasable{cursor:pointer;pointer-events:auto;border-style:solid;border-color:#c99b24;background:linear-gradient(145deg,#292311,#1c1a16);box-shadow:inset 0 0 0 1px #f3c84b1f,0 0 16px #d7a82c16;color:#f3cf68}
+.base-slot.purchasable:hover,.base-slot.purchasable:focus-visible{border-color:#f0ca58;background:linear-gradient(145deg,#342c12,#242018);box-shadow:inset 0 0 0 1px #ffe18b42,0 0 18px #d7a82c2e;transform:translateY(-1px);outline:none}
+.base-slot.purchasable .slot-icon{filter:none;opacity:1}.slot-purchase-title{display:block;color:#ffe38a;font-size:11px;line-height:1.15;text-transform:uppercase;letter-spacing:.04em}.base-slot.purchasable small{color:#d8bd68}
+:root:not([data-theme="dark"]) .base-slot.purchasable{background:linear-gradient(145deg,#fff8dc,#f3ead0);color:#7c5a00}.slot-auto-purchase{margin-bottom:8px}
