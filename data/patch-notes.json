@@ -2,6 +2,26 @@
   "version": 1,
   "notes": [
     {
+      "id": "2026-07-20-planning-tools-update",
+      "date": "2026-07-20",
+      "title": "Smarter Base and planning tools",
+      "summary": "Expanded the replacement, comparison, Rebirth, Lucky Droid, and Base optimisation tools.",
+      "changes": [
+        "Base now automatically checks the weakest eligible productive droid instead of asking you to select a target.",
+        "Added a collapsible Base Health Check and a dedicated Droid Calc page where any productive card can still be selected manually.",
+        "Replacement results now show only the first quality of each droid that improves the target, with a plus sign when higher qualities also qualify.",
+        "Added Compact and Detailed result views, sorting choices, and an optional Minimum improvement filter that is off by default.",
+        "Clarified Worker, Astromech, and Battle break-even values so each candidate correctly accounts for the 10% station match bonus.",
+        "Added Compare buttons to individual droid wiki pages and Droidex cards.",
+        "Added cheapest upgrade-path recommendations for missing Rebirth requirements using credit gain per upgrade chip.",
+        "Added Lucky Droid practicality filters for already owned, needs upgrading, and missing droids.",
+        "Updated recommendation wording to reflect that droids are randomly obtained from quests, missions, and the conveyor belt rather than directly purchased.",
+        "Improved Optimise step instructions to use newly emptied productive slots before suggesting swaps, avoiding unnecessary trips through Build stations.",
+        "Moved Optimise directly below Base, placed View Rebirths inside the Next Rebirth panel, removed Droidex transfer controls, shortened the Base transfer button, and moved Patch Notes to a header icon."
+      ],
+      "showOnStartup": true
+    },
+    {
       "id": "2026-07-20-community-links",
       "date": "2026-07-20",
       "title": "Community links and support",
