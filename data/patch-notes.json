@@ -2,6 +2,18 @@
   "version": 1,
   "notes": [
     {
+      "id": "2026-07-20-community-links",
+      "date": "2026-07-20",
+      "title": "Community links and support",
+      "summary": "Added easier ways to join the community or optionally support Droid Archives.",
+      "changes": [
+        "Added compact Discord and Donate buttons to the site header.",
+        "Added a separate, understated donation page with a Buy Me a Coffee link and QR code. Donations are optional support only and provide no rewards or benefits.",
+        "Retired Galactic Reports from public navigation while keeping the reporting system ready for a future variant."
+      ],
+      "showOnStartup": true
+    },
+    {
       "id": "2026-07-19-safe-build-slot-priority",
       "date": "2026-07-19",
       "title": "Safer Build-slot optimisation",
