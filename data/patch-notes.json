@@ -2,6 +2,19 @@
   "version": 1,
   "notes": [
     {
+      "id": "2026-07-21-compact-base-scrap-projections",
+      "date": "2026-07-21",
+      "title": "Compact Base cards and Scrap projections",
+      "summary": "Added a streamlined Base view and expanded Scrap earnings throughout the planning tools.",
+      "changes": [
+        "Added a Show Detail / Hide Detail control that condenses Base cards to their image, variant-coloured name, and useful Rebirth status.",
+        "Optimise now previews the resulting Scrap payout per hit and break, including the increase over the current Base.",
+        "Detailed Droid Calc results now show the Scrap payout gained per hit and break for every replacement.",
+        "Added quality controls to owned droids in the Rebirth upgrade-efficiency list so upgrades can be recorded without returning to Base."
+      ],
+      "showOnStartup": true
+    },
+    {
       "id": "2026-07-21-manual-tracker-cycle-selector",
       "date": "2026-07-21",
       "title": "Manual tracker cycle selector",
