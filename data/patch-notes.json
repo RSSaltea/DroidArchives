@@ -2,6 +2,21 @@
   "version": 1,
   "notes": [
     {
+      "id": "2026-07-21-manual-rebirth-tracker",
+      "date": "2026-07-21",
+      "title": "Manual Rebirth tracker",
+      "summary": "Added an optional Rebirth tracker for players who do not use the Base planner.",
+      "changes": [
+        "Added a Not using Base option to the Rebirth outlook so progress can be tracked independently of Base and Droidex ownership.",
+        "Each Rebirth requirement now has styled Default, Gold, Diamond, Rainbow, Beskar, and Galactic quality selectors in manual tracking mode.",
+        "Selecting a quality shows the Upgrade Chip cost needed to reach that Rebirth's required quality.",
+        "Added individual droid checkboxes for marking requirements as owned regardless of selected quality.",
+        "Added a Complete rebirth checkbox to every Rebirth heading for checking or clearing all three requirements together.",
+        "Manual Rebirth progress is saved per profile and included in local saves, cloud saves, imports, and exports."
+      ],
+      "showOnStartup": true
+    },
+    {
       "id": "2026-07-21-rebirth-slot-purchases",
       "date": "2026-07-21",
       "title": "Rebirth slot purchases",
