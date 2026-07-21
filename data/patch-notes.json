@@ -2,6 +2,16 @@
   "version": 1,
   "notes": [
     {
+      "id": "2026-07-21-manual-tracker-cycle-selector",
+      "date": "2026-07-21",
+      "title": "Manual tracker cycle selector",
+      "summary": "I forgot to include a Super Rebirth Cycle selector when adding the manual Rebirth tracker.",
+      "changes": [
+        "Added a Super Rebirth Cycle selector to Your outlook whenever Not using Base is enabled."
+      ],
+      "showOnStartup": true
+    },
+    {
       "id": "2026-07-21-manual-rebirth-tracker",
       "date": "2026-07-21",
       "title": "Manual Rebirth tracker",
