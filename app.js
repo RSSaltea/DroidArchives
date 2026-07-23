@@ -22,6 +22,9 @@ const app=document.querySelector('#app');
 state.patchNotes=[];
 let patchNotesPrompted=false;
 // ── Desktop companion bridge ──────────────────────────────────────────────
+// The Electron companion embeds this site with ?companion=1 and reads
+// window.__companionOptimise instead of scraping the rendered DOM. Publishing
+// is a no-op for normal browser visitors.
 const companionMode=new URLSearchParams(location.search).get('companion')==='1';
 function publishCompanionState(optimise){
   if(!companionMode)return;
