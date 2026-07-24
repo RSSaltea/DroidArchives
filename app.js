@@ -534,6 +534,24 @@ function optimisePage(){
   document.querySelector('.build-side').insertAdjacentHTML('afterend',`<div class="special-stations">${station('LOUNGE')}${station('COMPANION')}</div>`);
   document.querySelector('#toggleOptimiseSteps')?.addEventListener('click',()=>{localStorage.setItem('droid-archive-optimise-steps-collapsed',stepsCollapsed?'0':'1');optimisePage()});
   document.querySelector('#applyOptimised').onclick=()=>applyOptimisedLayout(plan);
+  if(companionMode){
+    // The Electron overlay triggers these from Shift+O / Ctrl+O. Unlike the
+    // web button they never prompt (no confirm() in a headless webview) and
+    // snapshot the current base so the apply can be undone.
+    window.__companionApplyOptimise=()=>{
+      try{
+        const projected=optimisedPlacements(placements(),plan);
+        window.__companionOptimiseUndo=state.owned.map(r=>({...r}));
+        state.owned=projected.rows;save();
+        return{applied:true,sold:projected.sell.length};
+      }catch(e){return{applied:false,error:String(e&&e.message||e)}}
+    };
+    window.__companionUndoOptimise=()=>{
+      if(!window.__companionOptimiseUndo)return{undone:false,reason:'nothing-to-undo'};
+      state.owned=window.__companionOptimiseUndo;window.__companionOptimiseUndo=null;save();
+      return{undone:true};
+    };
+  }
   publishCompanionState({
     computed:true,
     gainPerHour:gain*3600,currentPerHour:currentIncome*3600,optimisedPerHour:income*3600,
