@@ -19,23 +19,27 @@ if (git status --porcelain) {
   Write-Error 'Working tree has uncommitted changes. Commit or stash them before deploying.'
 }
 
+# git is a native exe, so a non-zero exit does not throw on its own; check it.
+function Invoke-Git { git @args; if ($LASTEXITCODE -ne 0) { throw "git $($args -join ' ') failed (exit $LASTEXITCODE)" } }
+
 $branch = (git rev-parse --abbrev-ref HEAD).Trim()
 
 Write-Host "1/2  Pushing $branch -> origin (droidarchives.co.uk)..."
-git push origin $branch
+Invoke-Git push origin $branch
 
 Write-Host '2/2  Pushing CNAME-stripped mirror -> fallback (github.io)...'
 $work = Join-Path $env:TEMP ('da-fallback-' + [guid]::NewGuid().ToString('N'))
-git worktree add --detach $work HEAD | Out-Null
+Invoke-Git worktree add --detach $work HEAD | Out-Null
 try {
   $cname = Join-Path $work 'CNAME'
   if (Test-Path $cname) { Remove-Item $cname -Force }
-  git -C $work add -A
+  Invoke-Git -C $work add -A
   # --allow-empty so a run with CNAME already absent still produces a commit to push.
-  git -C $work commit --allow-empty -m 'Deploy fallback mirror (no custom domain)' | Out-Null
-  git -C $work push --force fallback HEAD:main
+  Invoke-Git -C $work commit --allow-empty -m 'Deploy fallback mirror (no custom domain)' | Out-Null
+  # Fully-qualified ref so the very first push to the empty fallback repo works.
+  Invoke-Git -C $work push --force fallback HEAD:refs/heads/main
 } finally {
-  git worktree remove --force $work
+  git worktree remove --force $work | Out-Null
 }
 
 Write-Host ''
