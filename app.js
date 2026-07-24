@@ -820,3 +820,36 @@ const loadJson=async path=>{const response=await fetch(`${path}${path.includes('
 async function loadEvents(){try{const index=await loadJson('data/events/index.json');if(!Array.isArray(index.events))return[];return Promise.all(index.events.map(file=>loadJson(`data/events/${file}`)))}catch{return[]}}
 async function loadPatchNotes(){try{const data=await loadJson(`data/patch-notes.json?${Date.now()}`);return Array.isArray(data.notes)?data.notes:[]}catch{return[]}}
 Promise.all(['data/droids.json','data/rebirth-cycles/index.json','data/image-manifest.json','data/nova-shop.json'].map(loadJson)).then(async([d,cycleIndex,i,novaShop])=>{if(!Array.isArray(cycleIndex.cycles)||!cycleIndex.cycles.length)throw Error('No Super Rebirth cycles are configured.');const [cycles,events]=await Promise.all([Promise.all(cycleIndex.cycles.map(file=>loadJson(`data/rebirth-cycles/${file}`))),loadEvents()]);state.droids=d;state.rebirths=Object.fromEntries(cycles.map((cycle,index)=>[index,cycle]));state.images=i;state.novaShop=novaShop;state.events=events;normalizeLoadedDroidNames();if(!Object.hasOwn(state.rebirths,String(state.cycle)))state.cycle=0;autoPurchaseEligibleSlots();saveLocal();route();loadPatchNotes().then(notes=>{state.patchNotes=notes;showPatchNotesOnce()});loadSupabaseConfig().then(()=>initSupabaseSafe()).then(()=>renderCloudHeader())}).catch(e=>{app.innerHTML=`<h1>Archive unavailable</h1><p>${e.message}</p>`});
+// ── Companion Droidex / rebirth bridges ───────────────────────────────────
+// Called from the Electron companion (companion mode only); no-op for browsers.
+if(companionMode){
+  // Add a droid to the Droidex (idempotent), optionally marking it flawless.
+  window.__companionAddToDroidex=(name,variant='DEFAULT',flawless=false)=>{
+    try{
+      const d=state.droids.find(x=>x.name===name);
+      if(!d)return{added:false,error:'unknown-droid'};
+      const v=VARIANTS.includes(variant)?variant:'DEFAULT';
+      if(!droidexEntry(name,v))state.droidex.push({name,variant:v,flawless:false});
+      if(flawless&&!isIconic(d))state.droidex.filter(x=>x.name===name).forEach(x=>x.flawless=true);
+      save();
+      return{added:true,name,variant:v,flawless:isDroidFlawless(name)};
+    }catch(e){return{added:false,error:String(e&&e.message||e)}}
+  };
+  // Future-rebirth droids this spawn (quality + rarity) could still fill.
+  window.__companionRebirthNeed=(quality,rarity)=>{
+    try{
+      const q=String(quality||'').toUpperCase(),r=String(rarity||'').toUpperCase(),qi=VARIANTS.indexOf(q);
+      if(qi<0)return[];
+      const cycle=state.rebirths?.[state.cycle]||[],seen=new Set(),out=[];
+      for(const rb of cycle.filter(x=>x.to>state.rebirth))for(const req of (rb.requiredDroids||[])){
+        const d=state.droids.find(x=>x.name===req.droidName);
+        if(!d||String(d.rarity).toUpperCase()!==r)continue;       // rarity must match the spawn
+        if(VARIANTS.indexOf(req.variant)>qi)continue;             // this quality can satisfy the requirement
+        if(hasRequirement(req))continue;                           // already owned at a good-enough quality
+        if(seen.has(req.droidName))continue;seen.add(req.droidName);
+        out.push({droidName:req.droidName,variant:req.variant,rebirth:rb.to});
+      }
+      return out;
+    }catch(e){return{error:String(e&&e.message||e)}}
+  };
+}
