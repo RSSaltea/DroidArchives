@@ -23,6 +23,9 @@ REBUILD_PROGRESS.md
 # Desktop-only detection template asset (not used by the site)
 assets/other/RebirthDroid.png
 
+# Private full-backup script (references the private repo; not for the public site)
+backup.ps1
+
 # Operating-system metadata
 .DS_Store
 Thumbs.db
