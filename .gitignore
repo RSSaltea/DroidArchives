@@ -7,9 +7,21 @@ superRebirthRewards-CgMNMGB4.js
 
 # Local agent and editor settings
 .agents/
+.claude/
 .vscode/
 .idea/
 *.code-workspace
+
+# Desktop companion app (not part of the GitHub Pages site)
+desktop/
+
+# Build conversation archive and project handoff notes
+conversation/
+HANDOFF.md
+REBUILD_PROGRESS.md
+
+# Desktop-only detection template asset (not used by the site)
+assets/other/RebirthDroid.png
 
 # Operating-system metadata
 .DS_Store
@@ -19,6 +31,12 @@ Desktop.ini
 # Dependencies and generated output
 node_modules/
 dist/
+release/
+out/
+*.exe
+*.msi
+*.appx
+*.blockmap
 coverage/
 .cache/
 
@@ -29,6 +47,15 @@ scripts/
 *.log
 *.tmp
 *.bak
+*.zip
+backups/
+Backups/
+desktop/build/
+desktop/python/build/
+desktop/python/dist/
+desktop/python/models/
+desktop/python/runtime/
+desktop/renderer/icon.png
 *.swp
 *~
 
