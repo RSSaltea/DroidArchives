@@ -22,6 +22,10 @@
       "name": "Cosmetic"
     },
     {
+      "id": "lobby-boosts",
+      "name": "Lobby Boosts"
+    },
+    {
       "id": "iconic",
       "name": "Iconic Droids"
     }
@@ -613,16 +617,140 @@
     {
       "id": "companion-slot",
       "sourceId": "C2",
-      "name": "Companion Slot",
+      "name": "Second Companion",
       "category": "featured",
       "icon": "assets/nova-shop/T_Icon_DoubleCompanion.png",
-      "description": "Coming Soon. Unlock an additional Companion Slot.",
-      "comingSoon": true,
+      "description": "Allows a second companion.",
       "levels": [
         {
           "level": 1,
-          "cost": 0,
-          "reward": "Unlock an Additional Companion Slot"
+          "cost": 250,
+          "reward": "Unlock a Second Companion Slot"
+        }
+      ]
+    },
+    {
+      "id": "daily-crystals",
+      "sourceId": "DQC",
+      "name": "Daily Crystals",
+      "category": "featured",
+      "icon": "assets/nova-shop/DailyQuestCrystals.png",
+      "description": "Earn Nova Crystals from all Daily Quests.",
+      "levels": [
+        {
+          "level": 1,
+          "cost": 30,
+          "reward": "Daily Quests can award Nova Crystals"
+        }
+      ]
+    },
+    {
+      "id": "upgrade-chip-station",
+      "sourceId": "UCS",
+      "name": "Upgrade Chip Station",
+      "category": "featured",
+      "icon": "assets/nova-shop/UpgradeChipStation.png",
+      "description": "Adds a droid workstation that produces Upgrade Chips. Does not work offline and can only store one hour of chips.",
+      "levels": [
+        {
+          "level": 1,
+          "cost": 120,
+          "reward": "Unlock the Upgrade Chip Station"
+        }
+      ]
+    },
+    {
+      "id": "luck-boost-token",
+      "sourceId": "LBT",
+      "name": "Luck Boost Token",
+      "category": "lobby-boosts",
+      "icon": "assets/nova-shop/SandcrawlerLuckBoost.png",
+      "description": "Increases the odds of higher-rarity droids appearing on the Sandcrawler conveyor for 15 minutes. Use in the Cantina Shop.",
+      "uncapped": true,
+      "repeatable": true,
+      "costBase": 40,
+      "costScale": 0,
+      "levels": [
+        {
+          "level": 1,
+          "cost": 40,
+          "reward": "One 15-minute Luck Boost token"
+        }
+      ]
+    },
+    {
+      "id": "crafting-boost-token",
+      "sourceId": "CBT",
+      "name": "Crafting Boost Token",
+      "category": "lobby-boosts",
+      "icon": "assets/nova-shop/CraftingBoost.png",
+      "description": "Increases Droid Depot crafting speed and Pickaxe level by 50% for everyone in the session for 15 minutes. Use in the Cantina Shop.",
+      "uncapped": true,
+      "repeatable": true,
+      "costBase": 30,
+      "costScale": 0,
+      "levels": [
+        {
+          "level": 1,
+          "cost": 30,
+          "reward": "One 15-minute Crafting Boost token"
+        }
+      ]
+    },
+    {
+      "id": "rainbow-surge-token",
+      "sourceId": "RST",
+      "name": "Rainbow Surge Token",
+      "category": "lobby-boosts",
+      "icon": "assets/nova-shop/SurgeBoost.png",
+      "description": "Sends Rainbow Variant energy across the Sandcrawler conveyor every 30 seconds for 5 minutes. Use in the Cantina Shop.",
+      "uncapped": true,
+      "repeatable": true,
+      "costBase": 20,
+      "costScale": 0,
+      "levels": [
+        {
+          "level": 1,
+          "cost": 20,
+          "reward": "One 5-minute Rainbow Surge token"
+        }
+      ]
+    },
+    {
+      "id": "beskar-surge-token",
+      "sourceId": "BST",
+      "name": "Beskar Surge Token",
+      "category": "lobby-boosts",
+      "icon": "assets/nova-shop/SurgeBoost.png",
+      "description": "Sends Beskar Variant energy across the Sandcrawler conveyor every 30 seconds for 5 minutes. Use in the Cantina Shop.",
+      "uncapped": true,
+      "repeatable": true,
+      "costBase": 30,
+      "costScale": 0,
+      "levels": [
+        {
+          "level": 1,
+          "cost": 30,
+          "reward": "One 5-minute Beskar Surge token"
+        }
+      ]
+    },
+    {
+      "id": "galactic-surge-token",
+      "sourceId": "GST",
+      "name": "Galactic Surge Token",
+      "category": "lobby-boosts",
+      "icon": "assets/nova-shop/SurgeBoost.png",
+      "description": "Sends Galactic Variant energy across the Sandcrawler conveyor every 30 seconds for 5 minutes. Use in the Cantina Shop.",
+      "uncapped": true,
+      "repeatable": true,
+      "costBase": 40,
+      "costScale": 0,
+      "levels": [
+        {
+          "level": 1,
+          "cost": 40,
+          "reward": "One 5-minute Galactic Surge token"
         }
       ]
     },

@@ -1,0 +1,147 @@
+{
+  "currency": {
+    "name": "V-Bucks",
+    "symbol": "V"
+  },
+  "categories": [
+    {
+      "id": "boosts",
+      "name": "Boosts"
+    },
+    {
+      "id": "packs",
+      "name": "Packs"
+    },
+    {
+      "id": "surges",
+      "name": "Surges"
+    }
+  ],
+  "items": [
+    {
+      "id": "luck-boost",
+      "name": "Luck Boost",
+      "category": "boosts",
+      "icon": "assets/nova-shop/SandcrawlerLuckBoost.png",
+      "vbucksCost": 500,
+      "novaCost": 40,
+      "novaUpgradeId": "luck-boost-token",
+      "durationMinutes": 15,
+      "description": "Increases the odds of higher-rarity droids appearing on the Sandcrawler conveyor.",
+      "details": [
+        "Common: 55.78% → 51.28%",
+        "Rare: 31.87% → 29.30%",
+        "Epic: 7.97% → 7.33%",
+        "Legendary: 2.79% → 7.69%",
+        "Mythic: 1.59% → 4.40%"
+      ]
+    },
+    {
+      "id": "crafting-boost",
+      "name": "Crafting Boost",
+      "category": "boosts",
+      "icon": "assets/nova-shop/CraftingBoost.png",
+      "vbucksCost": 250,
+      "novaCost": 30,
+      "novaUpgradeId": "crafting-boost-token",
+      "durationMinutes": 15,
+      "description": "Increases Droid Depot crafting speed and Pickaxe level by 50% for everyone in the session."
+    },
+    {
+      "id": "companion-pack",
+      "name": "Companion Pack",
+      "category": "packs",
+      "vbucksCost": 1500,
+      "icon": "assets/nova-shop/T_Icon_DoubleCompanion.png",
+      "description": "A permanent bundle for companion-focused bases.",
+      "details": [
+        "Second Companion Slot",
+        "Companion Base Paint",
+        "Heart Droid Effect"
+      ],
+      "novaUnlocks": [
+        "companion-slot"
+      ]
+    },
+    {
+      "id": "vip-pack",
+      "name": "VIP Pack",
+      "category": "packs",
+      "vbucksCost": 2200,
+      "icon": "assets/nova-shop/UpgradeChipStation.png",
+      "description": "A permanent VIP bundle with two Nova Shop perks.",
+      "details": [
+        "VIP Droid Crown hat",
+        "VIP Status badge on your base",
+        "Upgrade Chip Station",
+        "Daily Crystals from all Daily Quests"
+      ],
+      "novaUnlocks": [
+        "upgrade-chip-station",
+        "daily-crystals"
+      ]
+    },
+    {
+      "id": "starter-pack",
+      "name": "Starter Pack",
+      "category": "packs",
+      "vbucksCost": 600,
+      "icon": "assets/other/UpgradeChip.png",
+      "description": "A permanent starter bundle with credits, chips and a Nova Shop perk.",
+      "details": [
+        "Permanent +200% Credit boost",
+        "Rebirth Droid Alert",
+        "Starter Pack Base Paint",
+        "600 Upgrade Chips"
+      ],
+      "novaUnlocks": [
+        "rebirth-droid-alert"
+      ]
+    },
+    {
+      "id": "rainbow-surge",
+      "name": "Rainbow Surge",
+      "category": "surges",
+      "icon": "assets/nova-shop/SurgeBoost.png",
+      "vbucksCost": 200,
+      "novaCost": 20,
+      "novaUpgradeId": "rainbow-surge-token",
+      "durationMinutes": 5,
+      "description": "Sends a wave of Rainbow Variant energy across the Sandcrawler conveyor every 30 seconds.",
+      "details": [
+        "Each wave has a 10% chance to upgrade Blueprints it passes through to Rainbow.",
+        "Guarantees one upgrade per wave."
+      ]
+    },
+    {
+      "id": "beskar-surge",
+      "name": "Beskar Surge",
+      "category": "surges",
+      "icon": "assets/nova-shop/SurgeBoost.png",
+      "vbucksCost": 300,
+      "novaCost": 30,
+      "novaUpgradeId": "beskar-surge-token",
+      "durationMinutes": 5,
+      "description": "Sends a wave of Beskar Variant energy across the Sandcrawler conveyor every 30 seconds.",
+      "details": [
+        "Each wave has a 10% chance to upgrade Blueprints it passes through to Beskar.",
+        "Guarantees one upgrade per wave."
+      ]
+    },
+    {
+      "id": "galactic-surge",
+      "name": "Galactic Surge",
+      "category": "surges",
+      "icon": "assets/nova-shop/SurgeBoost.png",
+      "vbucksCost": 400,
+      "novaCost": 40,
+      "novaUpgradeId": "galactic-surge-token",
+      "durationMinutes": 5,
+      "description": "Sends a wave of Galactic Variant energy across the Sandcrawler conveyor every 30 seconds.",
+      "details": [
+        "Each wave has a 10% chance to upgrade Blueprints it passes through to Galactic.",
+        "Guarantees one upgrade per wave."
+      ]
+    }
+  ]
+}
