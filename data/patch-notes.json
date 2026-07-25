@@ -2,6 +2,23 @@
   "version": 1,
   "notes": [
     {
+      "id": "2026-07-25-cantina-nova-expansion",
+      "date": "2026-07-25",
+      "title": "Cantina Shop and Nova expansion",
+      "summary": "Added the new Cantina Shop, released new Nova perks and stations, expanded Base locking, and applied the 1.23 Upgrade Chip balance changes.",
+      "changes": [
+        "Added a Cantina Shop reference with Boosts, Packs, and Surges, including V-Bucks prices, Nova Crystal token costs, durations, and full effects.",
+        "Added Second Companion, Daily Crystals, and Upgrade Chip Station to Nova Shop Featured with their current Nova Crystal costs.",
+        "Added Luck Boost, Crafting Boost, Rainbow Surge, Beskar Surge, and Galactic Surge tokens to the new Nova Shop Lobby Boosts category.",
+        "Added ownership tracking for Companion, VIP, and Starter Packs; owned packs automatically track their included Nova Shop perks.",
+        "Added a Nova-gated second Companion slot and Upgrade Chip Station to Base and Optimise. The Upgrade Chip Station produces Upgrade Chips rather than credits, works online only, and stores up to one hour of production.",
+        "Added a lock to every occupied droid slot. Locked droids remain pinned to their exact station and slot when using Optimise.",
+        "Updated Epic, Legendary, and Mythic Upgrade Chip costs to the new 1.23 values.",
+        "Saved Cantina Pack ownership and slot locks with profiles, cloud saves, imports, and exports, including migration of existing Companion locks."
+      ],
+      "showOnStartup": true
+    },
+    {
       "id": "2026-07-25-iconic-income-correction",
       "date": "2026-07-25",
       "title": "Iconic income correction",
