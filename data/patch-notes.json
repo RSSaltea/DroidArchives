@@ -2,6 +2,19 @@
   "version": 1,
   "notes": [
     {
+      "id": "2026-07-25-iconic-income-correction",
+      "date": "2026-07-25",
+      "title": "Iconic income correction",
+      "summary": "Iconic percentages were being added to every other droid's earnings. They are only what the Iconic droid itself earns.",
+      "changes": [
+        "Base cards now show a droid's own rate: base income × multiplier, plus the ×1.10 station match when its type fits the station.",
+        "Iconic cards still show their percentage of your total base income, which remains their whole contribution.",
+        "Droid Calc and Compare droids show the same own-rate figures, so per-droid values now add up to your Base income.",
+        "Replacement thresholds, gains per hour, Lucky value, and Optimise still account for the extra Iconic share a higher base income earns."
+      ],
+      "showOnStartup": true
+    },
+    {
       "id": "2026-07-21-compact-base-scrap-projections",
       "date": "2026-07-21",
       "title": "Compact Base cards and Scrap projections",
