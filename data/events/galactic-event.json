@@ -1,0 +1,11 @@
+{
+  "id": "galactic-event",
+  "name": "Galactic Event",
+  "category": "Limited event",
+  "description": "A 24 hour Droid Tycoon Galactic Event.",
+  "startsAt": "2026-07-25T20:00:00Z",
+  "durationHours": 24,
+  "endedRetentionHours": 2,
+  "homepage": true,
+  "image": "assets/events/eventgalactic.png"
+}
