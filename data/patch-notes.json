@@ -2,6 +2,21 @@
   "version": 1,
   "notes": [
     {
+      "id": "2026-07-27-cloud-profile-safety",
+      "date": "2026-07-27",
+      "title": "Cloud profile sync protection",
+      "summary": "Fixed a cloud-sync failure that could replace a multi-profile account with a new Main profile.",
+      "changes": [
+        "Missing, empty, or malformed cloud responses now stop synchronization instead of creating and uploading a replacement Main profile.",
+        "Added revision checks so an outdated tab or device cannot overwrite changes saved by a newer session.",
+        "Cloud saves are blocked if profiles disappear unexpectedly; reducing the profile count is allowed only through the confirmed Delete action.",
+        "The last successfully loaded cloud document is retained locally as an additional recovery copy.",
+        "Supabase now keeps a baseline snapshot and the previous complete profile document before every cloud update or deletion.",
+        "Token refresh events no longer reload profile data over unsaved changes."
+      ],
+      "showOnStartup": true
+    },
+    {
       "id": "2026-07-25-cantina-nova-expansion",
       "date": "2026-07-25",
       "title": "Cantina Shop and Nova expansion",
