@@ -1,0 +1,11 @@
+{
+  "id": "chopper-event",
+  "name": "Chopper Event",
+  "category": "Limited event",
+  "description": "A 24 hour Droid Tycoon event. This is your chance to unlock Chopper.",
+  "startsAt": "2026-08-01T20:00:00Z",
+  "durationHours": 24,
+  "endedRetentionHours": 2,
+  "homepage": true,
+  "image": "assets/events/chopper-event.png"
+}

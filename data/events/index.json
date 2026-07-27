@@ -1,5 +1,6 @@
 {
   "events": [
-    "galactic-event.json"
+    "galactic-event.json",
+    "chopper-event.json"
   ]
 }
