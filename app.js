@@ -497,7 +497,18 @@ function optimisedPlacements(baseP,plan){
     candidates.push({unit,fallbacks,old,betterStorageOpen,kept:false})
   }
   if(strictKeepBuild)candidates.sort((a,b)=>optimiseStorageKeepScore(b)-optimiseStorageKeepScore(a));
+  // The game fills the Upgrade Chip slot last, and it makes chips rather than
+  // credits, so it gets the best chip earner left over once the credit stations
+  // have taken their picks — not whichever droid happens to iterate first.
+  const chipScore=item=>upgradeChipRate(state.droids.find(x=>x.name===item.unit.name),item.unit.variant);
+  for(const chipSlot of stationSlotIndices('UPGRADE_CHIP')){
+    if(occupied.UPGRADE_CHIP.has(chipSlot))continue;
+    const best=candidates.filter(item=>!item.kept&&chipScore(item)>0).sort((a,b)=>chipScore(b)-chipScore(a))[0];
+    if(!best)break;
+    claim(best.unit,'UPGRADE_CHIP',chipSlot);best.kept=true;
+  }
   for(const item of candidates){
+    if(item.kept)continue;
     const {unit,fallbacks,old,betterStorageOpen}=item;
     if(old&&fallbacks.includes(old.station)&&canKeep(old.station,old.slot)&&!betterStorageOpen){claim(unit,old.station,old.slot);item.kept=true}
   }
@@ -516,42 +527,206 @@ function optimisedPlacements(baseP,plan){
 }
 function applyOptimisedLayout(plan){const projected=optimisedPlacements(placements(),plan);if(projected.sell.length&&!confirm(`Apply this layout and remove ${projected.sell.length} droid${projected.sell.length===1?'':'s'} from Sell?`))return;state.owned=projected.rows;save();location.hash='#/base';toast('Optimised layout applied')}
 const unitName=x=>`${x.name} ${variantText(x.variant)}`;
-const stationLabel=station=>station?`${station[0]+station.slice(1).toLowerCase()} station`:'roster';
-const slotLabel=p=>p?`${p.station} ${p.slot+1}`:'Roster';
-const sameDroidVariant=(a,b)=>a?.name===b?.name&&a?.variant===b?.variant;
-const sameSlot=(a,b)=>a?.station===b?.station&&a?.slot===b?.slot;
-function stepHtml(step){const d=state.droids.find(x=>x.name===step.unit?.name);return `<span class="step-thumb">${d?picture(d,step.unit.variant):''}</span><span class="step-text">${step.text}</span>`}
-function cleanOptimiseSteps(steps){const cleaned=[];for(let i=0;i<steps.length;i++){const a=steps[i],b=steps[i+1],hasSlots=a.from&&a.withFrom&&b?.from&&b?.to;if(hasSlots&&a.type==='swap'&&b.type==='move'&&b.to.station!=='BUILD'&&sameDroidVariant(a.unit,b.unit)&&sameSlot(a.withFrom,b.from)){cleaned.push({type:'move',unit:a.unit,from:a.from,to:b.to,text:`Move ${unitName(a.unit)} from ${slotLabel(a.from)} to empty ${slotLabel(b.to)}.`},{type:'move',unit:a.withUnit,from:a.withFrom,to:a.from,text:`Move ${unitName(a.withUnit)} from ${slotLabel(a.withFrom)} to empty ${slotLabel(a.from)}.`});i++;continue}cleaned.push(a)}const stationOrder=['WORKER','ASTROMECH','BATTLE','BUILD','LOUNGE','COMPANION','UPGRADE_CHIP','BLUEPRINT'];return cleaned.map((step,index)=>({...step,index})).filter(step=>!(step.type==='move'&&step.to?.station==='BUILD')&&!(step.type==='move'&&step.from?.station===step.to?.station)&&!(step.type==='swap'&&step.from?.station===step.withFrom?.station)).sort((a,b)=>a.type==='sell'&&b.type==='sell'?(stationOrder.indexOf(a.from?.station)-stationOrder.indexOf(b.from?.station))||((a.from?.slot??0)-(b.from?.slot??0))||a.index-b.index:a.type==='sell'?-1:b.type==='sell'?1:a.index-b.index)}
+function stepHtml(step){const d=state.droids.find(x=>x.name===step.unit?.name),assumed=step.assumed?'<em class="step-assumed" title="More than one credit station was open, so which slot it takes depends on your base layout. Check this one.">check where it lands</em>':'';return `<span class="step-thumb">${d?picture(d,step.unit.variant):''}</span><span class="step-text">${step.text}${assumed}</span>`}
 function normaliseProjectedForSteps(baseP,projected){const keyOf=x=>`${x.source}:${x.unit}`,groupOf=x=>`${x.name}:${x.variant}`,cloneRows=rows=>rows.map(x=>({...x})),placed=cloneRows(projected.placed),sell=cloneRows(projected.sell),overflow=cloneRows(projected.overflow);for(const group of [...new Set([...placed,...sell].map(groupOf))]){const current=baseP.placed.filter(x=>groupOf(x)===group),targets=placed.filter(x=>groupOf(x)===group),sells=sell.filter(x=>groupOf(x)===group);if(current.length<2||!sells.length)continue;const used=new Set(),take=picker=>{const row=current.find(x=>!used.has(keyOf(x))&&picker(x));if(row)used.add(keyOf(row));return row};for(const target of targets){const exact=take(x=>x.station===target.station&&x.slot===target.slot),sameStation=exact||take(x=>x.station===target.station),any=sameStation||take(()=>true);if(any){target.source=any.source;target.unit=any.unit}}for(const sold of sells){const any=take(()=>true);if(any){sold.source=any.source;sold.unit=any.unit}}}return{...projected,placed,sell,overflow}}
-function optimiseStepPlan(baseP,rawProjected){const projected=normaliseProjectedForSteps(baseP,rawProjected),keyOf=x=>`${x.source}:${x.unit}`,slotKey=p=>p?`${p.station}:${p.slot}`:'',all=[...baseP.placed,...projected.placed,...projected.sell,...projected.overflow],units=new Map(all.map(x=>[keyOf(x),x])),positions=new Map(baseP.placed.map(x=>[keyOf(x),{station:x.station,slot:x.slot}])),slotOwner=new Map(baseP.placed.map(x=>[`${x.station}:${x.slot}`,keyOf(x)])),goals=new Map(projected.placed.map(x=>[keyOf(x),{station:x.station,slot:x.slot}])),steps=[];for(const sold of projected.sell){const key=keyOf(sold),pos=positions.get(key);if(pos){steps.push({type:'sell',unit:sold,from:pos,text:`Sell ${unitName(sold)} in ${stationLabel(pos.station)}.`});slotOwner.delete(slotKey(pos));positions.delete(key)}else steps.push({type:'sell',unit:sold,text:`Sell ${unitName(sold)}.`})}const correct=(key,pos=positions.get(key),goal=goals.get(key))=>pos&&goal&&pos.station===goal.station&&pos.slot===goal.slot,unitType=key=>state.droids.find(d=>d.name===units.get(key)?.name)?.type,nativeSlotOpen=type=>['WORKER','ASTROMECH','BATTLE'].includes(type)&&stationSlotIndices(type).some(slot=>!slotOwner.has(`${type}:${slot}`)),goalOwner=pos=>pos?[...goals].find(([,goal])=>goal.station===pos.station&&goal.slot===pos.slot)?.[0]:null,autoRouteSafe=(key,goal,pos=positions.get(key))=>{const type=unitType(key);return !goal||!['WORKER','ASTROMECH','BATTLE'].includes(goal.station)||goal.station===type||pos?.station!==type&&!nativeSlotOpen(type)};for(let guard=0;guard<80;guard++){const unsafeSwap=[...goals].find(([key,goal])=>{const pos=positions.get(key);if(!pos||correct(key,pos,goal)||slotOwner.has(slotKey(goal))||autoRouteSafe(key,goal,pos))return false;const blocker=goalOwner(pos);return blocker&&blocker!==key&&positions.has(blocker)&&!correct(blocker)});if(unsafeSwap){const [key]=unsafeSwap,unit=units.get(key),pos=positions.get(key),blockerKey=goalOwner(pos),blocker=units.get(blockerKey),blockerPos=positions.get(blockerKey);if(!sameDroidVariant(unit,blocker))steps.push({type:'swap',unit,from:pos,withUnit:blocker,withFrom:blockerPos,text:`Swap ${unitName(unit)} from ${slotLabel(pos)} with ${unitName(blocker)} in ${slotLabel(blockerPos)}.`});slotOwner.set(slotKey(pos),blockerKey);positions.set(blockerKey,pos);slotOwner.set(slotKey(blockerPos),key);positions.set(key,blockerPos);continue}const candidates=[...goals].filter(([key,goal])=>positions.has(key)&&!correct(key)&&!slotOwner.has(slotKey(goal))),movable=candidates.find(([key,goal])=>goal.station===unitType(key))||candidates.find(([key,goal])=>autoRouteSafe(key,goal));if(!movable)break;const [key,goal]=movable,unit=units.get(key),pos=positions.get(key);steps.push({type:'move',unit,from:pos,to:goal,text:`Move ${unitName(unit)} from ${slotLabel(pos)} to empty ${slotLabel(goal)}.`});slotOwner.delete(slotKey(pos));slotOwner.set(slotKey(goal),key);positions.set(key,goal)}for(let guard=0;guard<80;guard++){const start=[...goals].find(([key])=>positions.has(key)&&!correct(key));if(!start)break;let [key]=start;for(let cycleGuard=0;cycleGuard<40&&!correct(key);cycleGuard++){const unit=units.get(key),pos=positions.get(key),goal=goals.get(key),targetKey=slotOwner.get(slotKey(goal));if(!targetKey||targetKey===key)break;const target=units.get(targetKey);if(!sameDroidVariant(unit,target))steps.push({type:'swap',unit,from:pos,withUnit:target,withFrom:goal,text:`Swap ${unitName(unit)} from ${slotLabel(pos)} with ${unitName(target)} in ${slotLabel(goal)}.`});slotOwner.set(slotKey(pos),targetKey);positions.set(targetKey,pos);slotOwner.set(slotKey(goal),key);positions.set(key,goal);key=targetKey}}return cleanOptimiseSteps(steps)}
-const slotStationName=station=>`${station[0]+station.slice(1).toLowerCase()} station`;
-const sameOwnedUnit=(a,b)=>a?.source===b?.source&&a?.unit===b?.unit;
-const cleanOptimiseStepsBySlot=cleanOptimiseSteps;
-cleanOptimiseSteps=steps=>{
-  const cleaned=cleanOptimiseStepsBySlot(steps),conversions=[];
-  for(let i=0;i<cleaned.length;i++){
-    const swap=cleaned[i];
-    if(swap.type!=='swap'||!swap.from||!swap.withFrom)continue;
-    const fromBuild=swap.from.station==='BUILD',withBuild=swap.withFrom.station==='BUILD';
-    if(fromBuild===withBuild)continue;
-    const productiveUnit=fromBuild?swap.withUnit:swap.unit;
-    const productiveFrom=fromBuild?swap.withFrom:swap.from;
-    const buildUnit=fromBuild?swap.unit:swap.withUnit;
-    const buildFrom=fromBuild?swap.from:swap.withFrom;
-    const laterIndex=cleaned.findIndex((candidate,index)=>index>i&&candidate.type==='move'&&sameOwnedUnit(candidate.unit,productiveUnit)&&sameSlot(candidate.from,buildFrom)&&candidate.to?.station!=='BUILD');
-    if(laterIndex<0)continue;
-    conversions.push({swapIndex:i,laterIndex,productiveUnit,productiveFrom,buildUnit,buildFrom,target:cleaned[laterIndex].to});
+
+// ─── Route-aware step planner ───────────────────────────────────────────────
+// In game you walk to the DROID and issue a command; the droid then routes
+// itself to a slot. A step's travel cost is therefore where the droid currently
+// stands, not where it ends up — so commands are grouped by source station and
+// the visit order is searched for the fewest trips around the base.
+//
+// The command vocabulary is everything the game actually offers:
+//   Work      — auto-routes: own type first, else the nearest credit slot,
+//               Upgrade Chip last. Greyed out when no credit/chip slot is free.
+//   Lounge    — its own option; never an auto-route destination.
+//   Companion — swaps when the companion slots are full.
+//   Sell
+// Build slots are swap-only and optimisedPlacements never routes a droid *into*
+// Build (see the BUILD guard in its fallback loop), so Build is exit-only here.
+const ROSTER='ROSTER',SOLD='SOLD';
+const WORK_STATIONS=[...PRODUCTIVE_STATIONS,'UPGRADE_CHIP'];
+const STAGING_STATIONS=['LOUNGE','COMPANION'];
+// When a droid cannot reach its own type of slot, the game sends it to the
+// "nearest" credit slot — which depends on how your base is laid out. This is
+// that tie-break. Steps that actually depend on it are flagged in the plan so
+// you can sanity-check them; put the stations in your own walking order and the
+// flags go away.
+const NEAREST_ORDER=['WORKER','ASTROMECH','BATTLE'];
+// A droid already sitting in a credit slot cannot be re-issued Work to land in a
+// *different* credit station: auto-route puts it straight back into its own
+// type. Relocating one means staging it in the Lounge or as a companion first.
+// Set this true only if the game turns out to allow a direct credit-to-credit
+// swap, in which case the planner will emit the shorter one-command version.
+const ALLOW_DIRECT_RESTATION=false;
+// The exact search is worth it for an ordinary tidy-up but has no chance on a
+// wholesale reshuffle, where it would only burn its budget before handing over
+// to greedy() anyway — so past this many droids we skip straight to greedy.
+const ROUTE_SEARCH_LIMIT=60000,ROUTE_SEARCH_MS=60,ROUTE_SEARCH_MAX_DROIDS=16;
+const placeName=station=>station===ROSTER?'Roster':stationName(station);
+
+function optimiseRoutePlan(baseP,rawProjected){
+  const projected=normaliseProjectedForSteps(baseP,rawProjected),keyOf=x=>`${x.source}:${x.unit}`;
+  const units=new Map([...baseP.placed,...projected.placed,...projected.sell,...projected.overflow].map(x=>[keyOf(x),x]));
+  const startAt=new Map([...units.keys()].map(key=>[key,ROSTER]));
+  for(const x of baseP.placed)startAt.set(keyOf(x),x.station);
+  const goalAt=new Map(projected.placed.map(x=>[keyOf(x),x.station])),sellKeys=new Set(projected.sell.map(keyOf)),lockedKeys=new Set(baseP.placed.filter(x=>x.lockedSlot).map(keyOf));
+  const capacityOf=Object.fromEntries(Object.keys(SLOT_RULES).map(type=>[type,stationSlotIndices(type).length]));
+  // Only droids that actually need a command are tracked. Everything else holds
+  // its slot for the whole plan, so its occupancy is a constant.
+  const tracked=[...units.keys()].filter(key=>{
+    if(lockedKeys.has(key))return false;
+    if(sellKeys.has(key))return true;
+    const goal=goalAt.get(key),start=startAt.get(key);
+    if(goal==='BUILD'&&start!=='BUILD'){console.warn('Optimise: no command can move a droid into Build',key);return false}
+    return Boolean(goal)&&goal!==start;
+  });
+  const trackedSet=new Set(tracked),staticOccupancy={};
+  for(const [key,station] of startAt)if(!trackedSet.has(key)&&station!==ROSTER)staticOccupancy[station]=(staticOccupancy[station]||0)+1;
+  const nativeOf=key=>state.droids.find(d=>d.name===units.get(key)?.name)?.type||'';
+  const natives=tracked.map(nativeOf),goals=tracked.map(key=>goalAt.get(key)),sells=tracked.map(key=>sellKeys.has(key));
+  const startState=tracked.map(key=>startAt.get(key));
+
+  const countsFor=st=>{const counts={...staticOccupancy};for(const pos of st)if(pos&&pos!==SOLD&&pos!==ROSTER)counts[pos]=(counts[pos]||0)+1;return counts};
+  // A droid vacates its own slot as it leaves, so that slot does not count
+  // against the space it is moving into.
+  const roomIn=(station,counts,pos)=>((counts[station]||0)-(pos===station?1:0))<(capacityOf[station]||0);
+  // The game's auto-route: own type first, else nearest credit slot, Upgrade
+  // Chip last. `assumed` marks the case where more than one credit station was
+  // open and NEAREST_ORDER had to break the tie.
+  const landing=(i,st,counts)=>{
+    const native=natives[i],pos=st[i];
+    if(PRODUCTIVE_STATIONS.includes(native)&&roomIn(native,counts,pos))return{to:native,assumed:false};
+    const open=NEAREST_ORDER.filter(station=>roomIn(station,counts,pos));
+    if(open.length)return{to:open[0],assumed:open.length>1};
+    return roomIn('UPGRADE_CHIP',counts,pos)?{to:'UPGRADE_CHIP',assumed:false}:null;
+  };
+  const satisfied=(i,st)=>sells[i]?st[i]===SOLD:st[i]===goals[i];
+  const allDone=st=>{for(let i=0;i<st.length;i++)if(!satisfied(i,st))return false;return true};
+  // Commands you can issue right now, standing at `here`. Roster droids are not
+  // in the base, so they are reachable from anywhere.
+  const actionsFor=(i,st,here,counts)=>{
+    if(satisfied(i,st))return[];
+    const pos=st[i];
+    if(pos!==here&&pos!==ROSTER)return[];
+    if(sells[i])return[{i,kind:'sell',to:SOLD,assumed:false}];
+    const goal=goals[i];
+    if(goal==='LOUNGE')return roomIn('LOUNGE',counts,pos)?[{i,kind:'lounge',to:'LOUNGE',assumed:false}]:[];
+    if(goal==='COMPANION')return roomIn('COMPANION',counts,pos)?[{i,kind:'companion',to:'COMPANION',assumed:false}]:[];
+    if(!WORK_STATIONS.includes(goal))return[];
+    if(ALLOW_DIRECT_RESTATION||!PRODUCTIVE_STATIONS.includes(pos)){
+      const land=landing(i,st,counts);
+      // Auto-route would drop it somewhere else; wait for a state where it lands
+      // on target rather than emitting a step that misfires in game.
+      return land&&land.to===goal?[{i,kind:'work',to:goal,assumed:land.assumed}]:[];
+    }
+    return STAGING_STATIONS.filter(station=>station!==pos&&roomIn(station,counts,pos)).map(station=>({i,kind:'stage',to:station,assumed:false}));
+  };
+  const stationsWithWork=(st,here)=>{const set=new Set();for(let i=0;i<st.length;i++){if(satisfied(i,st))continue;const pos=st[i];if(pos===ROSTER||pos===SOLD||pos===here)continue;set.add(pos)}return set};
+
+  // Trips are the only cost, so this is A* over (droid positions, where you are
+  // standing): issuing a command is free, walking to another station costs one.
+  // The heuristic — how many other stations still hold work — never overshoots,
+  // so the first complete plan found uses the fewest possible trips. Plans that
+  // lean on the NEAREST_ORDER guess are held back behind clean ones at the same
+  // cost. Big shuffles can outrun the budget, in which case greedy() takes over.
+  const search=()=>{
+    const clean=[],dirty=[],seen=new Map(),started=Date.now();
+    const push=node=>{const f=node.g+stationsWithWork(node.st,node.here).size,into=node.assumed?dirty:clean;(into[f]||(into[f]=[])).push(node)};
+    push({st:startState,here:null,g:0,assumed:0,parent:null,action:null});
+    seen.set(startState.join('|')+'@null',0);
+    let f=0,expansions=0;
+    while(f<Math.max(clean.length,dirty.length)){
+      const bucket=(clean[f]&&clean[f].length)?clean[f]:dirty[f];
+      if(!bucket||!bucket.length){f++;continue}
+      const node=bucket.pop();
+      if(++expansions>ROUTE_SEARCH_LIMIT)return null;
+      if(!(expansions&31)&&Date.now()-started>ROUTE_SEARCH_MS)return null;
+      if(seen.get(node.st.join('|')+'@'+node.here)<node.g)continue;
+      if(allDone(node.st))return node;
+      const counts=countsFor(node.st);
+      for(let i=0;i<node.st.length;i++)for(const action of actionsFor(i,node.st,node.here,counts)){
+        const st=node.st.slice();st[action.i]=action.to;
+        const childKey=st.join('|')+'@'+node.here;
+        if(seen.has(childKey)&&seen.get(childKey)<=node.g)continue;
+        seen.set(childKey,node.g);
+        push({st,here:node.here,g:node.g,assumed:node.assumed+(action.assumed?1:0),parent:node,action});
+      }
+      for(const station of stationsWithWork(node.st,node.here)){
+        const childKey=node.st.join('|')+'@'+station;
+        if(seen.has(childKey)&&seen.get(childKey)<=node.g+1)continue;
+        seen.set(childKey,node.g+1);
+        push({st:node.st,here:station,g:node.g+1,assumed:node.assumed,parent:node,action:{kind:'travel',to:station}});
+      }
+    }
+    return null;
+  };
+  // Used when the search outruns its budget on a big shuffle. Same rules, but it
+  // just clears whichever station has the most to do, finishing droids off in
+  // preference to staging more of them so the Lounge cannot silt up.
+  const rank={sell:0,work:1,lounge:2,companion:2,stage:3};
+  const greedy=()=>{
+    let st=startState.slice(),here=null;const trail=[];
+    for(let guard=0;guard<800&&!allDone(st);guard++){
+      for(let acted=true;acted;){
+        acted=false;
+        const counts=countsFor(st);let best=null;
+        for(let i=0;i<st.length;i++)for(const action of actionsFor(i,st,here,counts))if(!best||rank[action.kind]<rank[best.kind])best=action;
+        if(best){st=st.slice();st[best.i]=best.to;trail.push(best);acted=true}
+      }
+      if(allDone(st))break;
+      const options=[...stationsWithWork(st,here)];
+      if(!options.length)break;
+      const workAt=station=>{const counts=countsFor(st);let n=0;for(let i=0;i<st.length;i++)if(actionsFor(i,st,station,counts).length)n++;return n};
+      const scored=options.map(station=>[station,workAt(station)]).sort((a,b)=>b[1]-a[1]);
+      here=scored[0][0];
+      trail.push({kind:'travel',to:here});
+    }
+    return{trail,complete:allDone(st)};
+  };
+
+  const found=tracked.length<=ROUTE_SEARCH_MAX_DROIDS?search():null;
+  let trail,complete;
+  if(found){trail=[];for(let node=found;node&&node.action;node=node.parent)trail.unshift(node.action);complete=true}
+  else({trail,complete}=greedy());
+
+  const describe=(action,unit,from)=>{
+    const name=unitName(unit);
+    if(action.kind==='sell')return{type:'sell',text:from===ROSTER?`Sell ${name}.`:`Sell ${name} from ${placeName(from)}.`};
+    if(action.kind==='work')return{type:'move',text:`Tell ${name} to go to work — it will take a ${placeName(action.to)} slot.`};
+    if(action.kind==='lounge')return{type:'move',text:`Send ${name} to the Lounge.`};
+    if(action.kind==='companion')return{type:'move',text:`Make ${name} your companion.`};
+    if(action.to==='COMPANION')return{type:'move',text:`Make ${name} your companion to free its ${placeName(from)} slot — you will put it to work from there.`};
+    return{type:'move',text:`Send ${name} to the Lounge to free its ${placeName(from)} slot — you will put it to work from there.`};
+  };
+  const steps=[];let st=startState.slice(),here=null,visit=0;
+  for(const action of trail){
+    if(action.kind==='travel'){here=action.to;visit++;continue}
+    const from=st[action.i],unit=units.get(tracked[action.i]);
+    steps.push({...describe(action,unit,from),unit,at:here??from,visit,assumed:Boolean(action.assumed)});
+    st[action.i]=action.to;
   }
-  if(!conversions.length)return cleaned;
-  const first=Math.min(...conversions.map(x=>x.swapIndex)),last=Math.max(...conversions.map(x=>x.laterIndex)),used=new Set(conversions.flatMap(x=>[x.swapIndex,x.laterIndex]));
-  if(cleaned.slice(first,last+1).some((_,offset)=>!used.has(first+offset)))return cleaned;
-  const evacuations=conversions.map(x=>({type:'move',unit:x.productiveUnit,from:x.productiveFrom,to:x.target,text:`Put ${unitName(x.productiveUnit)} to work from ${slotStationName(x.productiveFrom.station)}; it will fill an empty ${x.target.station[0]+x.target.station.slice(1).toLowerCase()} slot.`}));
-  const fills=conversions.map(x=>({type:'move',unit:x.buildUnit,from:x.buildFrom,to:x.productiveFrom,text:`Put ${unitName(x.buildUnit)} to work from Build; it will fill an empty ${x.productiveFrom.station[0]+x.productiveFrom.station.slice(1).toLowerCase()} slot.`}));
-  return [...cleaned.slice(0,first),...evacuations,...fills,...cleaned.slice(last+1)];
-};
-function safeOptimiseStepPlan(baseP,projected){try{return optimiseStepPlan(baseP,projected)}catch(e){console.warn('Optimise step plan unavailable',e);return[]}}
+  if(!complete){
+    const stuck=tracked.filter((key,i)=>!satisfied(i,st)).map(key=>unitName(units.get(key)));
+    steps.push({type:'note',unit:null,at:here??ROSTER,visit,assumed:false,
+      text:`Could not route ${stuck.slice(0,4).join(', ')}${stuck.length>4?` and ${stuck.length-4} more`:''} automatically — free a Lounge or credit slot and reopen Optimise.`});
+  }
+  return steps;
+}
+// Consecutive steps issued at the same station are one stop on the walk round.
+function optimiseVisits(steps){
+  const visits=[];
+  for(const step of steps){
+    const last=visits[visits.length-1];
+    if(last&&last.at===step.at&&last.visit===step.visit)last.steps.push(step);
+    else visits.push({at:step.at,visit:step.visit,steps:[step]});
+  }
+  return visits;
+}
+function safeOptimiseStepPlan(baseP,projected){try{return optimiseRoutePlan(baseP,projected)}catch(e){console.warn('Optimise step plan unavailable',e);return[]}}
 function optimisePage(){
   const baseP=placements(),currentIncome=incomeForPlaced(baseP.placed),plan=optimiseBase(baseP,currentIncome),p=optimisedPlacements(baseP,plan),steps=safeOptimiseStepPlan(baseP,p),stepsCollapsed=localStorage.getItem('droid-archive-optimise-steps-collapsed')==='1',income=plan.income||currentIncome,gain=Math.max(0,income-currentIncome),currentScrap=scrapPayoutsForIncome(currentIncome),optimisedScrap=scrapPayoutsForIncome(income),scrapGain={hit:Math.max(0,(optimisedScrap.hit||0)-(currentScrap.hit||0)),break:Math.max(0,(optimisedScrap.break||0)-(currentScrap.break||0))},rebirthPick=p.placed.reduce((map,x)=>{const previous=map.get(x.name);if(!previous||VARIANTS.indexOf(x.variant)>VARIANTS.indexOf(previous.variant))map.set(x.name,{variant:x.variant,key:`${x.source}:${x.unit}`});return map},new Map()),currentMap=new Map(baseP.placed.map(x=>[`${x.source}:${x.unit}`,x]));
+  const visits=optimiseVisits(steps);
   const productive=p.placed.filter(x=>PRODUCTIVE_STATIONS.includes(x.station)),baseIncome=productive.reduce((sum,x)=>{const d=state.droids.find(y=>y.name===x.name);return sum+(d?.variants[x.variant]?.income||0)},0);
   const originLabel=x=>{const origin=currentMap.get(`${x.source}:${x.unit}`);return origin?`${origin.station} ${origin.slot+1}`:'Roster'};
   const replacementLabel=(occupant,type,index)=>{const key=`${occupant.source}:${occupant.unit}`,origin=currentMap.get(key),original=baseP.placed.find(x=>x.station===type&&x.slot===index);if(origin?.station===type&&origin?.slot===index)return'';if(!original)return'Empty slot';if(`${original.source}:${original.unit}`===key)return'';return`${original.name} ${variantText(original.variant)}`};
@@ -564,7 +739,7 @@ function optimisePage(){
   const station=type=>{const total=SLOT_RULES[type].initial+SLOT_RULES[type].unlocks.length,active=capacity(type),eligible=Array.from({length:total},(_,i)=>i).filter(i=>isSlotEligible(type,i)).length,toPurchase=eligible-active,future=total-eligible,used=p.placed.filter(x=>x.station===type).length,slots=Array.from({length:total},(_,i)=>`${type==='LOUNGE'?loungeDivider(i):''}${slot(type,i)}`).join('');return `<section class="station station-${type.toLowerCase().replaceAll('_','-')}"><header><span>${stationIcon(type)}<strong>${stationName(type)}</strong></span><small>${used}/${active} slots${toPurchase?` · ${toPurchase} not purchased`:''}${future?` · ${future} locked`:''}</small></header><div class="slot-grid">${slots}</div></section>`};
   const overflow=p.overflow.map(x=>{const d=state.droids.find(y=>y.name===x.name);return `<div class="roster-card"><a href="#/droid/${slug(d.name)}">${picture(d,x.variant)}<span><strong>${d.name}</strong><small>${variantText(x.variant)} &middot; not placed</small></span></a></div>`}).join('');
   const sell=p.sell.map(x=>{const d=state.droids.find(y=>y.name===x.name);return `<div class="sell-card cycle-unused"><a href="#/droid/${slug(d.name)}"><div>${picture(d,x.variant)}</div><span><strong>${d.name}</strong><small>${variantText(x.variant)} · From: ${originLabel(x)}</small><em>${x.sellReason||'No rebirth use'}</em></span></a></div>`}).join('');
-  app.innerHTML=`<div class="breadcrumbs"><a href="#/">Homepage</a> / Optimise</div><div class="base-heading"><div><p class="eyebrow">Credit optimiser</p><h1>Optimise</h1><p class="lead">A preview of your Base rearranged for the best estimated credits per hour.</p></div><button class="btn" id="applyOptimised">Apply optimised layout</button></div><div class="base-top optimise-stats"><div class="stat"><small>Current / hour</small><strong>${fmt(currentIncome*3600)}</strong></div><div class="stat"><small>Optimised / hour</small><strong>${fmt(income*3600)}</strong></div><div class="stat"><small>Estimated gain / hour</small><strong>${gain?`+${fmt(gain*3600)}`:'—'}</strong></div><div class="stat scrap-stat"><small>Optimised scrap / hit</small><strong>${optimisedScrap.hit?fmt(optimisedScrap.hit):'—'}</strong><em>${scrapGain.hit?`+${fmt(scrapGain.hit)} per hit`:'No change'}</em></div><div class="stat scrap-stat"><small>Optimised scrap / break</small><strong>${optimisedScrap.break?fmt(optimisedScrap.break):'—'}</strong><em>${scrapGain.break?`+${fmt(scrapGain.break)} per break`:'No change'}</em></div><div class="stat"><small>Droids owned</small><strong>${state.owned.reduce((s,x)=>s+x.qty,0)}</strong></div></div><div class="notice">This page does not change your Base until you click <strong>Apply optimised layout</strong>. Droids in Sell are excluded from the applied layout.</div>${steps.length?`<section class="optimise-steps ${stepsCollapsed?'collapsed':''}"><header><div><p class="eyebrow">Most efficient swap order</p><h2>Step-by-step moves</h2></div><button class="icon-btn optimise-steps-toggle" id="toggleOptimiseSteps" title="${stepsCollapsed?'Show':'Minimise'} steps">${stepsCollapsed?'+' :'−'}</button></header><ol ${stepsCollapsed?'hidden':''}>${steps.map(step=>`<li>${stepHtml(step)}</li>`).join('')}</ol></section>`:''}<div class="base-layout-v2 optimise-layout"><div class="typed-stations">${['WORKER','ASTROMECH','BATTLE'].map(station).join('')}</div><div class="build-side">${station('BUILD')}</div>${overflow?`<section class="roster-wide"><header><div><strong>Unplaced</strong><span>${p.overflow.length} over capacity</span></div></header><div id="rosterCards">${overflow}</div></section>`:''}${sell?`<section class="sell-wide"><header><div><strong>Sell</strong><span>${p.sell.length} unused or duplicate rebirth droid${p.sell.length===1?'':'s'}</span></div></header><div class="sell-grid">${sell}</div></section>`:''}</div>`;
+  app.innerHTML=`<div class="breadcrumbs"><a href="#/">Homepage</a> / Optimise</div><div class="base-heading"><div><p class="eyebrow">Credit optimiser</p><h1>Optimise</h1><p class="lead">A preview of your Base rearranged for the best estimated credits per hour.</p></div><button class="btn" id="applyOptimised">Apply optimised layout</button></div><div class="base-top optimise-stats"><div class="stat"><small>Current / hour</small><strong>${fmt(currentIncome*3600)}</strong></div><div class="stat"><small>Optimised / hour</small><strong>${fmt(income*3600)}</strong></div><div class="stat"><small>Estimated gain / hour</small><strong>${gain?`+${fmt(gain*3600)}`:'—'}</strong></div><div class="stat scrap-stat"><small>Optimised scrap / hit</small><strong>${optimisedScrap.hit?fmt(optimisedScrap.hit):'—'}</strong><em>${scrapGain.hit?`+${fmt(scrapGain.hit)} per hit`:'No change'}</em></div><div class="stat scrap-stat"><small>Optimised scrap / break</small><strong>${optimisedScrap.break?fmt(optimisedScrap.break):'—'}</strong><em>${scrapGain.break?`+${fmt(scrapGain.break)} per break`:'No change'}</em></div><div class="stat"><small>Droids owned</small><strong>${state.owned.reduce((s,x)=>s+x.qty,0)}</strong></div></div><div class="notice">This page does not change your Base until you click <strong>Apply optimised layout</strong>. Droids in Sell are excluded from the applied layout.</div>${steps.length?`<section class="optimise-steps ${stepsCollapsed?'collapsed':''}"><header><div><p class="eyebrow">One walk round the base · ${visits.length} stop${visits.length===1?'':'s'}</p><h2>Step-by-step moves</h2></div><button class="icon-btn optimise-steps-toggle" id="toggleOptimiseSteps" title="${stepsCollapsed?'Show':'Minimise'} steps">${stepsCollapsed?'+' :'−'}</button></header><ol class="optimise-visits" ${stepsCollapsed?'hidden':''}>${visits.map(v=>`<li class="optimise-visit"><h3>${placeName(v.at)}<small>${v.steps.length} droid${v.steps.length===1?'':'s'}</small></h3><ul>${v.steps.map(step=>`<li>${stepHtml(step)}</li>`).join('')}</ul></li>`).join('')}</ol></section>`:''}<div class="base-layout-v2 optimise-layout"><div class="typed-stations">${['WORKER','ASTROMECH','BATTLE'].map(station).join('')}</div><div class="build-side">${station('BUILD')}</div>${overflow?`<section class="roster-wide"><header><div><strong>Unplaced</strong><span>${p.overflow.length} over capacity</span></div></header><div id="rosterCards">${overflow}</div></section>`:''}${sell?`<section class="sell-wide"><header><div><strong>Sell</strong><span>${p.sell.length} unused or duplicate rebirth droid${p.sell.length===1?'':'s'}</span></div></header><div class="sell-grid">${sell}</div></section>`:''}</div>`;
   document.querySelector('.build-side').insertAdjacentHTML('afterend',`<div class="special-stations">${station('LOUNGE')}${station('COMPANION')}${station('UPGRADE_CHIP')}</div>`);
   document.querySelector('#toggleOptimiseSteps')?.addEventListener('click',()=>{localStorage.setItem('droid-archive-optimise-steps-collapsed',stepsCollapsed?'0':'1');optimisePage()});
   document.querySelector('#applyOptimised').onclick=()=>applyOptimisedLayout(plan);
