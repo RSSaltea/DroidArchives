@@ -556,12 +556,15 @@ const STAGING_STATIONS=['LOUNGE','COMPANION'];
 // you can sanity-check them; put the stations in your own walking order and the
 // flags go away.
 const NEAREST_ORDER=['WORKER','ASTROMECH','BATTLE'];
-// A droid already sitting in a credit slot cannot be re-issued Work to land in a
-// *different* credit station: auto-route puts it straight back into its own
-// type. Relocating one means staging it in the Lounge or as a companion first.
-// Set this true only if the game turns out to allow a direct credit-to-credit
-// swap, in which case the planner will emit the shorter one-command version.
-const ALLOW_DIRECT_RESTATION=false;
+// What happens when you tell a droid that is already working to work again.
+// Confirmed in game: with its own station full, the droid leaves and takes a
+// slot elsewhere, so the slot it is vacating still counts as occupied while the
+// game picks a destination. That is 'reroute', and it lets a droid move straight
+// between stations instead of being parked in the Lounge first.
+//   'stage' is the opposite reading - the vacated slot frees up in time, so
+// auto-route puts the droid straight back and relocating needs a detour. Kept
+// only as a fallback; it produces longer plans that work under either reading.
+const AUTO_ROUTE_MODEL='reroute';
 // The exact search is worth it for an ordinary tidy-up but has no chance on a
 // wholesale reshuffle, where it would only burn its budget before handing over
 // to greedy() anyway — so past this many droids we skip straight to greedy.
@@ -591,9 +594,9 @@ function optimiseRoutePlan(baseP,rawProjected){
   const startState=tracked.map(key=>startAt.get(key));
 
   const countsFor=st=>{const counts={...staticOccupancy};for(const pos of st)if(pos&&pos!==SOLD&&pos!==ROSTER)counts[pos]=(counts[pos]||0)+1;return counts};
-  // A droid vacates its own slot as it leaves, so that slot does not count
-  // against the space it is moving into.
-  const roomIn=(station,counts,pos)=>((counts[station]||0)-(pos===station?1:0))<(capacityOf[station]||0);
+  // Whether the slot being vacated frees up in time to be chosen again is the
+  // whole difference between the two auto-route models above.
+  const roomIn=(station,counts,pos)=>((counts[station]||0)-(AUTO_ROUTE_MODEL==='stage'&&pos===station?1:0))<(capacityOf[station]||0);
   // The game's auto-route: own type first, else nearest credit slot, Upgrade
   // Chip last. `assumed` marks the case where more than one credit station was
   // open and NEAREST_ORDER had to break the tie.
@@ -617,12 +620,14 @@ function optimiseRoutePlan(baseP,rawProjected){
     if(goal==='LOUNGE')return roomIn('LOUNGE',counts,pos)?[{i,kind:'lounge',to:'LOUNGE',assumed:false}]:[];
     if(goal==='COMPANION')return roomIn('COMPANION',counts,pos)?[{i,kind:'companion',to:'COMPANION',assumed:false}]:[];
     if(!WORK_STATIONS.includes(goal))return[];
-    if(ALLOW_DIRECT_RESTATION||!PRODUCTIVE_STATIONS.includes(pos)){
+    if(AUTO_ROUTE_MODEL==='reroute'||!PRODUCTIVE_STATIONS.includes(pos)){
       const land=landing(i,st,counts);
-      // Auto-route would drop it somewhere else; wait for a state where it lands
-      // on target rather than emitting a step that misfires in game.
-      return land&&land.to===goal?[{i,kind:'work',to:goal,assumed:land.assumed}]:[];
+      if(land&&land.to===goal)return[{i,kind:'work',to:goal,assumed:land.assumed}];
     }
+    // Auto-route would drop it somewhere else. Staging it out of the credit
+    // slots is the way round that; from anywhere else, wait for a state where it
+    // lands on target rather than emitting a step that misfires in game.
+    if(!PRODUCTIVE_STATIONS.includes(pos))return[];
     return STAGING_STATIONS.filter(station=>station!==pos&&roomIn(station,counts,pos)).map(station=>({i,kind:'stage',to:station,assumed:false}));
   };
   const stationsWithWork=(st,here)=>{const set=new Set();for(let i=0;i<st.length;i++){if(satisfied(i,st))continue;const pos=st[i];if(pos===ROSTER||pos===SOLD||pos===here)continue;set.add(pos)}return set};
@@ -644,7 +649,7 @@ function optimiseRoutePlan(baseP,rawProjected){
       if(!bucket||!bucket.length){f++;continue}
       const node=bucket.pop();
       if(++expansions>ROUTE_SEARCH_LIMIT)return null;
-      if(!(expansions&31)&&Date.now()-started>ROUTE_SEARCH_MS)return null;
+      if(!(expansions&7)&&Date.now()-started>ROUTE_SEARCH_MS)return null;
       if(seen.get(node.st.join('|')+'@'+node.here)<node.g)continue;
       if(allDone(node.st))return node;
       const counts=countsFor(node.st);
