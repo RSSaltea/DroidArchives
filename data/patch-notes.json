@@ -2,6 +2,19 @@
   "version": 1,
   "notes": [
     {
+      "id": "2026-07-28-optimise-route-planner",
+      "date": "2026-07-28",
+      "title": "Optimise route planning",
+      "summary": "Optimise now plans one walk around the base instead of sending you back and forth between the same stations.",
+      "changes": [
+        "Optimise steps are grouped by where each droid currently is, so you clear a station in one visit instead of returning to it several times.",
+        "Selling is done as you pass each station rather than as a separate lap of the base before anything else moves.",
+        "The Upgrade Chip slot is now filled with the best remaining droid for chips; previously it was often left empty.",
+        "Admittedly used AI to create the new optimiser."
+      ],
+      "showOnStartup": true
+    },
+    {
       "id": "2026-07-27-cloud-profile-safety",
       "date": "2026-07-27",
       "title": "Cloud profile sync protection",
