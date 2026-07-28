@@ -488,25 +488,26 @@ function optimisedPlacements(baseP,plan){
   const bestFuture=new Map();
   for(const unit of units){if(assigned.has(`${unit.source}:${unit.unit}`))continue;const previous=bestFuture.get(unit.name);if(!previous||VARIANTS.indexOf(unit.variant)>VARIANTS.indexOf(previous.variant))bestFuture.set(unit.name,{variant:unit.variant,key:`${unit.source}:${unit.unit}`})}
   const candidates=[],keepBuildOpen=Boolean(state.optimiseFreeBuild),strictKeepBuild=keepBuildOpen&&optimiseFreeBuildMode()!=='unused-income';
+  // A droid in the Upgrade Chip slot is producing, so it is claimed here, before
+  // the unused-for-rebirth sell pass below. Picking afterwards meant the best
+  // chip earner was sold for having no rebirth use and a weaker droid inherited
+  // the slot, cutting chip output.
+  const chipRateOf=unit=>upgradeChipRate(state.droids.find(x=>x.name===unit.name),unit.variant),chipPicks=new Set();
+  for(const chipSlot of stationSlotIndices('UPGRADE_CHIP')){
+    if(occupied.UPGRADE_CHIP.has(chipSlot))continue;
+    const best=units.filter(unit=>{const key=`${unit.source}:${unit.unit}`;return !assigned.has(key)&&!lockedKeys.has(key)&&!chipPicks.has(key)&&chipRateOf(unit)>0}).sort((a,b)=>chipRateOf(b)-chipRateOf(a))[0];
+    if(!best)break;
+    chipPicks.add(`${best.source}:${best.unit}`);claim(best,'UPGRADE_CHIP',chipSlot);
+  }
   for(const unit of units){
     const key=`${unit.source}:${unit.unit}`;
-    if(assigned.has(key)||lockedKeys.has(key))continue;
+    if(assigned.has(key)||lockedKeys.has(key)||chipPicks.has(key))continue;
     const d=state.droids.find(x=>x.name===unit.name),cycleStatus=d?droidCycleStatus(d,unit.variant,bestFuture.get(unit.name)?.key===key):{kind:'unused'};
     if(cycleStatus.kind==='unused'&&!isIconic(d)){sell.push({...unit,sellReason:cycleStatus.label});continue}
     const productiveFallback=d?.type?[d.type,...['WORKER','ASTROMECH','BATTLE'].filter(x=>x!==d.type)]:['WORKER','ASTROMECH','BATTLE'],fallbacks=['LOUNGE','COMPANION','UPGRADE_CHIP',...(strictKeepBuild?[]:['BUILD']),...productiveFallback],old=current.get(key),betterStorageOpen=old?.station==='BUILD'&&(strictKeepBuild||['LOUNGE','COMPANION','UPGRADE_CHIP'].some(station=>free(station)>=0));
     candidates.push({unit,fallbacks,old,betterStorageOpen,kept:false})
   }
   if(strictKeepBuild)candidates.sort((a,b)=>optimiseStorageKeepScore(b)-optimiseStorageKeepScore(a));
-  // The game fills the Upgrade Chip slot last, and it makes chips rather than
-  // credits, so it gets the best chip earner left over once the credit stations
-  // have taken their picks — not whichever droid happens to iterate first.
-  const chipScore=item=>upgradeChipRate(state.droids.find(x=>x.name===item.unit.name),item.unit.variant);
-  for(const chipSlot of stationSlotIndices('UPGRADE_CHIP')){
-    if(occupied.UPGRADE_CHIP.has(chipSlot))continue;
-    const best=candidates.filter(item=>!item.kept&&chipScore(item)>0).sort((a,b)=>chipScore(b)-chipScore(a))[0];
-    if(!best)break;
-    claim(best.unit,'UPGRADE_CHIP',chipSlot);best.kept=true;
-  }
   for(const item of candidates){
     if(item.kept)continue;
     const {unit,fallbacks,old,betterStorageOpen}=item;
@@ -520,7 +521,9 @@ function optimisedPlacements(baseP,plan){
     if(!station){const d=state.droids.find(x=>x.name===unit.name);if(strictKeepBuild&&!isIconic(d))sell.push({...unit,sellReason:`Sold to keep Build slots open · ${optimiseFreeBuildModeLabel(optimiseFreeBuildMode()).toLowerCase()} priority`});else overflow.push(unit)}
   }
   const stablePlaced=stabiliseProjectedPlacements(baseP,placed),rebirthPick=stablePlaced.reduce((map,x)=>{const previous=map.get(x.name),key=`${x.source}:${x.unit}`;if(!previous||VARIANTS.indexOf(x.variant)>VARIANTS.indexOf(previous.variant))map.set(x.name,{variant:x.variant,key});return map},new Map()),finalPlaced=[],finalSell=[...sell];
-  for(const x of stablePlaced){const d=state.droids.find(y=>y.name===x.name),status=d?droidCycleStatus(d,x.variant,rebirthPick.get(x.name)?.key===`${x.source}:${x.unit}`):{kind:'unused'};if(!PRODUCTIVE_STATIONS.includes(x.station)&&status.kind==='unused'&&!isIconic(d)&&!x.lockedSlot)finalSell.push({...x,sellReason:status.label});else finalPlaced.push(x)}
+  // Upgrade Chip counts as producing here: a droid making chips is earning its
+  // slot even with no rebirth use, so it is exempt from the unused sell pass.
+  for(const x of stablePlaced){const d=state.droids.find(y=>y.name===x.name),producing=PRODUCTIVE_STATIONS.includes(x.station)||x.station==='UPGRADE_CHIP',status=d?droidCycleStatus(d,x.variant,rebirthPick.get(x.name)?.key===`${x.source}:${x.unit}`):{kind:'unused'};if(!producing&&status.kind==='unused'&&!isIconic(d)&&!x.lockedSlot)finalSell.push({...x,sellReason:status.label});else finalPlaced.push(x)}
   if(keepBuildOpen&&optimiseFreeBuildMode()==='unused-income')finalSell.sort((a,b)=>{const ad=state.droids.find(d=>d.name===a.name),bd=state.droids.find(d=>d.name===b.name);return(ad?.variants[a.variant]?.income||0)-(bd?.variants[b.variant]?.income||0)});
   const rows=[...finalPlaced,...overflow].map(x=>({name:x.name,variant:x.variant,qty:1,...(x.station?{preferred:x.station,preferredSlot:x.slot}:{}),...(x.lockedSlot?{lockedSlot:true}:{})}));
   return{placed:finalPlaced,overflow,sell:finalSell,rows}
