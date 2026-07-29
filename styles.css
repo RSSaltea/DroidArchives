@@ -368,3 +368,7 @@ h1{font-size:29px}
 .chip-held-card strong{display:block;font-size:13px}
 .chip-held-card small{display:block;color:var(--muted);font-weight:600}
 :root:not([data-theme="dark"]) .chip-held-card{background:rgba(0,0,0,.05)}
+.chip-held-card.needs-upgrade{border-color:#c98f2e;background:rgba(240,200,91,.10)}
+.chip-held-card.needs-upgrade small{color:#f0c85b}
+.chip-sell-totals .chip-sell-short strong{color:#ff9a8a}
+.chip-sell-totals .chip-sell-covered strong{color:#7fd1a0}

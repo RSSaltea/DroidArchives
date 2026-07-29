@@ -211,15 +211,21 @@ function scrapSeconds(){const config=state.novaShop?.calculators?.scrap,upgrade=
 function scrapPayoutsForIncome(income,quality='default'){const config=state.novaShop?.calculators?.scrap,seconds=scrapSeconds(),row=config?.qualities?.find(x=>String(x.id||x.name).toLowerCase()===String(quality).toLowerCase())||config?.qualities?.[0],drops=config?.drops||[];return Object.fromEntries(drops.map((drop,index)=>[drop.id||String(drop.name).toLowerCase(),seconds?income*seconds*Number(row?.multipliers?.[index]??1):0]))}
 function scrapCalculatorHtml(placed){const config=state.novaShop?.calculators?.scrap;if(!config)return'';const income=scrapIncomeForPlaced(placed),seconds=scrapSeconds(),level=novaLevelFor(config.upgradeId),drops=config.drops||[];return `<section class="scrap-calculator"><div><p class="eyebrow">Workshop calculator</p><h2>${config.title||'Scrap calculator'}</h2><p>${config.description||''}</p><small>Scrap Value level ${level} · ${seconds||'—'} second${seconds===1?'':'s'} of current Base generation · Scrap base ${fmt(income)}/s</small></div><table><thead><tr><th>Scrap</th>${drops.map(drop=>`<th>${drop.name}</th>`).join('')}</tr></thead><tbody>${(config.qualities||[]).map(row=>`<tr><th>${row.name}</th>${drops.map((drop,i)=>`<td>${seconds?fmt(income*seconds*Number(row.multipliers?.[i]??1)):'—'}</td>`).join('')}</tr>`).join('')}</tbody></table></section>`}
 // The next rebirth consumes 3 droids, so they are held back from the sell total.
-// For each requirement keep the cheapest owned copy that still satisfies it —
-// that is the one you would actually spend, leaving the rest sellable.
+// A requirement you have not met yet still holds one back: the copy you are
+// saving chips to upgrade is the whole point of the exercise, so selling it
+// would be self-defeating.
 function nextRebirthHoldBacks(units){
   const next=(state.rebirths[state.cycle]||[]).find(r=>r.to===state.rebirth+1),held=new Map();
   for(const req of next?.requiredDroids||[]){
-    const needed=VARIANTS.indexOf(req.variant);
-    const match=units.filter(u=>u.name===req.droidName&&VARIANTS.indexOf(u.variant)>=needed&&!held.has(`${u.source}:${u.unit}`))
-      .sort((a,b)=>chipSellValue(state.droids.find(d=>d.name===a.name),a.variant)-chipSellValue(state.droids.find(d=>d.name===b.name),b.variant))[0];
-    if(match)held.set(`${match.source}:${match.unit}`,{...match,at:next.to});
+    const needed=VARIANTS.indexOf(req.variant),d=state.droids.find(x=>x.name===req.droidName);
+    const owned=units.filter(u=>u.name===req.droidName&&!held.has(`${u.source}:${u.unit}`));
+    // Already good enough: keep the cheapest such copy so the better ones stay
+    // sellable. Otherwise keep the closest copy below the requirement, which is
+    // the cheapest one to finish upgrading.
+    const ready=owned.filter(u=>VARIANTS.indexOf(u.variant)>=needed).sort((a,b)=>chipSellValue(d,a.variant)-chipSellValue(d,b.variant))[0];
+    const upgradable=owned.filter(u=>VARIANTS.indexOf(u.variant)<needed).sort((a,b)=>VARIANTS.indexOf(b.variant)-VARIANTS.indexOf(a.variant))[0];
+    const pick=ready||upgradable;
+    if(pick)held.set(`${pick.source}:${pick.unit}`,{...pick,at:next.to,required:req.variant,chipsNeeded:ready?0:chipsToVariant(d,pick.variant,req.variant)});
   }
   return held;
 }
@@ -237,10 +243,14 @@ function chipSellCalculatorHtml(p){
     const row=rows.get(d.rarity)||{count:0,chips:0};row.count++;row.chips+=value;rows.set(d.rarity,row);
   }
   const bb8=bb8CompanionActive(p.placed),order=['COMMON','RARE','EPIC','LEGENDARY','MYTHIC'];
+  // What the held-back droids still cost to bring up to the required quality.
+  const needed=[...held.values()].reduce((sum,unit)=>sum+unit.chipsNeeded,0);
+  const shortfall=Math.max(0,needed-total),shortfallBb8=Math.max(0,needed-total*2);
   const breakdown=order.filter(rarity=>rows.has(rarity)).map(rarity=>{const row=rows.get(rarity);return `<tr><th>${rarityText(rarity)}</th><td>${row.count}</td><td>${fmt(row.chips)}</td><td>${fmt(row.chips*2)}</td></tr>`}).join('');
-  const heldCards=[...held.values()].map(unit=>{const d=state.droids.find(x=>x.name===unit.name);return `<a class="chip-held-card" href="#/droid/${slug(d.name)}"><div>${picture(d,unit.variant)}</div><span><strong>${d.name}</strong><small>${variantText(unit.variant)} · worth ${fmt(chipSellValue(d,unit.variant))}</small></span></a>`}).join('');
+  const heldCards=[...held.values()].map(unit=>{const d=state.droids.find(x=>x.name===unit.name);return `<a class="chip-held-card ${unit.chipsNeeded?'needs-upgrade':''}" href="#/droid/${slug(d.name)}"><div>${picture(d,unit.variant)}</div><span><strong>${d.name}</strong><small>${unit.chipsNeeded?`${variantText(unit.variant)} → ${variantText(unit.required)} · ${fmt(unit.chipsNeeded)} chips`:`${variantText(unit.variant)} · ready`}</small></span></a>`}).join('');
   const missing=(next?.requiredDroids||[]).length-held.size;
-  return `<section class="scrap-calculator chip-sell-calculator"><div><p class="eyebrow">Workshop calculator</p><h2>Upgrade Chip sell value</h2><p>What your roster is worth if you sold it for Upgrade Chips, holding back the droids your next rebirth needs.</p><small>${sellable} sellable droid${sellable===1?'':'s'}${standard?` · ${standard} Standard or Iconic worth nothing`:''}${next?` · holding back ${held.size} for Rebirth ${next.to}`:' · no next rebirth in this cycle'}</small></div><div class="chip-sell-totals"><div class="stat"><small>Sell everything</small><strong>${fmt(total)}</strong><em>Upgrade Chips</em></div><div class="stat chip-sell-bb8 ${bb8?'active':''}"><small>With BB-8 companion</small><strong>${fmt(total*2)}</strong><em>${bb8?'BB-8 is your companion':'Doubled — needs BB-8 as companion'}</em></div></div>${breakdown?`<table><thead><tr><th>Rarity</th><th>Droids</th><th>Chips</th><th>With BB-8</th></tr></thead><tbody>${breakdown}</tbody><tfoot><tr><th>Total</th><td>${sellable}</td><td>${fmt(total)}</td><td>${fmt(total*2)}</td></tr></tfoot></table>`:'<p class="chip-sell-empty">Nothing on your roster can be sold for Upgrade Chips yet — Standard quality droids are worth nothing.</p>'}${heldCards?`<div class="chip-held"><small>Held back for Rebirth ${next.to}${missing>0?` · ${missing} still missing from your roster`:''}</small><div class="chip-held-grid">${heldCards}</div></div>`:''}</section>`
+  const goalStats=needed?`<div class="stat"><small>Needed for Rebirth ${next.to}</small><strong>${fmt(needed)}</strong><em>to finish upgrading ${[...held.values()].filter(u=>u.chipsNeeded).map(u=>u.name).join(', ')}</em></div><div class="stat ${shortfall?'chip-sell-short':'chip-sell-covered'}"><small>${shortfall?'Still short after selling':'Covered by selling'}</small><strong>${fmt(shortfall||total-needed)}</strong><em>${shortfall?(shortfallBb8?`${fmt(shortfallBb8)} short with BB-8`:'covered if BB-8 is your companion'):'chips left over'}</em></div>`:'';
+  return `<section class="scrap-calculator chip-sell-calculator"><div><p class="eyebrow">Workshop calculator</p><h2>Upgrade Chip sell value</h2><p>What your roster is worth if you sold it for Upgrade Chips, holding back the droids your next rebirth needs — including any you are still upgrading.</p><small>${sellable} sellable droid${sellable===1?'':'s'}${standard?` · ${standard} Standard or Iconic worth nothing`:''}${next?` · holding back ${held.size} for Rebirth ${next.to}`:' · no next rebirth in this cycle'}</small></div><div class="chip-sell-totals"><div class="stat"><small>Sell everything</small><strong>${fmt(total)}</strong><em>Upgrade Chips</em></div><div class="stat chip-sell-bb8 ${bb8?'active':''}"><small>With BB-8 companion</small><strong>${fmt(total*2)}</strong><em>${bb8?'BB-8 is your companion':'Doubled — needs BB-8 as companion'}</em></div>${goalStats}</div>${breakdown?`<table><thead><tr><th>Rarity</th><th>Droids</th><th>Chips</th><th>With BB-8</th></tr></thead><tbody>${breakdown}</tbody><tfoot><tr><th>Total</th><td>${sellable}</td><td>${fmt(total)}</td><td>${fmt(total*2)}</td></tr></tfoot></table>`:'<p class="chip-sell-empty">Nothing on your roster can be sold for Upgrade Chips yet — Standard quality droids are worth nothing.</p>'}${heldCards?`<div class="chip-held"><small>Held back for Rebirth ${next.to}${missing>0?` · ${missing} still missing from your roster`:''}</small><div class="chip-held-grid">${heldCards}</div></div>`:''}</section>`
 }
 const PRODUCTIVE_STATIONS=['WORKER','ASTROMECH','BATTLE'];
 const replacementKey=x=>`${x.source}:${x.unit}`;
