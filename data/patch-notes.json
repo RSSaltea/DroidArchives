@@ -2,6 +2,16 @@
   "version": 1,
   "notes": [
     {
+      "id": "2026-08-04-chopper",
+      "date": "2026-08-04",
+      "title": "Chopper added",
+      "summary": "Chopper is now in the Archives.",
+      "changes": [
+        "Added Chopper, an Iconic Astromech that produces 15%/s and gives +50% Crit Chance & Damage."
+      ],
+      "showOnStartup": true
+    },
+    {
       "id": "2026-07-28-optimise-route-planner",
       "date": "2026-07-28",
       "title": "Optimise route planning",
