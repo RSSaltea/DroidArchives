@@ -419,3 +419,5 @@ h1{font-size:29px}
 .companion-choice button[disabled]{opacity:.4;cursor:not-allowed}
 .companion-choice button[disabled]:hover{border-color:var(--line)}
 .picker-hint.companion-count{margin-top:-4px;font-weight:800;color:#8fd9ef}
+
+@media(min-width:1000px){.dex-grid{grid-template-columns:repeat(5,minmax(0,1fr))}}
