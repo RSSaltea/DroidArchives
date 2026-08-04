@@ -6,19 +6,22 @@ const LOCAL_PROFILES_KEY='droid-archive-local-profiles';
 const SUPABASE_CONFIG_PATH='data/supabase-config.json';
 const PUBLIC_SITE_URL='https://rssaltea.github.io/DroidArchives/';
 const GALACTIC_REPORTS_ENABLED=false;
-const ATTRIBUTE={WORKER:'Increases droid crafting speed'};
 function droidAttribute(d,variant='DEFAULT'){
   // Iconics have no rarity/quality scaling, so their attribute is whatever
   // passive they carry. Only some have one recorded.
   if(isIconic(d))return d?.special?.passive||'N/A';
-  if(d?.type==='WORKER')return ATTRIBUTE.WORKER;
   const rarityLevel={COMMON:1,RARE:2,EPIC:3,LEGENDARY:4,MYTHIC:5}[d?.rarity],variantLevel=Math.max(0,VARIANTS.indexOf(variant));
   if(!rarityLevel)return'N/A';
+  // Crafting speed steps 0.2/sec for each rarity and each quality, so Common
+  // Standard is 0.2 and Mythic Galactic is 2 — the same rarity + quality ladder
+  // the Astromech pickaxe levels use. toFixed then Number drops the float noise
+  // (0.2 * 3 is 0.6000000000000001) without leaving a trailing .0 on whole steps.
+  if(d.type==='WORKER')return`+${Number((0.2*(rarityLevel+variantLevel)).toFixed(1))}/sec Droid Crafting`;
   if(d.type==='ASTROMECH'){const level=rarityLevel+variantLevel;return`+${level} Pickaxe Level${level===1?'':'s'}`}
   if(d.type==='BATTLE')return`+${rarityLevel*20+variantLevel*40} Max Health`;
   return'N/A'
 }
-const droidGameplayAttribute=(d,variant)=>d?.type==='WORKER'?`${d.name} ${ATTRIBUTE.WORKER.toLowerCase()}.`:`${d.name} provides <strong>${droidAttribute(d,variant)}</strong>.`;
+const droidGameplayAttribute=(d,variant)=>`${d.name} provides <strong>${droidAttribute(d,variant)}</strong>.`;
 const syncProvider=localStorage.getItem('droid-archive-sync-provider')||'local';
 let supabaseConfig={url:'',anonKey:'',table:'droid_archive_profiles'};
 let supabaseClient=null;
