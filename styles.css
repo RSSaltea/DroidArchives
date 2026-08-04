@@ -380,8 +380,24 @@ h1{font-size:29px}
 .optimise-preview .keep-droidex{color:#c9a2ff}
 .optimise-preview .keep-rebirth{color:#8fd9ef}
 .optimise-preview .keep-building{color:#ff9a8a}
-.side-subcheck{display:flex;align-items:center;gap:7px;margin:4px 0 0;font-weight:600;text-transform:none;letter-spacing:0}
 .side-field select[multiple]{width:100%;padding:6px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:5px}
 .notice.companion-wanted{border-left:5px solid #c9a2ff}
 .notice.companion-wanted a{color:#c9a2ff;font-weight:800}
 .optimise-preview .keep-companion{color:#c9a2ff}
+.side-group{margin:0 6px 11px;border:1px solid var(--line);border-radius:6px;background:rgba(0,0,0,.12)}
+.side-group>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 10px;cursor:pointer;list-style:none;color:var(--ink);font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase}
+.side-group>summary::-webkit-details-marker{display:none}
+.side-group>summary::after{content:"+";font-size:14px;color:var(--muted)}
+.side-group[open]>summary::after{content:"\2212"}
+.side-group>summary em{margin-left:auto;font-style:normal;font-size:10px;font-weight:700;letter-spacing:0;text-transform:none;color:var(--muted)}
+.side-group[open]>summary{border-bottom:1px solid var(--line)}
+.side-group-body{padding:10px 2px 2px}
+.side-pillfield{gap:6px}
+.side-pills{display:flex;flex-wrap:wrap;gap:6px}
+.side-pill{position:relative;display:inline-flex}
+.side-pill input{position:absolute;opacity:0;width:0;height:0}
+.side-pill span{display:inline-block;padding:5px 10px;background:var(--panel);border:1px solid var(--line);border-radius:999px;color:var(--muted);font:700 11px Inter;letter-spacing:0;text-transform:none;cursor:pointer;white-space:nowrap}
+.side-pill input:checked+span{background:#1d3b2a;border-color:#4f9d73;color:#9ae6bb}
+.side-pill input:focus-visible+span{outline:2px solid #7fd1a0;outline-offset:1px}
+.side-field select[multiple]{min-height:0;padding:4px;font-size:11px}
+.side-field select[multiple] option{padding:3px 5px}
