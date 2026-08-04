@@ -2,12 +2,49 @@
   "version": 1,
   "notes": [
     {
+      "id": "2026-08-04-droidex-companions-builds",
+      "date": "2026-08-04",
+      "title": "Droidex tracking, Companion picks and Build completion",
+      "summary": "The Droidex fills itself as you play, Optimise keeps your Companion slots stocked, and Build slots have to be marked complete.",
+      "changes": [
+        "Adding a droid records it in your Droidex, and upgrading records every quality it passes through, so Standard to Beskar fills Gold, Diamond and Rainbow too.",
+        "Optimise can keep droids that would complete Droidex entries instead of selling them, and now tells you whether a droid is being kept for Rebirth, the Droidex or as a Companion.",
+        "Optimise keeps your Companion slots filled with the boosts you choose: highest pickaxe level, craft speed or max health. Pick one and both slots use it, pick two and you get one of each.",
+        "You can nominate preferred Iconic companions. Optimise slots them in if you own them, or tells you to go and buy them if you do not.",
+        "Build slots show red until you press Complete. Unfinished builds stay out of the Droidex and Optimise will not try to move them. There is an auto complete option if you would rather skip the step."
+      ],
+      "showOnStartup": true
+    },
+    {
+      "id": "2026-08-04-worker-attributes",
+      "date": "2026-08-04",
+      "title": "Worker crafting speeds",
+      "summary": "Worker droids now show their real crafting speed instead of a general description.",
+      "changes": [
+        "Every Worker droid shows its exact Droid Crafting speed, from +0.2/sec for a Common Standard up to +2/sec for a Mythic Galactic."
+      ],
+      "showOnStartup": true
+    },
+    {
       "id": "2026-08-04-chopper",
       "date": "2026-08-04",
       "title": "Chopper added",
       "summary": "Chopper is now in the Archives.",
       "changes": [
         "Added Chopper, an Iconic Astromech that produces 15%/s and gives +50% Crit Chance & Damage."
+      ],
+      "showOnStartup": true
+    },
+    {
+      "id": "2026-08-04-chip-sell-calculator",
+      "date": "2026-08-04",
+      "title": "Upgrade Chip sell values",
+      "summary": "See what every droid is worth in Upgrade Chips and what your whole roster would fetch.",
+      "changes": [
+        "Every droid page shows what it sells for in Upgrade Chips. Standard quality and Iconics are worth nothing.",
+        "A new Base panel totals what your roster would fetch, holding back the droids your next rebirth needs, including any you are still upgrading.",
+        "Every total is also shown doubled for having BB-8 as your companion.",
+        "It tells you how many chips you still need for the next rebirth and what is left owing once everything is sold."
       ],
       "showOnStartup": true
     },
