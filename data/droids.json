@@ -2530,5 +2530,39 @@
       "maxQuantity": 1
     },
     "novaCrystalCost": 30
+  },
+  {
+    "name": "CHOPPER",
+    "rarity": "ICONIC",
+    "type": "ASTROMECH",
+    "variants": {
+      "DEFAULT": {
+        "cost": 0,
+        "income": 0
+      },
+      "GOLD": {
+        "cost": 0,
+        "income": 0
+      },
+      "DIAMOND": {
+        "cost": 0,
+        "income": 0
+      },
+      "RAINBOW": {
+        "cost": 0,
+        "income": 0
+      },
+      "BESKAR": {
+        "cost": 0,
+        "income": 0
+      }
+    },
+    "special": {
+      "incomePercent": 0.15,
+      "onlyDefaultVariant": true,
+      "cannotSell": true,
+      "maxQuantity": 1,
+      "passive": "+50% Crit Chance & Damage"
+    }
   }
 ]

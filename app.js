@@ -8,7 +8,9 @@ const PUBLIC_SITE_URL='https://rssaltea.github.io/DroidArchives/';
 const GALACTIC_REPORTS_ENABLED=false;
 const ATTRIBUTE={WORKER:'Increases droid crafting speed'};
 function droidAttribute(d,variant='DEFAULT'){
-  if(isIconic(d))return'N/A';
+  // Iconics have no rarity/quality scaling, so their attribute is whatever
+  // passive they carry. Only some have one recorded.
+  if(isIconic(d))return d?.special?.passive||'N/A';
   if(d?.type==='WORKER')return ATTRIBUTE.WORKER;
   const rarityLevel={COMMON:1,RARE:2,EPIC:3,LEGENDARY:4,MYTHIC:5}[d?.rarity],variantLevel=Math.max(0,VARIANTS.indexOf(variant));
   if(!rarityLevel)return'N/A';
