@@ -416,3 +416,6 @@ h1{font-size:29px}
 .companion-choice button small{color:var(--muted);font-size:10px}
 .companion-choice button.picked{border-color:#4f9d73;background:#1d3b2a}
 .companion-choice button.picked small{color:#9ae6bb}
+.companion-choice button[disabled]{opacity:.4;cursor:not-allowed}
+.companion-choice button[disabled]:hover{border-color:var(--line)}
+.picker-hint.companion-count{margin-top:-4px;font-weight:800;color:#8fd9ef}
