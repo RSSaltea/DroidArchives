@@ -615,6 +615,36 @@
       ]
     },
     {
+      "id": "multi-crit",
+      "name": "Multi Crit",
+      "category": "featured",
+      "icon": "assets/nova-shop/Icon_CritMulti.png",
+      "description": "Allows up to five total Critical hits. Each successful additional roll halves the next roll chance.",
+      "prerequisite": "Critical Chance level 8",
+      "levels": [
+        {
+          "level": 1,
+          "cost": 400,
+          "reward": "Up to 2 total Critical hits"
+        },
+        {
+          "level": 2,
+          "cost": 800,
+          "reward": "Up to 3 total Critical hits"
+        },
+        {
+          "level": 3,
+          "cost": 1200,
+          "reward": "Up to 4 total Critical hits"
+        },
+        {
+          "level": 4,
+          "cost": 1600,
+          "reward": "Up to 5 total Critical hits"
+        }
+      ]
+    },
+    {
       "id": "companion-slot",
       "sourceId": "C2",
       "name": "Second Companion",

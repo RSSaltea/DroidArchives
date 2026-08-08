@@ -2,6 +2,20 @@
   "version": 1,
   "notes": [
     {
+      "id": "2026-08-08-firing-range-second-floor-multi-crit",
+      "date": "2026-08-08",
+      "title": "Firing Range second floor and Multi Crit",
+      "summary": "Six more Battle slots open up across Rebirth 17 to 22, and Multi Crit has arrived in the Nova Shop.",
+      "changes": [
+        "Added the Firing Range second floor: six new Battle Droid slots unlocking at Rebirth 17, 18, 19, 20, 21 and 22, taking the station from 5 slots to 11.",
+        "The new slots work exactly like every other Rebirth slot, so they are bought individually, respect auto purchase, and are included in Optimise and the Droid Calc.",
+        "Base and Optimise show a Second Floor divider above the new slots, matching the Lounge's Upper Level.",
+        "Added Multi Crit to the Nova Shop: four levels at 400, 800, 1,200 and 1,600 Nova, 4,000 Nova in total, requiring Critical Chance level 8.",
+        "Multi Crit allows up to five total Critical hits, with each successful additional roll halving the next roll chance."
+      ],
+      "showOnStartup": true
+    },
+    {
       "id": "2026-08-04-droidex-companions-builds",
       "date": "2026-08-04",
       "title": "Droidex tracking, Companion picks and Build completion",
