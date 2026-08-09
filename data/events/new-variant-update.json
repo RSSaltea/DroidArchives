@@ -1,0 +1,11 @@
+{
+  "id": "new-variant-update",
+  "name": "New Variant",
+  "category": "Update",
+  "description": "A new variant of Droid is coming. It is not a better variant than Galactic, it is somewhere between the other varieties. We also get D-O as an Iconic soon, unknown when.",
+  "startsAt": "2026-08-15T20:00:00Z",
+  "durationHours": 24,
+  "endedRetentionHours": 2,
+  "homepage": true,
+  "image": "assets/events/new-variant-update.png"
+}

@@ -1,6 +1,7 @@
 {
   "events": [
     "galactic-event.json",
-    "chopper-event.json"
+    "chopper-event.json",
+    "new-variant-update.json"
   ]
 }
