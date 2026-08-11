@@ -195,11 +195,13 @@ function movePlacedDroid(p,source,targetStation,targetSlot,target){const indices
 function toggleSlotLock(source,unit){const p=placements(),indices=materializePlacements(p),index=indices.get(`${source}:${unit}`),row=state.owned[index];if(!row)return;row.lockedSlot=!row.lockedSlot;save();toast(row.lockedSlot?'Droid slot locked for Optimise':'Droid slot unlocked')}
 function moveUnitByKey(sourceKey,targetKey,onDone){const p=placements(),source=p.placed.find(x=>`${x.source}:${x.unit}`===sourceKey),target=p.placed.find(x=>`${x.source}:${x.unit}`===targetKey);if(!source||!target)return;movePlacedDroid(p,source,target.station,target.slot,target);onDone()}
 function moveUnitToSlot(sourceKey,station,slot,onDone){const p=placements(),source=p.placed.find(x=>`${x.source}:${x.unit}`===sourceKey);if(!source)return;movePlacedDroid(p,source,station,slot,p.placed.find(x=>x.station===station&&x.slot===slot));onDone()}
-// Dragging a card between slots can lock the tab up: the page stops responding
-// with nothing logged, and it cannot be reproduced with devtools open. Turned off
-// until the cause is found — the swap button on each card does the same job.
-// Flip this back to true to re-enable both the handlers and the draggable cards.
-const DRAG_AND_DROP_ENABLED=false;
+// Dragging once locked the tab up with nothing logged, and the freeze survived a
+// page refresh but not a browser restart — the mark of a drag the browser never
+// finished, left running with the pointer captured. Re-rendering the Base inside
+// the drop handler tore the dragged card out mid-drag and caused exactly that;
+// the render is now deferred. Set to false to turn dragging off again if it
+// returns — the swap button on each card does the same job.
+const DRAG_AND_DROP_ENABLED=true;
 function attachSlotDragAndDrop(p,rerender){if(!DRAG_AND_DROP_ENABLED)return;let dragged=null;const clear=()=>document.querySelectorAll('.base-slot').forEach(x=>x.classList.remove('drag-source','drag-target'));document.querySelectorAll('.base-slot.occupied[draggable="true"]').forEach(card=>{card.ondragstart=e=>{dragged=p.placed.find(x=>x.source===Number(card.dataset.source)&&x.unit===Number(card.dataset.unit));if(!dragged){e.preventDefault();return}card.classList.add('drag-source');e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',`${dragged.source}:${dragged.unit}`)};card.ondragend=()=>{dragged=null;clear()}});document.querySelectorAll('.base-slot[data-slot-index]').forEach(target=>{target.ondragover=e=>{if(!dragged||target.disabled)return;e.preventDefault();e.dataTransfer.dropEffect='move';target.classList.add('drag-target')};target.ondragleave=()=>target.classList.remove('drag-target');target.ondrop=e=>{e.preventDefault();if(!dragged||target.disabled)return;const station=target.dataset.slotStation||target.dataset.station,index=Number(target.dataset.slotIndex);if(station===dragged.station&&index===dragged.slot){clear();return}const occupant=p.placed.find(x=>x.station===station&&x.slot===index);movePlacedDroid(p,dragged,station,index,occupant);dragged=null;clear();
     // Re-render after the drop handler returns, never inside it. Rebuilding the
     // Base tears out the card being dragged, and if that happens before the
