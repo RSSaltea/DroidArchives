@@ -765,7 +765,9 @@ function stepHtml(step,index){
   const ticked=stepTicked(step.text);
   const tick=step.type==='note'?'':`<label class="step-tick" title="Mark this step as done"><input type="checkbox" data-step-tick="${escapeAttr(step.text)}" ${ticked?'checked':''}><span></span></label>`;
   // Sell steps can be waved off: the droid is spared and the plan recomputed.
-  const skip=step.type==='sell'&&step.unit?`<button class="step-skip" data-skip-sell="${step.unit.source}:${step.unit.unit}" title="Keep ${unitName(step.unit)} and work out the plan again">Keep</button>`:'';
+  // unitName() returns markup, so it cannot go in an attribute — its quotes end
+  // the attribute early and the rest spills onto the page as text.
+  const skip=step.type==='sell'&&step.unit?`<button class="step-skip" data-skip-sell="${step.unit.source}:${step.unit.unit}" title="${escapeAttr(`Keep ${plainUnitName(step.unit)} and work out the plan again`)}">Keep</button>`:'';
   return `${tick}<span class="step-thumb">${d?picture(d,step.unit.variant):''}</span><span class="step-text">${text}${assumed}</span>${skip}`;
 }
 function normaliseProjectedForSteps(baseP,projected){const keyOf=x=>`${x.source}:${x.unit}`,groupOf=x=>`${x.name}:${x.variant}`,cloneRows=rows=>rows.map(x=>({...x})),placed=cloneRows(projected.placed),sell=cloneRows(projected.sell),overflow=cloneRows(projected.overflow);for(const group of [...new Set([...placed,...sell].map(groupOf))]){const current=baseP.placed.filter(x=>groupOf(x)===group),targets=placed.filter(x=>groupOf(x)===group),sells=sell.filter(x=>groupOf(x)===group);if(current.length<2||!sells.length)continue;const used=new Set(),take=picker=>{const row=current.find(x=>!used.has(keyOf(x))&&picker(x));if(row)used.add(keyOf(row));return row};for(const target of targets){const exact=take(x=>x.station===target.station&&x.slot===target.slot),sameStation=exact||take(x=>x.station===target.station),any=sameStation||take(()=>true);if(any){target.source=any.source;target.unit=any.unit}}for(const sold of sells){const any=take(()=>true);if(any){sold.source=any.source;sold.unit=any.unit}}}return{...projected,placed,sell,overflow}}
@@ -785,6 +787,9 @@ function normaliseProjectedForSteps(baseP,projected){const keyOf=x=>`${x.source}
 // Build slots are swap-only and optimisedPlacements never routes a droid *into*
 // Build (see the BUILD guard in its fallback loop), so Build is exit-only here.
 const escapeAttr=s=>String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+// unitName() is markup for display; this is the same thing as plain text, for
+// tooltips and anywhere else that must not contain tags.
+const plainUnitName=x=>`${x.name} ${variantLabel(x.variant)}`;
 // Ticking steps off is purely a visual aid, but a plan can take a few minutes to
 // work through, so the ticks survive a reload. Keyed on the step wording, so
 // they fall away by themselves once the plan changes.
