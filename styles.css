@@ -421,3 +421,20 @@ h1{font-size:29px}
 .picker-hint.companion-count{margin-top:-4px;font-weight:800;color:#8fd9ef}
 
 @media(min-width:1000px){.dex-grid{grid-template-columns:repeat(5,minmax(0,1fr))}}
+.step-verb{font-weight:900;letter-spacing:.02em}
+.verb-sell{color:#ff8a7a}
+.verb-stage{color:#f5b944}
+.verb-place{color:#7fd1a0}
+.optimise-settled{margin:0;padding:10px 16px;background:rgba(127,209,160,.12);border:1px solid #4f9d73;border-radius:6px;color:#9ae6bb;font-weight:800;white-space:nowrap}
+.optimise-steps li.step-done{opacity:.45}
+.optimise-steps li.step-done .step-text{text-decoration:line-through}
+.step-tick{display:inline-flex;align-items:center;vertical-align:middle;margin:0 8px 0 0;cursor:pointer;flex:0 0 auto}
+.step-tick input{position:absolute;opacity:0;width:0;height:0}
+.step-tick span{display:block;width:17px;height:17px;background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:4px}
+.step-tick input:checked+span{background:#7fd1a0;border-color:#4f9d73}
+.step-tick input:checked+span::after{content:"";display:block;width:5px;height:9px;margin:1px auto 0;border:solid #0f1a12;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.step-tick input:focus-visible+span{outline:2px solid #7fd1a0;outline-offset:1px}
+.step-skip{margin-left:8px;padding:3px 9px;font:800 10px Inter;letter-spacing:.04em;text-transform:uppercase;color:#9ae6bb;background:rgba(127,209,160,.12);border:1px solid #4f9d73;border-radius:999px;cursor:pointer;vertical-align:middle}
+.step-skip:hover{background:#297142;color:#fff}
+.optimise-preview .keep-manual{color:#9ae6bb}
+.outlook-next-card .outlook-where{display:block;margin-top:2px;font-size:10px;font-style:normal;font-weight:700;letter-spacing:.03em;color:var(--muted);text-transform:uppercase}
