@@ -3,6 +3,7 @@
 .discord-button,.donate-icon-button{display:grid;place-items:center;width:36px;height:36px;flex:0 0 36px;border:1px solid #505651;background:#1d201e;border-radius:4px;text-decoration:none;transition:background .15s,border-color .15s,color .15s}.discord-button{color:#c9ceff}.discord-button svg,.donate-icon-button svg{width:21px;height:21px;fill:currentColor}.discord-button:hover,.discord-button:focus-visible{background:#5865f2;border-color:#7c86ff;color:#fff;outline:none}.donate-icon-button{color:#ffdf00}.donate-icon-button:hover,.donate-icon-button:focus-visible{background:#ffdf00;border-color:#ffec69;color:#171717;outline:none}
 .quick-grid{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
 .side-field{display:flex;flex-direction:column;gap:5px;margin:0 6px 11px;color:var(--muted);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}.side-field input,.side-field select{width:100%;min-width:0;padding:8px;background:var(--panel);border:1px solid var(--line);border-radius:4px;color:var(--ink);font:600 12px Inter;text-transform:none;letter-spacing:0}
+.side-stepper{display:grid;grid-template-columns:34px minmax(0,1fr) 34px;gap:5px}.side-stepper button{min-width:0;border:1px solid var(--line);border-radius:4px;background:var(--panel);color:var(--ink);font:900 18px Inter;cursor:pointer}.side-stepper button:hover:not(:disabled){border-color:var(--green);background:color-mix(in srgb,var(--green) 16%,var(--panel));color:var(--green)}.side-stepper button:disabled{opacity:.38;cursor:not-allowed}
 .side-check{display:flex;align-items:flex-start;gap:8px;margin:0 6px 11px;color:var(--ink);font-size:12px;font-weight:800;line-height:1.35}.side-check input{margin-top:2px;accent-color:var(--green)}
 .setting-label-row{display:flex;align-items:center;justify-content:space-between;gap:8px}.setting-help{display:inline-grid;place-items:center;flex:none;width:16px;height:16px;border:1px solid var(--line);border-radius:50%;background:var(--panel);color:var(--green);font-size:10px;font-weight:900;line-height:1;cursor:help}.setting-help:hover,.setting-help:focus{border-color:var(--green);outline:none;box-shadow:0 0 0 2px rgba(92,169,122,.14)}.side-check .setting-help{margin-left:auto}
 .super-rebirth-button{width:calc(100% - 12px);margin:2px 6px 12px}
@@ -43,14 +44,14 @@ body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,system-
 .brand small{color:#bfc6bf;font-size:10px;text-transform:uppercase;letter-spacing:.12em}
 .site-header nav{display:flex;height:100%;align-items:center}
 .site-header nav a{color:#d7ddd8;text-decoration:none;padding:24px 14px;height:100%;font-weight:600;white-space:nowrap}
-.site-header nav a:hover{background:#343a35;color:#fff}
+.site-header nav a:hover,.site-header nav a.active{background:#343a35;color:#fff}
 .header-search{margin-left:0;background:#1d201e;border:1px solid #505651;border-radius:3px;height:38px;display:flex;align-items:center;width:min(310px,26vw);padding:0 10px;color:#aeb7b0}.theme-button{margin-left:0;flex:0 0 36px}
 .header-search input{border:0;outline:0;color:#fff;background:none;width:100%;padding:8px;font:inherit}
 .menu-button{display:none;background:none;border:0;color:#fff;font-size:22px}
 .layout{max-width:1500px;margin:auto;display:grid;grid-template-columns:215px minmax(0,1fr);min-height:calc(100vh - 112px)}
 .sidebar{padding:28px 20px;border-right:1px solid var(--line);background:#f0ece3}
 .sidebar a{display:flex;align-items:center;gap:9px;padding:9px 10px;color:#3d4d41;text-decoration:none;border-radius:3px}
-.sidebar a:hover{background:#e2ddd1;color:var(--green2)}
+.sidebar a:hover,.sidebar a.active{background:#e2ddd1;color:var(--green2)}
 .side-title{text-transform:uppercase;letter-spacing:.12em;font-size:10px;font-weight:800;color:#918879;margin:3px 10px 8px}
 .side-rule{border-top:1px solid var(--line);margin:18px 4px}
 .type-dot{width:9px;height:9px;border-radius:50%}
@@ -418,6 +419,7 @@ h1{font-size:29px}
 .companion-choice button.picked small{color:#9ae6bb}
 .companion-choice button[disabled]{opacity:.4;cursor:not-allowed}
 .companion-choice button[disabled]:hover{border-color:var(--line)}
+.picker-mode{display:flex;align-items:center;gap:10px;margin:0 0 12px;padding:9px 11px;border:1px solid var(--line);border-radius:5px;background:color-mix(in srgb,var(--green) 7%,var(--panel));cursor:pointer}.picker-mode input{width:17px;height:17px;accent-color:var(--green)}.picker-mode strong,.picker-mode small{display:block}.picker-mode strong{font-size:12px}.picker-mode small{margin-top:2px;color:var(--muted);font-size:10px}
 .picker-hint.companion-count{margin-top:-4px;font-weight:800;color:#8fd9ef}
 
 @media(min-width:1000px){.dex-grid{grid-template-columns:repeat(5,minmax(0,1fr))}}
@@ -438,3 +440,10 @@ h1{font-size:29px}
 .step-skip:hover{background:#297142;color:#fff}
 .optimise-preview .keep-manual{color:#9ae6bb}
 .outlook-next-card .outlook-where{display:block;margin-top:2px;font-size:10px;font-style:normal;font-weight:700;letter-spacing:.03em;color:var(--muted);text-transform:uppercase}
+html[data-theme="dark"] .sidebar a.active{background:#202633;color:#fff}
+
+/* Nova Shop planner */
+.nova-planner-grid{grid-template-columns:190px minmax(520px,1fr) minmax(280px,360px)}.nova-planner-icon{display:grid!important;place-items:center;border:1px solid #55b6dc;border-radius:50%;color:#72dff6;font-size:22px}.nova-planner-workspace{min-width:0;padding:18px;border-right:1px solid #29333f;background:#05080c}.nova-planner-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:15px}.nova-planner-summary>div{padding:13px;border:1px solid #2f4551;background:#0d151c}.nova-planner-summary small,.nova-planner-summary strong{display:block}.nova-planner-summary small{color:#7e8da0;font:800 9px Inter;text-transform:uppercase}.nova-planner-summary strong{margin-top:4px;color:#7de2bf;font-size:18px}.nova-planner-upgrades{border:1px solid #273342}.nova-planner-upgrades>header,.nova-plan-row{display:grid;grid-template-columns:minmax(230px,1fr) 76px 76px 100px;align-items:center;gap:8px}.nova-planner-upgrades>header{padding:9px 10px;background:#111925;color:#8290a3;font-size:9px;font-weight:900;text-transform:uppercase}.nova-plan-row{position:relative;min-height:66px;padding:9px 10px 9px 66px;border-top:1px solid #202b37;color:#dce2e9}.nova-plan-row>img,.nova-plan-row>.picture,.nova-plan-row>span:first-child{position:absolute;left:10px;width:44px;height:44px;object-fit:contain}.nova-plan-row>.picture img{width:100%;height:100%;object-fit:contain}.nova-plan-row span strong,.nova-plan-row span small{display:block}.nova-plan-row span strong{font-size:12px;text-transform:uppercase}.nova-plan-row span small{margin-top:3px;color:#758397;font-size:9px}.nova-plan-row input{width:100%;min-width:0;padding:8px;border:1px solid #3a4858;background:#0d1219;color:#e8ebf1;font:800 12px Inter}.nova-plan-row>b{color:#7de2bf;font-size:12px;text-align:right}.nova-planner-runs{min-width:0;padding:18px;background:linear-gradient(145deg,#0a1118,#05090e)}.nova-planner-runs h2{margin:3px 0 14px;padding:0;border:0;color:#70e2c1;font:900 20px Inter;text-transform:uppercase}.nova-route-option{display:grid;grid-template-columns:1fr auto;gap:3px 8px;margin-bottom:8px;padding:10px;border:1px solid #33414f;background:#0d131a}.nova-route-option.best{border-color:#72dff6;box-shadow:inset 3px 0 #72dff6}.nova-route-option span,.nova-route-option strong{font-size:12px}.nova-route-option strong{color:#7de2bf}.nova-route-option small{grid-column:1/-1;color:#7e8da0}.nova-run-table{max-height:330px;overflow:auto;margin-top:15px;border:1px solid #273342}.nova-run-table table{margin:0}.nova-run-table th{position:sticky;top:0;background:#111925;color:#8290a3;font-size:9px;text-transform:uppercase}.nova-run-table td{font-size:11px}.nova-run-table tr.fastest td{background:#10231c;color:#a8e5c8}.nova-plan-note{display:block;margin-top:10px;color:#788698;line-height:1.45}
+@media(max-width:1180px){.nova-planner-grid{grid-template-columns:165px minmax(440px,1fr) 290px}.nova-planner-upgrades>header,.nova-plan-row{grid-template-columns:minmax(180px,1fr) 68px 68px 88px}}
+@media(max-width:900px){.nova-planner-grid{grid-template-columns:1fr}.nova-planner-workspace{border-right:0;border-bottom:1px solid #29333f}}
+@media(max-width:620px){.nova-planner-workspace,.nova-planner-runs{padding:12px}.nova-planner-summary{grid-template-columns:1fr}.nova-planner-upgrades>header{display:none}.nova-plan-row{grid-template-columns:1fr 65px 65px;padding-left:64px}.nova-plan-row>b{grid-column:1/-1;text-align:left}.nova-plan-row>b::before{content:'Still costs: ';color:#758397}.nova-planner-grid .nova-category-rail{grid-template-columns:repeat(7,118px)}}
