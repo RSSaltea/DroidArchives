@@ -19,3 +19,7 @@ Then open `http://localhost:8000`. Directly opening `index.html` will not work b
 - `data/image-manifest.json` maps locally stored wiki image assets.
 
 Data was cross-checked against the community tracker and Fortnite Wiki on 28 June 2026. This is an unofficial fan project and is not affiliated with Epic Games, Fortnite, Disney, or Lucasfilm.
+
+## Supabase setup
+
+Cloud profiles and account groups require the tables, row-level security policies, and RPC functions in `data/supabase-schema.sql`. Run the complete file in the Supabase SQL Editor after pulling an update; it is written to be safely rerunnable. The group RPCs expose only profiles that their owners explicitly share and handle permitted shared-profile edits atomically.
