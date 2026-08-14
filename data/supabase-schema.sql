@@ -243,9 +243,33 @@ create table if not exists public.droid_archive_group_members (
   user_id uuid not null references auth.users(id) on delete cascade,
   display_name text not null check (char_length(display_name) between 1 and 40),
   role text not null default 'member' check (role in ('owner', 'member')),
+  approval_status text not null default 'pending' check (approval_status in ('pending', 'approved')),
   joined_at timestamptz not null default now(),
   primary key (group_id, user_id)
 );
+
+-- Existing group members predate join approval and must remain connected.
+alter table public.droid_archive_group_members
+  add column if not exists approval_status text;
+update public.droid_archive_group_members
+set approval_status = 'approved'
+where approval_status is null;
+alter table public.droid_archive_group_members
+  alter column approval_status set default 'pending',
+  alter column approval_status set not null;
+do $$
+begin
+  if not exists (
+    select 1 from pg_constraint
+    where conname = 'droid_archive_group_members_approval_status_check'
+      and conrelid = 'public.droid_archive_group_members'::regclass
+  ) then
+    alter table public.droid_archive_group_members
+      add constraint droid_archive_group_members_approval_status_check
+      check (approval_status in ('pending', 'approved'));
+  end if;
+end;
+$$;
 
 create table if not exists public.droid_archive_group_profile_shares (
   group_id uuid not null references public.droid_archive_groups(id) on delete cascade,
@@ -282,6 +306,7 @@ as $$
     from public.droid_archive_group_members member
     where member.group_id = target_group_id
       and member.user_id = auth.uid()
+      and member.approval_status = 'approved'
   );
 $$;
 
@@ -376,8 +401,8 @@ begin
   values (trim(group_name), auth.uid())
   returning id into new_group_id;
 
-  insert into public.droid_archive_group_members (group_id, user_id, display_name, role)
-  values (new_group_id, auth.uid(), trim(member_display_name), 'owner');
+  insert into public.droid_archive_group_members (group_id, user_id, display_name, role, approval_status)
+  values (new_group_id, auth.uid(), trim(member_display_name), 'owner', 'approved');
 
   return new_group_id;
 end;
@@ -412,8 +437,8 @@ begin
     raise exception 'That invite code is invalid.';
   end if;
 
-  insert into public.droid_archive_group_members (group_id, user_id, display_name, role)
-  values (target_group_id, auth.uid(), trim(member_display_name), 'member')
+  insert into public.droid_archive_group_members (group_id, user_id, display_name, role, approval_status)
+  values (target_group_id, auth.uid(), trim(member_display_name), 'member', 'pending')
   on conflict (group_id, user_id)
   do update set display_name = excluded.display_name;
 
@@ -487,10 +512,12 @@ as $$
           'userId', member.user_id,
           'displayName', member.display_name,
           'role', member.role,
+          'approvalStatus', member.approval_status,
           'joinedAt', member.joined_at
         ) order by member.role desc, lower(member.display_name))
         from public.droid_archive_group_members member
         where member.group_id = target_group.id
+          and (member.approval_status = 'approved' or target_group.owner_id = auth.uid())
       ), '[]'::jsonb),
       'profiles', coalesce((
         select jsonb_agg(jsonb_build_object(
@@ -599,6 +626,50 @@ begin
 end;
 $$;
 
+create or replace function public.review_droid_archive_group_member(
+  target_group_id uuid,
+  target_user_id uuid,
+  approve_member boolean
+)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if not exists (
+    select 1 from public.droid_archive_groups target_group
+    where target_group.id = target_group_id
+      and target_group.owner_id = auth.uid()
+  ) then
+    raise exception 'Only the group owner can review join requests.';
+  end if;
+
+  if target_user_id = auth.uid() then
+    raise exception 'The group owner cannot review themselves.';
+  end if;
+
+  if approve_member then
+    update public.droid_archive_group_members
+    set approval_status = 'approved'
+    where group_id = target_group_id
+      and user_id = target_user_id
+      and role = 'member'
+      and approval_status = 'pending';
+  else
+    delete from public.droid_archive_group_members
+    where group_id = target_group_id
+      and user_id = target_user_id
+      and role = 'member'
+      and approval_status = 'pending';
+  end if;
+
+  if not found then
+    raise exception 'That pending join request no longer exists.';
+  end if;
+end;
+$$;
+
 create or replace function public.leave_droid_archive_group(target_group_id uuid)
 returns void
 language plpgsql
@@ -655,6 +726,7 @@ revoke all on function public.droid_archive_group_workspace() from public;
 revoke all on function public.save_shared_droid_archive_profile(uuid, uuid, text, jsonb, text) from public;
 revoke all on function public.leave_droid_archive_group(uuid) from public;
 revoke all on function public.remove_droid_archive_group_member(uuid, uuid) from public;
+revoke all on function public.review_droid_archive_group_member(uuid, uuid, boolean) from public;
 
 grant execute on function public.create_droid_archive_group(text, text) to authenticated;
 grant execute on function public.join_droid_archive_group(text, text) to authenticated;
@@ -663,3 +735,4 @@ grant execute on function public.droid_archive_group_workspace() to authenticate
 grant execute on function public.save_shared_droid_archive_profile(uuid, uuid, text, jsonb, text) to authenticated;
 grant execute on function public.leave_droid_archive_group(uuid) to authenticated;
 grant execute on function public.remove_droid_archive_group_member(uuid, uuid) to authenticated;
+grant execute on function public.review_droid_archive_group_member(uuid, uuid, boolean) to authenticated;
