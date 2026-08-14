@@ -2,6 +2,21 @@
   "version": 1,
   "notes": [
     {
+      "id": "2026-08-14-connected-account-groups",
+      "date": "2026-08-14",
+      "title": "Connected account groups and shared Rebirth Outlooks",
+      "summary": "Connect accounts, share selected profiles safely, and track several Rebirth Outlooks together from the Base page.",
+      "changes": [
+        "Create or join account groups with an invite code, then share only the profiles you choose.",
+        "Group owners must approve new join requests before those accounts can access the group or its shared profiles.",
+        "Shared profiles are read only unless their owner explicitly allows editing.",
+        "Choose exactly which connected profiles appear in Group Rebirth Outlook, with a separate Base-page button to show or hide the panel.",
+        "Invite codes stay concealed until hovered on desktop or tapped on mobile; clicking or tapping also copies the code.",
+        "Fixed View and View / Edit freezing the page when opening another account's shared profile."
+      ],
+      "showOnStartup": true
+    },
+    {
       "id": "2026-08-11-optimise-steps-and-pickers",
       "date": "2026-08-11",
       "title": "Easier Optimise steps and quicker droid picking",
