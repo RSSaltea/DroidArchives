@@ -511,5 +511,45 @@
       { "droidName": "CYCLENS", "variant": "BESKAR" },
       { "droidName": "IG", "variant": "GALACTIC" }
     ]
+  },
+  {
+    "to": 31, "creditsCost": 150000000000000,
+    "requiredDroids": [
+      { "droidName": "TRAK-R", "variant": "STELLAR" },
+      { "droidName": "CYCLO-GRAV", "variant": "BESKAR" },
+      { "droidName": "TRI-TEK", "variant": "BESKAR" }
+    ]
+  },
+  {
+    "to": 32, "creditsCost": 230000000000000,
+    "requiredDroids": [
+      { "droidName": "R2", "variant": "GALACTIC" },
+      { "droidName": "R6", "variant": "GALACTIC" },
+      { "droidName": "IG", "variant": "BESKAR" }
+    ]
+  },
+  {
+    "to": 33, "creditsCost": 345000000000000,
+    "requiredDroids": [
+      { "droidName": "B2 HEAVY", "variant": "STELLAR" },
+      { "droidName": "BB9", "variant": "GALACTIC" },
+      { "droidName": "RIC-1200", "variant": "GALACTIC" }
+    ]
+  },
+  {
+    "to": 34, "creditsCost": 520000000000000,
+    "requiredDroids": [
+      { "droidName": "STRIKE-ORB", "variant": "STELLAR" },
+      { "droidName": "AMP WALKER", "variant": "STELLAR" },
+      { "droidName": "MO-TRAK", "variant": "GALACTIC" }
+    ]
+  },
+  {
+    "to": 35, "creditsCost": 778000000000000,
+    "requiredDroids": [
+      { "droidName": "B2-RP", "variant": "STELLAR" },
+      { "droidName": "LOADLIFTER", "variant": "STELLAR" },
+      { "droidName": "LEP", "variant": "STELLAR" }
+    ]
   }
 ]

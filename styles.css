@@ -84,7 +84,7 @@ h2{font-size:22px;border-bottom:1px solid var(--line);padding-bottom:9px;margin-
 .spawn-rainbow{border-color:#26647a;background:linear-gradient(135deg,#111a2b,#151827 58%,#271830)}
 .spawn-rainbow strong{background:linear-gradient(90deg,#ff7a40,#ffe15b,#62e77d,#54d9ff,#d27cff);-webkit-background-clip:text;background-clip:text;color:transparent}
 .spawn-galactic{border-color:#7f47ff;background:radial-gradient(circle at 18% 22%,#cbb7ff33,transparent 18%),radial-gradient(circle at 74% 34%,#ff7cff24,transparent 16%),linear-gradient(135deg,#11142b,#201242 58%,#34175d)}
-.spawn-galactic img{filter:hue-rotate(80deg) saturate(1.5) drop-shadow(0 4px 12px #8d63ff88)}
+.spawn-galactic img{filter:saturate(1.12) drop-shadow(0 4px 12px #8d63ff88)}
 .spawn-galactic strong{background:linear-gradient(90deg,#d8c7ff,#9c67ff,#ff82df,#6be7ff);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none}
 .home-timers{display:grid;gap:16px;margin-top:-4px}
 .home-timers .spawn-timer{min-height:106px;padding:18px 20px}
@@ -466,3 +466,12 @@ html[data-theme="dark"] .sidebar a.active{background:#202633;color:#fff}
 @media(max-width:980px){.nova-plan-card-grid{grid-template-columns:1fr}.nova-srb-levels{grid-template-columns:repeat(4,1fr)}}
 @media(max-width:700px){.nova-planner-toolbar{align-items:stretch;flex-direction:column}.nova-planner-toolbar>span{order:3}.nova-reach-setting{align-items:stretch;flex-direction:column;margin:0 14px}.nova-reach-setting label{justify-content:space-between}.nova-planner-summary{grid-template-columns:1fr;padding:14px}.nova-planner-groups{padding:2px 14px 16px}.nova-route-options{grid-template-columns:1fr}.nova-srb-planner>header{align-items:flex-start;flex-direction:column}.nova-srb-levels{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:430px){.nova-plan-card{padding:11px}.nova-plan-card>header{grid-template-columns:40px minmax(0,1fr)}.nova-plan-card>header>img,.nova-plan-card>header>.picture,.nova-plan-card>header>span:first-child{width:38px;height:38px}.nova-plan-card>header>strong{grid-column:1/-1}.nova-plan-controls{grid-template-columns:1fr}.nova-plan-arrow{display:none}}
+
+/* Stellar sits above Galactic. Dedicated art is not available yet. */
+.variant-stellar{background:linear-gradient(90deg,#ffe66a,#ffad24,#ff6a1a,#ffd34d);-webkit-background-clip:text;background-clip:text;color:transparent!important;text-shadow:0 0 14px rgba(255,126,24,.38)}
+.variant-tabs button.active .variant-stellar{color:#fff!important;background:none!important;-webkit-text-fill-color:currentColor}
+.rebirth-quality-option.quality-stellar{border-color:#ff9c20;background:radial-gradient(circle at 72% 28%,#ffe778 0 8%,transparent 24%),linear-gradient(135deg,#321006,#7d2108 34%,#ff7b13 55%,#a72b08 73%,#2b0904);color:#fff0a6;text-shadow:0 1px 2px #3b0900;box-shadow:inset 0 0 9px rgba(255,224,94,.38),0 0 10px rgba(255,100,12,.45)}
+.rebirth-quality-strip{grid-template-columns:repeat(7,minmax(0,1fr))}
+/* The timer count comes from the enabled spawn configuration. This keeps two
+   current timers balanced and automatically makes room for a future Stellar timer. */
+.spawn-timers{grid-template-columns:repeat(var(--spawn-timer-count,2),minmax(0,1fr))!important}

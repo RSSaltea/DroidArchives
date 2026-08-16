@@ -511,5 +511,45 @@
       { "droidName": "KX", "variant": "BESKAR" },
       { "droidName": "DRFT-R", "variant": "GALACTIC" }
     ]
+  },
+  {
+    "to": 31, "creditsCost": 150000000000000,
+    "requiredDroids": [
+      { "droidName": "B2 SUPER", "variant": "STELLAR" },
+      { "droidName": "B2-RP", "variant": "BESKAR" },
+      { "droidName": "LOADLIFTER", "variant": "BESKAR" }
+    ]
+  },
+  {
+    "to": 32, "creditsCost": 230000000000000,
+    "requiredDroids": [
+      { "droidName": "GUNRUNNER", "variant": "GALACTIC" },
+      { "droidName": "B1 HEAVY", "variant": "GALACTIC" },
+      { "droidName": "LEP", "variant": "BESKAR" }
+    ]
+  },
+  {
+    "to": 33, "creditsCost": 345000000000000,
+    "requiredDroids": [
+      { "droidName": "R2", "variant": "STELLAR" },
+      { "droidName": "OPTI-STRIKE", "variant": "GALACTIC" },
+      { "droidName": "KX", "variant": "GALACTIC" }
+    ]
+  },
+  {
+    "to": 34, "creditsCost": 520000000000000,
+    "requiredDroids": [
+      { "droidName": "R6", "variant": "STELLAR" },
+      { "droidName": "LO", "variant": "STELLAR" },
+      { "droidName": "RIC", "variant": "GALACTIC" }
+    ]
+  },
+  {
+    "to": 35, "creditsCost": 778000000000000,
+    "requiredDroids": [
+      { "droidName": "R7", "variant": "STELLAR" },
+      { "droidName": "DRFT-R", "variant": "STELLAR" },
+      { "droidName": "CYCLENS", "variant": "STELLAR" }
+    ]
   }
 ]

@@ -99,6 +99,30 @@
       ]
     },
     {
+      "id": "crit-pack",
+      "name": "Crit Pack",
+      "category": "packs",
+      "vbucksCost": 3800,
+      "icon": "assets/nova-shop/T_Icon_CritChance.png",
+      "description": "A permanent bundle for Critical upgrades and effects.",
+      "details": [
+        "Special Crit visual effect when you get a Critical hit",
+        "4 Levels of Critical Chance",
+        "2 Levels of Critical Amount",
+        "1 Level of Multi Crit"
+      ],
+      "novaUnlocks": [
+        "critical-chance",
+        "critical-amount",
+        "multi-crit"
+      ],
+      "novaLevels": {
+        "critical-chance": 4,
+        "critical-amount": 2,
+        "multi-crit": 1
+      }
+    },
+    {
       "id": "rainbow-surge",
       "name": "Rainbow Surge",
       "category": "surges",

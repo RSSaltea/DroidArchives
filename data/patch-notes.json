@@ -2,6 +2,24 @@
   "version": 1,
   "notes": [
     {
+      "id": "2026-08-16-command-deck-stellar",
+      "date": "2026-08-16",
+      "title": "Command Deck UI, Stellar droids and Cycle 5",
+      "summary": "A complete Modern interface joins the classic Legacy view, alongside Stellar droids, 35-level rebirth cycles, Crit Pack support and new Nova upgrades.",
+      "changes": [
+        "Added the Command Deck interface across Droid Archives, with a responsive navigation deck, clearer page layouts, compact spawn timers, improved Base controls and refreshed droid-slot actions.",
+        "Added a Modern / Legacy switch so you can use the redesigned interface or return to the original layout at any time.",
+        "Added Stellar as the new quality above Galactic, including the new Stellar droid artwork, production data, sell values, upgrade costs and Upgrade Chip Station output.",
+        "Extended every Super Rebirth cycle from 30 to 35 rebirths and added the complete Cycle 5 guide. Stellar droids also satisfy Galactic and every lower-quality rebirth requirement.",
+        "Removed the retired Beskar spawn timer from display while keeping its timer slot ready for a future Stellar schedule, and updated the Galactic spawn artwork.",
+        "Added Crit Pack to the Cantina Shop. Owning it grants at least 4 Critical Chance levels, 2 Critical Amount levels and 1 Multi Crit level without preventing further upgrades.",
+        "Added Chip Sell Bonus and Credit Sell Bonus to the Nova Shop, including all costs and level rewards. Chip Sell Bonus is included in the Base Upgrade Chip sell calculator.",
+        "Updated the Base layout, collapsible settings, active calculator buttons, slot locks, station arrangement and droid management controls for a cleaner and more consistent experience.",
+        "Updated upgrade paths and calculations for Galactic to Stellar, including 180 Common, 750 Rare, 8,000 Epic, 24,000 Legendary and 90,000 Mythic Upgrade Chips."
+      ],
+      "showOnStartup": true
+    },
+    {
       "id": "2026-08-14-connected-account-groups",
       "date": "2026-08-14",
       "title": "Connected account groups and shared Rebirth Outlooks",

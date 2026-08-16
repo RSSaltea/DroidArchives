@@ -690,6 +690,61 @@
       ]
     },
     {
+      "id": "chip-sell-bonus",
+      "sourceId": "CSB",
+      "name": "Chip Sell Bonus",
+      "category": "featured",
+      "icon": "assets/nova-shop/chipsellbonus.png",
+      "description": "Earn up to +200% Upgrade Chips when selling a Droid.",
+      "levels": [
+        {
+          "level": 1,
+          "cost": 60,
+          "reward": "+50% Upgrade Chips when selling a Droid"
+        },
+        {
+          "level": 2,
+          "cost": 100,
+          "reward": "+100% Upgrade Chips when selling a Droid"
+        },
+        {
+          "level": 3,
+          "cost": 140,
+          "reward": "+150% Upgrade Chips when selling a Droid"
+        },
+        {
+          "level": 4,
+          "cost": 180,
+          "reward": "+200% Upgrade Chips when selling a Droid"
+        }
+      ]
+    },
+    {
+      "id": "credit-sell-bonus",
+      "sourceId": "CRSB",
+      "name": "Credit Sell Bonus",
+      "category": "featured",
+      "icon": "assets/nova-shop/creditsellbonus.png",
+      "description": "Earn up to +750% Credits when selling a Droid.",
+      "levels": [
+        {
+          "level": 1,
+          "cost": 25,
+          "reward": "+250% Credits when selling a Droid"
+        },
+        {
+          "level": 2,
+          "cost": 40,
+          "reward": "+500% Credits when selling a Droid"
+        },
+        {
+          "level": 3,
+          "cost": 55,
+          "reward": "+750% Credits when selling a Droid"
+        }
+      ]
+    },
+    {
       "id": "luck-boost-token",
       "sourceId": "LBT",
       "name": "Luck Boost Token",

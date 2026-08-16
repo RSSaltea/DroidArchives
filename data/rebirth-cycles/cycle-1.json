@@ -511,5 +511,45 @@
       { "droidName": "CYCLENS", "variant": "BESKAR" },
       { "droidName": "LOADLIFTER", "variant": "GALACTIC" }
     ]
+  },
+  {
+    "to": 31, "creditsCost": 150000000000000,
+    "requiredDroids": [
+      { "droidName": "SEN-TRI", "variant": "STELLAR" },
+      { "droidName": "PROTO-ROLLER", "variant": "BESKAR" },
+      { "droidName": "KX", "variant": "BESKAR" }
+    ]
+  },
+  {
+    "to": 32, "creditsCost": 230000000000000,
+    "requiredDroids": [
+      { "droidName": "ORB-WALKER", "variant": "GALACTIC" },
+      { "droidName": "OPTI-POD", "variant": "GALACTIC" },
+      { "droidName": "RIC", "variant": "BESKAR" }
+    ]
+  },
+  {
+    "to": 33, "creditsCost": 345000000000000,
+    "requiredDroids": [
+      { "droidName": "B1 HEAVY", "variant": "STELLAR" },
+      { "droidName": "CYCLO-GRAV", "variant": "GALACTIC" },
+      { "droidName": "DRFT-R", "variant": "GALACTIC" }
+    ]
+  },
+  {
+    "to": 34, "creditsCost": 520000000000000,
+    "requiredDroids": [
+      { "droidName": "GROUNDMECH", "variant": "STELLAR" },
+      { "droidName": "BB", "variant": "STELLAR" },
+      { "droidName": "CYCLENS", "variant": "GALACTIC" }
+    ]
+  },
+  {
+    "to": 35, "creditsCost": 778000000000000,
+    "requiredDroids": [
+      { "droidName": "BB9", "variant": "STELLAR" },
+      { "droidName": "IG", "variant": "STELLAR" },
+      { "droidName": "SNOW MOUSE", "variant": "STELLAR" }
+    ]
   }
 ]

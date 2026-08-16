@@ -1,0 +1,51 @@
+{
+  "_source": "https://gonk.tools/wiki?section=droids",
+  "_sourceBuild": "1.26.0-aug-15",
+  "_rules": {
+    "craftingMultiplier": 18,
+    "costMultiplier": {
+      "COMMON": 24,
+      "RARE": 24,
+      "EPIC": 750,
+      "LEGENDARY": 14500,
+      "MYTHIC": 28000
+    },
+    "incomeMultiplier": {
+      "COMMON": 32,
+      "RARE": 32,
+      "EPIC": 80,
+      "LEGENDARY": 150,
+      "MYTHIC": 125
+    }
+  },
+  "_images": {
+    "MOUSE": "Mouse.png", "PIT": "Pit.png", "GONK": "Gonk.png", "CB": "CB.png",
+    "R3": "R3.png", "R5": "R5.png", "R8": "R8.png", "IMPERIAL PROBE": "Imperial_Probe.png",
+    "B1 BATTLE": "B1_Battle.png", "DRK-1 PROBE": "DRK-1_Probe.png", "ID10": "ID10.png",
+    "BDX EXPLORER": "BDX_Explorer.png", "ARG": "ARG.png", "SENATE HOVERCAM": "Senate_Hovercam.png",
+    "B-U4D": "B-U4D.png", "BAL-CORE": "Bal-Core.png", "ROLL-R": "Roll-R.png", "2BB": "2BB.png",
+    "A-LT": "A-LT.png", "R4": "R4.png", "R9": "R9.png", "B1 SECURITY": "B1_Security.png",
+    "NAV-EX": "Nav-Ex.png", "VECT-ARM": "Vect-ARM.png", "HOV-R": "Hov-R.png",
+    "GROUNDMECH": "Groundmech.png", "LO": "LO.png", "AMP WALKER": "Amp_Walker.png",
+    "SEN-TRI": "Sen-Tri.png", "OPTI-POD": "Opti-Pod.png", "GUNRUNNER": "Gunrunner.png",
+    "BB": "BB.png", "R2": "R2.png", "R6": "R6.png", "TRAK-R": "Trak-R.png",
+    "ORB-WALKER": "Orb-Walker.png", "UTIL-TEC": "Util-Tec.png", "B1 HEAVY": "B1_Heavy.png",
+    "B2 SUPER": "B2_Super.png", "B2 HEAVY": "B2_Heavy.png", "STRIKE-ORB": "Strike-Orb.png",
+    "HAUL-R": "Haul-R.png", "LNG-SHOT": "LNG-Shot.png", "PROTO-ROLLER": "Proto-Roller.png",
+    "MECHA-DROID": "Mecha-Droid.png", "MONO-WALKER": "Mono-WLKR.png", "BB9": "BB9.png",
+    "R7": "R7.png", "B2-RP": "B2-RP.png", "CYCLO-GRAV": "Cyclo-Grav.png",
+    "OPTI-STRIKE": "Opti-STRK.png", "SNOW MOUSE": "Snow_Mouse.png", "RIC": "RIC.png",
+    "LOADLIFTER": "Loadlifter.png", "LEP": "Lep.png", "RIC-1200": "RIC-1200.png",
+    "DRFT-R": "DRFT-R.png", "CYCLENS": "Cyclens.png", "MO-TRAK": "Mo-Trak.png",
+    "TRI-TEK": "Tri-Tek.png", "IG": "IG.png", "KX": "KX.png"
+  },
+  "MOUSE": { "cost": 22800, "income": 64 },
+  "PIT": { "cost": 26400, "income": 64 },
+  "GONK": { "cost": 72000, "income": 128 },
+  "IMPERIAL PROBE": { "cost": 120000, "income": 192 },
+  "DRK-1 PROBE": { "cost": 72000, "income": 96 },
+  "ID10": { "cost": 96000, "income": 128 },
+  "SENATE HOVERCAM": { "cost": 2400000, "income": 1470 },
+  "TRAK-R": { "cost": 2250000000, "income": 26400 },
+  "DRFT-R": { "cost": 6380000000000, "income": 725000 }
+}
