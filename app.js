@@ -1559,11 +1559,14 @@ function modernBaseStationLayout(){
 function modernDroidCardActions(){
   app.querySelectorAll('.base-slot.occupied').forEach(card=>{
     if(card.parentElement?.classList.contains('modern-slot-wrap'))return;
-    const controls=[...card.children].filter(node=>node.matches?.('.slot-variant,.slot-lock,.slot-swap,.slot-delete,.slot-complete'));
+    // Keep the Build completion control inside the card. It is deliberately a
+    // full-width footer action in Legacy and is clearer there than squeezed
+    // into Modern's small utility-button strip.
+    const controls=[...card.children].filter(node=>node.matches?.('.slot-variant,.slot-lock,.slot-swap,.slot-delete'));
     if(!controls.length)return;
     const actions=document.createElement('div'),menu=document.createElement('div');
     actions.className='slot-card-actions';menu.className='slot-card-menu';
-    controls.forEach(button=>{const label=button.classList.contains('slot-complete')?'Complete build':button.classList.contains('craft-blueprint')?'Craft':button.classList.contains('slot-variant')?'Change quality':button.classList.contains('slot-lock')?'Optimise lock':button.classList.contains('slot-swap')?'Swap droid':'Remove droid';button.dataset.actionLabel=label;button.title=label;menu.append(button)});
+    controls.forEach(button=>{const label=button.classList.contains('craft-blueprint')?'Craft':button.classList.contains('slot-variant')?'Change quality':button.classList.contains('slot-lock')?'Optimise lock':button.classList.contains('slot-swap')?'Swap droid':'Remove droid';button.dataset.actionLabel=label;button.title=label;menu.append(button)});
     const wrapper=document.createElement('div');wrapper.className='modern-slot-wrap';
     actions.append(menu);card.before(wrapper);wrapper.append(actions,card);
     menu.onclick=event=>event.stopPropagation()
