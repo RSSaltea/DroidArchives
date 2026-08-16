@@ -2,6 +2,18 @@
   "version": 1,
   "notes": [
     {
+      "id": "2026-08-16-mobile-profiles-stability",
+      "date": "2026-08-16",
+      "title": "Mobile profiles and stability fixes",
+      "summary": "Account controls are now easy to reach on mobile, with steadier timers and reliable shared-profile optimisation.",
+      "changes": [
+        "Added an account and profile button to the Modern mobile header, giving quick access to sign in, account creation and profile switching at every phone width.",
+        "Stopped compact spawn timers flickering between their large and small layouts near the scroll threshold.",
+        "Fixed Apply optimised layout on editable group profiles so the new layout is saved back to the shared profile."
+      ],
+      "showOnStartup": true
+    },
+    {
       "id": "2026-08-16-command-deck-stellar",
       "date": "2026-08-16",
       "title": "Command Deck UI, Stellar droids and Cycle 5",
