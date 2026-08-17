@@ -475,3 +475,23 @@ html[data-theme="dark"] .sidebar a.active{background:#202633;color:#fff}
 /* The timer count comes from the enabled spawn configuration. This keeps two
    current timers balanced and automatically makes room for a future Stellar timer. */
 .spawn-timers{grid-template-columns:repeat(var(--spawn-timer-count,2),minmax(0,1fr))!important}
+.base-map{margin:18px 0 22px;padding:14px 16px;background:var(--panel);border:1px solid var(--line);border-left:5px solid #6fd3ff;border-radius:8px;box-shadow:var(--shadow)}
+.base-map>header{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:12px}
+.base-map>header strong{display:block;font-size:15px}
+.base-map>header span{display:block;color:var(--muted);font-size:12px;font-weight:700}
+.base-map-art{position:relative;width:100%;max-width:900px;margin:0 auto}
+.base-map-art>img{display:block;width:100%;height:auto;border-radius:6px}
+.map-slot{position:absolute;transform:translate(-50%,-50%);display:grid;place-items:center;width:6.2%;aspect-ratio:1;min-width:26px;padding:0;border-radius:50%;border:2px solid var(--line);background:#0e1420cc;cursor:pointer;overflow:hidden;z-index:2}
+.map-slot img{width:88%;height:88%;object-fit:contain}
+.map-slot>span{font-size:13px;font-weight:800;line-height:1;color:var(--muted)}
+.map-slot.open{border-style:dashed;background:#0e142099}
+.map-slot.open:hover{border-color:#7fd1a0;background:#132a1ecc}
+.map-slot.open:hover>span{color:#9ae6bb}
+.map-slot.filled{border-color:#6fd3ff;background:#0b1522ee}
+.map-slot.filled:hover{border-color:#b6e8ff;transform:translate(-50%,-50%) scale(1.12);z-index:3}
+.map-slot.filled.matched{border-color:#7fd1a0}
+.map-slot.filled.building{border-color:#c0563f}
+.map-slot.locked{border-style:dotted;opacity:.5;cursor:default}
+.map-slot.locked>span{font-size:11px}
+.base-layout-v2.map-mode{opacity:.92}
+@media(max-width:650px){.base-map{padding:12px}.base-map>header{flex-direction:column;align-items:flex-start;gap:8px}.map-slot{min-width:20px;border-width:1px}}
