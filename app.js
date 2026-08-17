@@ -64,7 +64,7 @@ const fmt=n=>{if(!n)return '—';const u=[['T',1e12],['B',1e9],['M',1e6],['K',1e
 // at 01:44:53 BST, which agrees with Mythic (10:07 to :55) and Galactic (00:07
 // to :45) from the same screenshot.
 const SPAWN_TIMERS=[
-  {id:'stellar',name:'Stellar Spawn',intervalMinutes:60,offsetMinutes:0,note:'Every 60 minutes',image:'assets/events/beskar-spawn.png'},
+  {id:'stellar',name:'Stellar Spawn',intervalMinutes:60,offsetMinutes:0,note:'Every 60 minutes',image:'assets/events/stellar-spawn.png'},
   {id:'mythic',name:'Mythic Spawn',intervalMinutes:60,offsetMinutes:55,note:'Every 60 minutes',image:'assets/events/mythic-spawn.png'},
   {id:'galactic',name:'Galactic Spawn',intervalMinutes:60,offsetMinutes:45,note:'Every 60 minutes',image:'assets/events/galactic-spawn.png'}
 ];
