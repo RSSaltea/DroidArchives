@@ -363,6 +363,9 @@ const mapFloor=()=>MAP_FLOORS.includes(localStorage.getItem('droid-archive-map-f
 // Markers carry the same data attributes the list view uses, so the Base page's
 // existing handlers wire them up untouched: an empty slot opens the picker, an
 // occupied one opens the swap, blueprints open the blueprint picker.
+// One piece of artwork serves both floors — the building is the same shape
+// upstairs, so only the markers change. The floor toggle still matters: it swaps
+// the five ground-floor Battle slots for the six above them.
 function baseMapHtml(p){
   const floor=mapFloor(),other=floor==='downstairs'?'upstairs':'downstairs';
   const markers=mapFloorSlots(floor).map(spot=>{
@@ -396,7 +399,7 @@ function baseMapHtml(p){
     return `<div class="map-pin" style="${pos}" data-slot-station="${station}" data-slot-index="${index}"><button class="map-pin-face open" data-station="${station}" data-slot-index="${index}" title="${escapeAttr(`Add to ${stationName(station)} slot ${index+1}`)}"><span class="slot-icon">${stationIcon(station)}</span></button></div>`;
   }).join('');
   const counts=mapFloorSlots(floor).reduce((n,s)=>n+(p.placed.some(x=>x.station===s.station&&x.slot===s.index)?1:0),0);
-  return `<section class="base-map"><header><div><strong>${floor==='upstairs'?'Upstairs':'Downstairs'}</strong><span>${counts} of ${mapFloorSlots(floor).length} spots filled</span></div><button class="btn secondary" id="toggleMapFloor">Go ${other}</button></header><div class="base-map-art"><img src="assets/map/${floor}.png" alt="Overhead map of the base, ${floor}">${markers}</div></section>`;
+  return `<section class="base-map"><header><div><strong>${floor==='upstairs'?'Upstairs':'Downstairs'}</strong><span>${counts} of ${mapFloorSlots(floor).length} spots filled</span></div><button class="btn secondary" id="toggleMapFloor">Go ${other}</button></header><div class="base-map-art"><img src="assets/map/map.png" alt="Overhead map of the base, ${floor}">${markers}</div></section>`;
 }
 function mapFloorSlots(floor){
   const spots=MAP_SPOTS[floor]||{},out=[];
