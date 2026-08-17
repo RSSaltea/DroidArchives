@@ -2,6 +2,20 @@
   "version": 1,
   "notes": [
     {
+      "id": "2026-08-17-base-map",
+      "date": "2026-08-17",
+      "title": "Base map",
+      "summary": "See your Base as an overhead map of the building, with each droid sitting on the spot it actually occupies.",
+      "changes": [
+        "Added a Map button on Base that swaps the slot list for an overhead map of the base.",
+        "Slots work the same on the map: click an empty one to add a droid, and hover a droid for the usual quality, lock, swap and remove buttons.",
+        "You can drag droids between slots on the map just like the normal view.",
+        "Added an upstairs and downstairs toggle, since the Firing Range Battle slots are split across two floors.",
+        "<em>This is a work in progress and some slots may not be in the right place yet.</em>"
+      ],
+      "showOnStartup": true
+    },
+    {
       "id": "2026-08-16-mobile-profiles-stability",
       "date": "2026-08-16",
       "title": "Mobile profiles and stability fixes",
