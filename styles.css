@@ -510,8 +510,6 @@ html[data-theme="dark"] .sidebar a.active{background:#202633;color:#fff}
 .crit-field{display:flex;flex-direction:column;gap:5px;color:var(--muted);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
 .crit-field input{width:100%;padding:9px;background:var(--panel);border:1px solid var(--line);border-radius:5px;color:var(--ink);font:700 15px Inter}
 .crit-field small{color:var(--muted);font-size:10px;font-weight:600;text-transform:none;letter-spacing:0}
-.crit-check{align-self:end;margin:0;padding:9px 10px;border:1px solid var(--line);border-radius:5px;background:var(--panel)}
-.crit-check small{display:block;margin-top:2px;color:var(--muted);font-size:10px;font-weight:600;text-transform:none;letter-spacing:0}
 .crit-stats .stat em{display:block;margin-top:3px;font-size:11px;font-style:normal;font-weight:600;color:var(--muted)}
 .notice.crit-best{border-left:5px solid #7fd1a0}
 .crit-table{grid-template-columns:minmax(0,1fr)}
@@ -525,3 +523,11 @@ html[data-theme="dark"] .sidebar a.active{background:#202633;color:#fff}
 .crit-table td small.crit-note{display:block;color:var(--muted);font-size:10px;font-weight:600}
 .crit-table tr.crit-locked th,.crit-table tr.crit-locked td{opacity:.55}
 .crit-table tr.crit-locked th{color:#ff9a8a}
+
+.crit-readout{padding:9px;background:var(--panel);border:1px solid var(--line);border-radius:5px;color:var(--ink);font:800 15px Inter;text-align:center}
+.crit-toggle{cursor:pointer}
+.crit-switch{display:flex;align-items:center;gap:9px;padding:9px 10px;background:var(--panel);border:1px solid var(--line);border-radius:5px}
+.crit-switch input{width:17px;height:17px;margin:0;accent-color:var(--green);cursor:pointer}
+.crit-switch b{font:800 13px Inter;letter-spacing:0;text-transform:none;color:var(--ink)}
+.crit-toggle input:checked~b{color:#9ae6bb}
+.crit-toggle:has(input:checked) .crit-switch{border-color:#4f9d73;background:#152a1f}

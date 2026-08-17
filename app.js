@@ -1301,7 +1301,9 @@ function critCalcPage(){
       multiLevel:novaLevelFor(CRIT_UPGRADE_IDS.multi),
       chopper:Boolean(critSetting('chopper',autoChopper?1:0)),
       pickaxe:critSetting('pickaxe',masteryFloor),
-      astromech:critSetting('astromech',autoAstro),
+      // Read straight off the Base rather than typed in — whatever Astromech is
+      // in your Companion slot is the answer.
+      astromech:autoAstro,
     };
     // What each perk has cost you so far, and what the next rank adds.
     const spent=id=>{const u=novaUpgrade(id);return(u?.levels||[]).filter(l=>Number(l.level)<=novaLevelFor(id)).reduce((s,l)=>s+(l.cost||0),0)};
@@ -1321,8 +1323,8 @@ function critCalcPage(){
         ${perk(CRIT_UPGRADE_IDS.amount,'critAmount','Critical Amount',current.amountLevel,`crits do ×${(1+p.amount).toFixed(2)}`)}
         ${perk(CRIT_UPGRADE_IDS.multi,'critMulti','Multi Crit',current.multiLevel,`${p.rolls} crit roll${p.rolls===1?'':'s'} in total`)}
         ${num('critPickaxe','Pickaxe level',current.pickaxe,0,masteryFloor?`Pickaxe Mastery keeps ${masteryFloor}`:'Set Pickaxe Mastery in Nova Shop')}
-        ${num('critAstromech','Astromech companion levels',current.astromech,0,autoAstro?`Your companion adds ${autoAstro}`:'No Astromech companion')}
-        <label class="side-check crit-check"><input type="checkbox" id="critChopper" ${current.chopper?'checked':''}> Chopper equipped <small>+${Math.round(CHOPPER_CRIT_BONUS*100)}% chance and amount</small></label>
+        <div class="crit-field"><span>Astromech companion</span><div class="crit-readout">${autoAstro?`+${autoAstro}`:'—'}</div><small>${autoAstro?`From your Base · effective level ${current.pickaxe+autoAstro}`:'No Astromech in a Companion slot'}</small></div>
+        <label class="crit-field crit-toggle"><span>Chopper</span><div class="crit-switch"><input type="checkbox" id="critChopper" ${current.chopper?'checked':''}><b>${current.chopper?'Equipped':'Not equipped'}</b></div><small>+${Math.round(CHOPPER_CRIT_BONUS*100)}% chance and amount${autoChopper?' · found in your Base':''}</small></label>
       </section>
       <div class="base-top crit-stats">
         <div class="stat"><small>Base hit</small><strong>${p.base.toFixed(1)}s</strong><em>level ${current.pickaxe}${current.astromech?` + ${current.astromech}`:''} = ${current.pickaxe+current.astromech}</em></div>
@@ -1338,14 +1340,14 @@ function critCalcPage(){
       </tbody></table></section>
       <div class="notice"><strong>Rebirth crit buffs are not included yet.</strong> The model has a slot for them, so they will fold in once the numbers are known.</div>`;
     const bind=(id,key)=>{const el=document.querySelector('#'+id);if(el)el.onchange=()=>{setCritSetting(key,Number(el.type==='checkbox'?(el.checked?1:0):el.value)||0);render()}};
-    bind('critPickaxe','pickaxe');bind('critAstromech','astromech');bind('critChopper','chopper');
+    bind('critPickaxe','pickaxe');bind('critChopper','chopper');
     // Perk levels write through to the Nova Shop itself.
     const setPerk=(id,level)=>{setNovaLevel(id,Math.max(0,level),false);save();render()};
     [['critChance',CRIT_UPGRADE_IDS.chance],['critAmount',CRIT_UPGRADE_IDS.amount],['critMulti',CRIT_UPGRADE_IDS.multi]]
       .forEach(([field,id])=>{const el=document.querySelector('#'+field);if(el)el.onchange=()=>setPerk(id,Number(el.value)||0)});
     document.querySelectorAll('[data-perk-up]').forEach(b=>b.onclick=()=>setPerk(b.dataset.perkUp,novaLevelFor(b.dataset.perkUp)+1));
     document.querySelectorAll('[data-perk-down]').forEach(b=>b.onclick=()=>setPerk(b.dataset.perkDown,novaLevelFor(b.dataset.perkDown)-1));
-    document.querySelector('#critReset').onclick=()=>{['chopper','pickaxe','astromech'].forEach(k=>localStorage.removeItem('droid-archive-crit-'+k));render();toast('Pickaxe and companion reset to your Base')};
+    document.querySelector('#critReset').onclick=()=>{['chopper','pickaxe'].forEach(k=>localStorage.removeItem('droid-archive-crit-'+k));render();toast('Pickaxe and companion reset to your Base')};
   };
   render();
 }
