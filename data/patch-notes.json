@@ -2,6 +2,16 @@
   "version": 1,
   "notes": [
     {
+      "id": "2026-08-17-optimise-swap-fix",
+      "date": "2026-08-17",
+      "title": "Optimise: swaps through the Companion and chip slots",
+      "summary": "Optimise no longer gives up when two droids need to trade places.",
+      "changes": [
+        "Fixed Optimise saying \"could not route\" when one droid needed the Upgrade Chip slot and the droid already in it was wanted as your Companion. Each was holding the slot the other needed, and neither was allowed to move first, so the plan gave up even with the Lounge half empty.",
+        "Optimise will now step one of them into the Lounge to break the tie, then finish the swap. It only does this when something is genuinely waiting on that slot, so straightforward plans are the same length as before."
+      ]
+    },
+    {
       "id": "2026-08-17-critical-calculator",
       "date": "2026-08-17",
       "title": "Critical Calculator",

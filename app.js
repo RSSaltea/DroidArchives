@@ -1122,6 +1122,11 @@ function optimiseRoutePlan(baseP,rawProjected){
   };
   const satisfied=(i,st)=>sells[i]?st[i]===SOLD:st[i]===goals[i];
   const allDone=st=>{for(let i=0;i<st.length;i++)if(!satisfied(i,st))return false;return true};
+  // Is anyone else still waiting on the slot this droid is sitting in?
+  const wantedByAnother=(self,station,st)=>{
+    for(let j=0;j<st.length;j++)if(j!==self&&goals[j]===station&&st[j]!==station&&!satisfied(j,st))return true;
+    return false;
+  };
   // Commands you can issue right now, standing at `here`. Roster droids are not
   // in the base, so they are reachable from anywhere.
   const actionsFor=(i,st,here,counts)=>{
@@ -1137,11 +1142,14 @@ function optimiseRoutePlan(baseP,rawProjected){
       const land=landing(i,st,counts);
       if(land&&land.to===goal)return[{i,kind:'work',to:goal,assumed:land.assumed}];
     }
-    // Auto-route would drop it somewhere else. Staging it out of the credit
-    // slots is the way round that; from anywhere else, wait for a state where it
-    // lands on target rather than emitting a step that misfires in game.
-    if(!PRODUCTIVE_STATIONS.includes(pos))return[];
-    return STAGING_STATIONS.filter(station=>station!==pos&&roomIn(station,counts,pos)).map(station=>({i,kind:'stage',to:station,assumed:false}));
+    // Auto-route would drop it somewhere else. Stepping aside out of a credit slot
+    // is the way round that. Out of a storage slot it only earns its step if
+    // someone else is waiting on that slot — but then it is essential, because two
+    // droids swapping through the Companion and Upgrade Chip slots each hold what
+    // the other one wants, and without this neither may move and the plan gives up.
+    if(pos===ROSTER||pos===SOLD)return[];
+    if(!PRODUCTIVE_STATIONS.includes(pos)&&!wantedByAnother(i,pos,st))return[];
+    return STAGING_STATIONS.filter(station=>station!==pos&&station!==goal&&roomIn(station,counts,pos)).map(station=>({i,kind:'stage',to:station,assumed:false}));
   };
   const stationsWithWork=(st,here)=>{const set=new Set();for(let i=0;i<st.length;i++){if(satisfied(i,st))continue;const pos=st[i];if(pos===ROSTER||pos===SOLD||pos===here)continue;set.add(pos)}return set};
 
@@ -1187,18 +1195,22 @@ function optimiseRoutePlan(baseP,rawProjected){
   // preference to staging more of them so the Lounge cannot silt up.
   const rank={sell:0,work:1,lounge:2,companion:2,stage:3};
   const greedy=()=>{
-    let st=startState.slice(),here=null;const trail=[];
+    // Stepping the same droid aside twice never gets it closer to its goal, and
+    // with storage slots able to stage into each other it would let a droid
+    // shuttle between the Lounge and the Companion slot forever. One each.
+    let st=startState.slice(),here=null;const trail=[],staged=new Set();
+    const movesFor=(i,st,at,counts)=>actionsFor(i,st,at,counts).filter(a=>a.kind!=='stage'||!staged.has(a.i));
     for(let guard=0;guard<800&&!allDone(st);guard++){
       for(let acted=true;acted;){
         acted=false;
         const counts=countsFor(st);let best=null;
-        for(let i=0;i<st.length;i++)for(const action of actionsFor(i,st,here,counts))if(!best||rank[action.kind]<rank[best.kind])best=action;
-        if(best){st=st.slice();st[best.i]=best.to;trail.push(best);acted=true}
+        for(let i=0;i<st.length;i++)for(const action of movesFor(i,st,here,counts))if(!best||rank[action.kind]<rank[best.kind])best=action;
+        if(best){st=st.slice();st[best.i]=best.to;trail.push(best);if(best.kind==='stage')staged.add(best.i);acted=true}
       }
       if(allDone(st))break;
       const options=[...stationsWithWork(st,here)];
       if(!options.length)break;
-      const workAt=station=>{const counts=countsFor(st);let n=0;for(let i=0;i<st.length;i++)if(actionsFor(i,st,station,counts).length)n++;return n};
+      const workAt=station=>{const counts=countsFor(st);let n=0;for(let i=0;i<st.length;i++)if(movesFor(i,st,station,counts).length)n++;return n};
       const scored=options.map(station=>[station,workAt(station)]).sort((a,b)=>b[1]-a[1]);
       here=scored[0][0];
       trail.push({kind:'travel',to:here});
