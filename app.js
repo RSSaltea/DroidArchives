@@ -351,7 +351,7 @@ function chipSellCalculatorHtml(p){
 // The Battle station spans both floors: the five ground-floor dots are slots 0-4
 // and the six upstairs ones are 5-10, matching the Rebirth 17-22 unlocks.
 const MAP_SPOTS={
-  downstairs:{WORKER:[[73.52,40.21],[75.96,40.65],[77.79,42.16],[68.97,69.34],[76.24,70.75],[62.82,72.97],[80.09,79.79],[60.46,80.1],[78.51,87.64],[63.26,88.35],[71.49,91.68]],ASTROMECH:[[20.99,40.04],[34.46,40.11],[29.11,40.32],[39.8,40.34],[20.1,51.32],[36.48,56.56],[30.44,56.64],[26.19,56.73],[45.27,56.75]],BATTLE:[[71.96,21.61],[67.07,22.21],[61.04,22.98],[70.08,23.37],[64.49,24.07]],BUILD:[[67.39,32.37],[41.92,48.32],[70.03,53.47]],BLUEPRINT:[[79.46,55.57],[80.5,56.57],[81.55,57.48]],UPGRADE_CHIP:[[61.83,66.63]],LOUNGE:[[95.85,44.64],[96.02,51.22],[82.13,51.54],[86.13,56.33],[92.52,56.33]],LOUNGE_NOVA:[[89,26.97],[86.12,27.12],[91.56,27.95],[83.58,28.62],[93.47,29.94],[94.97,32.44],[95.06,35.42],[94.52,38.31]]},
+  downstairs:{WORKER:[[73.52,40.21],[75.96,40.65],[77.79,42.16],[68.97,69.34],[76.24,70.75],[62.82,72.97],[80.09,79.79],[60.46,80.1],[78.51,87.64],[63.26,88.35],[71.49,91.68]],ASTROMECH:[[20.99,40.04],[34.46,40.11],[29.11,40.32],[39.8,40.34],[20.1,51.32],[36.48,56.56],[30.44,56.64],[26.19,56.73],[45.27,56.75]],BATTLE:[[71.96,21.61],[67.07,22.21],[61.04,22.98],[70.08,23.37],[64.49,24.07]],BUILD:[[67.39,32.37],[41.92,48.32],[70.03,53.47]],BLUEPRINT:[[79.46,55.57],[80.5,56.57],[81.55,57.48]],UPGRADE_CHIP:[[61.83,66.63]],LOUNGE:[[95.85,44.64],[96.02,51.22],[82.13,51.54],[86.13,56.33],[92.52,56.33]],LOUNGE_REBIRTH:[[93.47,29.94],[94.97,32.44],[95.06,35.42],[94.52,38.31]],LOUNGE_NOVA:[[89,26.97],[86.12,27.12],[91.56,27.95],[83.58,28.62]]},
   upstairs:{BATTLE:[[65.13,11.47],[65.48,14.69],[65.74,17.71],[66.09,20.83],[66.27,24.16],[66.53,27.68]]}
 };
 const MAP_FLOORS=['downstairs','upstairs'];
@@ -368,17 +368,27 @@ function baseMapHtml(p){
     const {station,index,x,y}=spot,pos=`left:${x}%;top:${y}%`;
     if(station==='BLUEPRINT_STORAGE'){
       const bp=state.blueprints.find(b=>Number(b.slot)===index),locked=index>=capacity('BLUEPRINT_STORAGE');
-      if(bp){const d=state.droids.find(x=>x.name===bp.name);return `<span class="map-slot filled" style="${pos}" title="${escapeAttr(`${bp.name} ${variantLabel(bp.variant)} blueprint`)}">${picture(d,bp.variant)}</span>`}
-      return `<button class="map-slot open ${locked?'locked':''} blueprint-open" style="${pos}" ${locked?'disabled':''} data-blueprint-slot="${index}" title="${locked?'Locked blueprint slot':'Add blueprint'}"><span>+</span></button>`;
+      if(bp){const d=state.droids.find(x=>x.name===bp.name),i=state.blueprints.indexOf(bp);
+        return `<div class="map-pin" style="${pos}"><div class="map-pin-actions"><button class="slot-swap craft-blueprint" data-blueprint="${i}" title="Craft into Build">⚒</button><button class="slot-delete delete-blueprint" data-blueprint="${i}" title="Remove blueprint">×</button></div><span class="map-pin-face" title="${escapeAttr(`${bp.name} ${variantLabel(bp.variant)} blueprint`)}">${picture(d,bp.variant)}</span></div>`}
+      return `<div class="map-pin" style="${pos}"><button class="map-pin-face open ${locked?'locked':''} blueprint-open" ${locked?'disabled':''} data-blueprint-slot="${index}" title="${locked?'Locked blueprint slot':'Add blueprint'}"><span class="slot-icon">${stationIcon('BLUEPRINT_STORAGE')}</span></button></div>`;
     }
     const occupant=p.placed.find(x=>x.station===station&&x.slot===index);
     if(occupant){
-      const d=state.droids.find(x=>x.name===occupant.name),match=!isIconic(d)&&station===d.type,building=isBuilding(occupant);
-      return `<button class="map-slot filled ${match?'matched':''} ${building?'building':''} slot-swap" style="${pos}" data-source="${occupant.source}" data-unit="${occupant.unit}" title="${escapeAttr(`${occupant.name} ${variantLabel(occupant.variant)} · ${stationName(station)} ${index+1}${building?' · still building':''}`)}">${picture(d,occupant.variant)}</button>`;
+      const d=state.droids.find(x=>x.name===occupant.name),match=!isIconic(d)&&station===d.type,building=isBuilding(occupant),locked=Boolean(occupant.lockedSlot);
+      // Same controls as the list view, stacked above the portrait so they never
+      // sit on top of it or of the neighbouring slot's card.
+      const actions=[
+        building?`<button class="slot-complete" data-complete-source="${occupant.source}" data-complete-unit="${occupant.unit}" title="Mark as finished building">✓</button>`:'',
+        isIconic(d)?'':`<button class="slot-variant" data-source="${occupant.source}" data-name="${escapeAttr(d.name)}" data-variant="${occupant.variant}" data-station="${station}" data-slot="${index}" title="Change quality">◆</button>`,
+        `<button class="slot-lock ${locked?'active':''}" data-source="${occupant.source}" data-unit="${occupant.unit}" title="${locked?'Unlock':'Lock for Optimise'}">${locked?'🔒':'🔓'}</button>`,
+        `<button class="slot-swap" data-source="${occupant.source}" data-unit="${occupant.unit}" title="Swap">⇄</button>`,
+        `<button class="slot-delete" data-source="${occupant.source}" title="Remove">×</button>`,
+      ].join('');
+      return `<div class="map-pin filled ${match?'matched':''} ${building?'building':''} ${locked?'pinned':''}" style="${pos}"><div class="map-pin-actions">${actions}</div><a class="map-pin-face" href="#/droid/${slug(d.name)}" title="${escapeAttr(`${occupant.name} ${variantLabel(occupant.variant)} · ${stationName(station)} ${index+1}${building?' · still building':''}`)}">${picture(d,occupant.variant)}</a></div>`;
     }
-    const eligible=isSlotEligible(station,index),purchased=isSlotPurchased(station,index),locked=!eligible||!purchased;
-    if(locked)return `<span class="map-slot locked" style="${pos}" title="${escapeAttr(lockedSlotLabel(station,index)||`Locked ${stationName(station)} slot`)}"><span>🔒</span></span>`;
-    return `<button class="map-slot open" style="${pos}" data-station="${station}" data-slot-index="${index}" title="${escapeAttr(`Add to ${stationName(station)} slot ${index+1}`)}"><span>+</span></button>`;
+    const eligible=isSlotEligible(station,index),purchased=isSlotPurchased(station,index);
+    if(!eligible||!purchased)return `<div class="map-pin" style="${pos}"><span class="map-pin-face locked" title="${escapeAttr(lockedSlotLabel(station,index)||`Locked ${stationName(station)} slot`)}"><span class="slot-icon">${stationIcon(station)}</span></span></div>`;
+    return `<div class="map-pin" style="${pos}"><button class="map-pin-face open" data-station="${station}" data-slot-index="${index}" title="${escapeAttr(`Add to ${stationName(station)} slot ${index+1}`)}"><span class="slot-icon">${stationIcon(station)}</span></button></div>`;
   }).join('');
   const counts=mapFloorSlots(floor).reduce((n,s)=>n+(p.placed.some(x=>x.station===s.station&&x.slot===s.index)?1:0),0);
   return `<section class="base-map"><header><div><strong>${floor==='upstairs'?'Upstairs':'Downstairs'}</strong><span>${counts} of ${mapFloorSlots(floor).length} spots filled</span></div><button class="btn secondary" id="toggleMapFloor">Go ${other}</button></header><div class="base-map-art"><img src="assets/map/${floor}.png" alt="Overhead map of the base, ${floor}">${markers}</div></section>`;
@@ -389,7 +399,10 @@ function mapFloorSlots(floor){
   if(floor==='upstairs'){add('BATTLE',spots.BATTLE,5);return out}
   add('WORKER',spots.WORKER);add('ASTROMECH',spots.ASTROMECH);add('BATTLE',spots.BATTLE);
   add('BUILD',spots.BUILD);add('UPGRADE_CHIP',spots.UPGRADE_CHIP);
-  add('LOUNGE',spots.LOUNGE);add('LOUNGE',spots.LOUNGE_NOVA,5);
+  // loungeSlotMeta splits the Lounge three ways: 0-4 base, 5-8 unlocked by
+  // Rebirth, 9-12 bought in the Nova Shop. The four Nova ones are the
+  // northernmost dots on the map.
+  add('LOUNGE',spots.LOUNGE);add('LOUNGE',spots.LOUNGE_REBIRTH,5);add('LOUNGE',spots.LOUNGE_NOVA,9);
   add('BLUEPRINT_STORAGE',spots.BLUEPRINT);
   return out;
 }

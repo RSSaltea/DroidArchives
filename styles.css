@@ -475,23 +475,30 @@ html[data-theme="dark"] .sidebar a.active{background:#202633;color:#fff}
 /* The timer count comes from the enabled spawn configuration. This keeps two
    current timers balanced and automatically makes room for a future Stellar timer. */
 .spawn-timers{grid-template-columns:repeat(var(--spawn-timer-count,2),minmax(0,1fr))!important}
-.base-map{margin:18px 0 22px;padding:14px 16px;background:var(--panel);border:1px solid var(--line);border-left:5px solid #6fd3ff;border-radius:8px;box-shadow:var(--shadow)}
+.base-map{margin:18px 0 22px;padding:14px 16px;container-type:inline-size;background:var(--panel);border:1px solid var(--line);border-left:5px solid #6fd3ff;border-radius:8px;box-shadow:var(--shadow)}
 .base-map>header{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:12px}
 .base-map>header strong{display:block;font-size:15px}
 .base-map>header span{display:block;color:var(--muted);font-size:12px;font-weight:700}
-.base-map-art{position:relative;width:100%;max-width:900px;margin:0 auto}
+.base-map-art{position:relative;width:100%;max-width:1280px;margin:0 auto}
 .base-map-art>img{display:block;width:100%;height:auto;border-radius:6px}
-.map-slot{position:absolute;transform:translate(-50%,-50%);display:grid;place-items:center;width:6.2%;aspect-ratio:1;min-width:26px;padding:0;border-radius:50%;border:2px solid var(--line);background:#0e1420cc;cursor:pointer;overflow:hidden;z-index:2}
-.map-slot img{width:88%;height:88%;object-fit:contain}
-.map-slot>span{font-size:13px;font-weight:800;line-height:1;color:var(--muted)}
-.map-slot.open{border-style:dashed;background:#0e142099}
-.map-slot.open:hover{border-color:#7fd1a0;background:#132a1ecc}
-.map-slot.open:hover>span{color:#9ae6bb}
-.map-slot.filled{border-color:#6fd3ff;background:#0b1522ee}
-.map-slot.filled:hover{border-color:#b6e8ff;transform:translate(-50%,-50%) scale(1.12);z-index:3}
-.map-slot.filled.matched{border-color:#7fd1a0}
-.map-slot.filled.building{border-color:#c0563f}
-.map-slot.locked{border-style:dotted;opacity:.5;cursor:default}
-.map-slot.locked>span{font-size:11px}
 .base-layout-v2.map-mode{opacity:.92}
 @media(max-width:650px){.base-map{padding:12px}.base-map>header{flex-direction:column;align-items:flex-start;gap:8px}.map-slot{min-width:20px;border-width:1px}}
+.map-pin{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:2px;z-index:2}
+.map-pin:hover,.map-pin:focus-within{z-index:6}
+.map-pin-face{display:grid;place-items:center;width:34px;height:34px;padding:0;border:0;background:none;cursor:pointer;line-height:0}
+.map-pin-face img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 1px 3px #000c)}
+.map-pin-face .slot-icon img{width:17px;height:17px;opacity:.75}
+.map-pin-face .slot-icon{font-size:15px;opacity:.75;line-height:1}
+.map-pin-face.open{border-radius:6px;background:#0e142088}
+.map-pin-face.open:hover{background:#153024cc}
+.map-pin-face.open:hover .slot-icon{opacity:1}
+.map-pin-face.locked{opacity:.32;cursor:default}
+.map-pin.filled .map-pin-face{filter:drop-shadow(0 0 4px #6fd3ff55)}
+.map-pin.matched .map-pin-face{filter:drop-shadow(0 0 5px #7fd1a0aa)}
+.map-pin.building .map-pin-face{filter:drop-shadow(0 0 5px #ff9a8acc)}
+.map-pin.pinned .map-pin-face{filter:drop-shadow(0 0 5px #ffe184aa)}
+.map-pin-actions{display:flex;gap:1px;opacity:0;pointer-events:none;transition:opacity .12s}
+.map-pin:hover .map-pin-actions,.map-pin:focus-within .map-pin-actions{opacity:1;pointer-events:auto}
+.map-pin-actions>button{position:static;width:17px;height:17px;min-width:0;padding:0;display:grid;place-items:center;font-size:10px;line-height:1;border-radius:4px;cursor:pointer}
+.map-pin-actions .slot-complete{width:17px;height:17px;left:auto;right:auto;bottom:auto;font-size:10px;letter-spacing:0}
+@media(max-width:900px){.map-pin-face{width:26px;height:26px}.map-pin-actions>button{width:14px;height:14px;font-size:9px}}
