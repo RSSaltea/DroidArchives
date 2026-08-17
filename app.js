@@ -1,4 +1,4 @@
-const VARIANTS=['DEFAULT','GOLD','DIAMOND','RAINBOW','BESKAR','GALACTIC','STELLAR'];
+﻿const VARIANTS=['DEFAULT','GOLD','DIAMOND','RAINBOW','BESKAR','GALACTIC','STELLAR'];
 const GOOGLE_CLIENT_ID='639634997022-sla3g6plurr364s6liq4vouj003rcaus.apps.googleusercontent.com';
 const DRIVE_SCOPE='https://www.googleapis.com/auth/drive.appdata';
 const CLOUD_FILE_NAME='droid-archives-cloud-save.json';
@@ -413,6 +413,87 @@ function mapFloorSlots(floor){
   add('LOUNGE',spots.LOUNGE);add('LOUNGE',spots.LOUNGE_REBIRTH,5);add('LOUNGE',spots.LOUNGE_NOVA,9);
   add('BLUEPRINT_STORAGE',spots.BLUEPRINT);
   return out;
+}
+// ─── Critical strike model ──────────────────────────────────────────────────
+// Every figure here is derived from measurements rather than guessed.
+//
+// Pickaxe: eight readings across levels 14-17 with and without a +7 Astromech
+// fall exactly on one line, and an Astromech's levels stack onto your own, so
+// 14+7 behaves identically to a native 21.
+//   seconds per hit = 1.2 x (your level + astromech + 1)
+//
+// Critical Chance starts at 1% and gains 5% a level; Critical Amount starts at
+// 50% and gains 10%. Chopper adds 50 points to each. Amount is the bonus over a
+// normal hit, so 100% means a crit does double.
+//
+// Multi Crit: landing a crit starts a chain of extra rolls, each at half the
+// previous chance, ending at the cap or the first failure. Level N buys N extra
+// rolls, so the cap is N+1 including the original. Chances are not clamped: a
+// 200% chance is a guaranteed roll that halves to a guaranteed 100%.
+const PICKAXE_SECONDS_PER_LEVEL=1.2;
+const CRIT_CHANCE_BASE=0.01,CRIT_CHANCE_PER_LEVEL=0.05;
+const CRIT_AMOUNT_BASE=0.50,CRIT_AMOUNT_PER_LEVEL=0.10;
+const CHOPPER_CRIT_BONUS=0.50;
+const CRIT_UPGRADE_IDS={chance:'critical-chance',amount:'critical-amount',multi:'multi-crit'};
+// Rebirth crit buffs are not documented yet. This is where they will land, so
+// adding them later is a data change rather than a reshape of the model.
+const rebirthCritBonus=()=>({chance:0,amount:0});
+const pickaxeHitSeconds=effectiveLevel=>PICKAXE_SECONDS_PER_LEVEL*(Math.max(0,effectiveLevel)+1);
+const critChanceFor=(level,chopper)=>CRIT_CHANCE_BASE+CRIT_CHANCE_PER_LEVEL*Math.max(0,level)+(chopper?CHOPPER_CRIT_BONUS:0)+rebirthCritBonus().chance;
+const critAmountFor=(level,chopper)=>CRIT_AMOUNT_BASE+CRIT_AMOUNT_PER_LEVEL*Math.max(0,level)+(chopper?CHOPPER_CRIT_BONUS:0)+rebirthCritBonus().amount;
+const multiCritRolls=level=>Math.max(0,level)+1;
+// Average damage multiplier of a swing, relative to a non-crit hit. Follows the
+// community sheet: the hit itself, plus the crit amount once per crit landed.
+function critMultiplier(chance,amount,rolls){
+  let onCrit=1+amount,chain=1;
+  for(let k=1;k<rolls;k++){chain*=Math.min(1,chance/Math.pow(2,k));onCrit+=chain*amount}
+  const p=Math.min(1,chance);
+  return(1-p)+p*onCrit;
+}
+const critProfile=({chanceLevel=0,amountLevel=0,multiLevel=0,chopper=false,pickaxe=0,astromech=0}={})=>{
+  const chance=critChanceFor(chanceLevel,chopper),amount=critAmountFor(amountLevel,chopper),rolls=multiCritRolls(multiLevel);
+  const base=pickaxeHitSeconds(pickaxe+astromech),multiplier=critMultiplier(chance,amount,rolls);
+  return{chance,amount,rolls,base,multiplier,perHit:base*multiplier};
+};
+// Pickaxe Mastery only decides how many levels survive a Super Rebirth: 5 at
+// rank 1, then two more each rank, up to 25. That is the floor the calculator
+// starts you at until you say otherwise.
+const pickaxeMasteryLevels=()=>{const r=novaLevelFor('pickaxe-mastery');return r>0?5+2*(r-1):0};
+// An Astromech companion's pickaxe levels stack onto your own.
+const companionAstromechBonus=placed=>Math.max(0,...[0,...placed.filter(x=>x.station==='COMPANION').map(x=>{
+  const d=state.droids.find(y=>y.name===x.name);return d?.type==='ASTROMECH'?droidAttributeValue(d,x.variant):0})]);
+const critSetting=(key,fallback)=>{const v=Number(localStorage.getItem('droid-archive-crit-'+key));return Number.isFinite(v)&&localStorage.getItem('droid-archive-crit-'+key)!==null?v:fallback};
+const setCritSetting=(key,value)=>localStorage.setItem('droid-archive-crit-'+key,String(value));
+const novaLevelCost=(id,level)=>novaUpgrade(id)?.levels?.find(l=>Number(l.level)===level)?.cost??null;
+const novaMaxLevel=id=>novaUpgrade(id)?.levels?.length??0;
+// Multi Crit needs Critical Chance first, so its true price is the missing
+// Critical Chance ranks plus its own.
+const MULTI_CRIT_REQUIRES_CHANCE=8;
+function critUpgradeOptions(current){
+  const {chanceLevel,amountLevel,multiLevel}=current;
+  const now=critProfile(current).multiplier;
+  const gain=next=>critProfile({...current,...next}).multiplier/now-1;
+  const out=[];
+  if(chanceLevel<novaMaxLevel(CRIT_UPGRADE_IDS.chance)){
+    const cost=novaLevelCost(CRIT_UPGRADE_IDS.chance,chanceLevel+1);
+    out.push({id:CRIT_UPGRADE_IDS.chance,name:'Critical Chance',to:chanceLevel+1,cost,gain:gain({chanceLevel:chanceLevel+1}),note:''});
+  }
+  if(amountLevel<novaMaxLevel(CRIT_UPGRADE_IDS.amount)){
+    const cost=novaLevelCost(CRIT_UPGRADE_IDS.amount,amountLevel+1);
+    out.push({id:CRIT_UPGRADE_IDS.amount,name:'Critical Amount',to:amountLevel+1,cost,gain:gain({amountLevel:amountLevel+1}),note:''});
+  }
+  if(multiLevel<novaMaxLevel(CRIT_UPGRADE_IDS.multi)){
+    let cost=novaLevelCost(CRIT_UPGRADE_IDS.multi,multiLevel+1),note='',chanceTo=chanceLevel;
+    if(chanceLevel<MULTI_CRIT_REQUIRES_CHANCE){
+      let extra=0;
+      for(let l=chanceLevel+1;l<=MULTI_CRIT_REQUIRES_CHANCE;l++)extra+=novaLevelCost(CRIT_UPGRADE_IDS.chance,l)||0;
+      cost+=extra;chanceTo=MULTI_CRIT_REQUIRES_CHANCE;
+      note=`includes ${fmt(extra)} to reach Critical Chance ${MULTI_CRIT_REQUIRES_CHANCE}`;
+    }
+    out.push({id:CRIT_UPGRADE_IDS.multi,name:'Multi Crit',to:multiLevel+1,cost,gain:gain({multiLevel:multiLevel+1,chanceLevel:chanceTo}),note});
+  }
+  // Ranked by damage bought per crystal, which is what decides the best buy.
+  return out.filter(x=>x.cost).map(x=>({...x,value:x.gain/x.cost*1000})).sort((a,b)=>b.value-a.value);
 }
 const PRODUCTIVE_STATIONS=['WORKER','ASTROMECH','BATTLE'];
 const replacementKey=x=>`${x.source}:${x.unit}`;
@@ -1202,6 +1283,68 @@ const OPTIMISE_STEP_STYLES=["route","classic"];
 // entire step list instead of just the preference.
 const optimiseStepStyle=()=>{try{const saved=localStorage.getItem("droid-archive-optimise-step-style");return OPTIMISE_STEP_STYLES.includes(saved)?saved:"route"}catch(e){return"route"}};
 function safeOptimiseStepPlan(baseP,projected){try{return optimiseStepStyle()==="classic"?optimiseStepPlan(baseP,projected):optimiseRoutePlan(baseP,projected)}catch(e){console.warn("Optimise step plan unavailable",e);return[]}}
+function critCalcPage(){
+  const render=()=>{
+    const placed=placements().placed;
+    const autoAstro=companionAstromechBonus(placed),autoChopper=placed.some(x=>x.station==='COMPANION'&&x.name==='CHOPPER');
+    const masteryFloor=pickaxeMasteryLevels();
+    // The three perk levels are the real Nova Shop values, edited in place, so
+    // this and the Nova Shop page never disagree. Only the pickaxe, companion
+    // and Chopper inputs are local to the calculator.
+    const current={
+      chanceLevel:novaLevelFor(CRIT_UPGRADE_IDS.chance),
+      amountLevel:novaLevelFor(CRIT_UPGRADE_IDS.amount),
+      multiLevel:novaLevelFor(CRIT_UPGRADE_IDS.multi),
+      chopper:Boolean(critSetting('chopper',autoChopper?1:0)),
+      pickaxe:critSetting('pickaxe',masteryFloor),
+      astromech:critSetting('astromech',autoAstro),
+    };
+    // What each perk has cost you so far, and what the next rank adds.
+    const spent=id=>{const u=novaUpgrade(id);return(u?.levels||[]).filter(l=>Number(l.level)<=novaLevelFor(id)).reduce((s,l)=>s+(l.cost||0),0)};
+    const totalSpent=Object.values(CRIT_UPGRADE_IDS).reduce((s,id)=>s+spent(id),0);
+    const p=critProfile(current),options=critUpgradeOptions(current),best=options[0];
+    const num=(id,label,value,max,hint)=>`<label class="crit-field"><span>${label}</span><input type="number" id="${id}" value="${value}" min="0" ${max?`max="${max}"`:''} step="1"><small>${hint}</small></label>`;
+    // Nova perks get plus and minus buttons so levels can be pushed from here
+    // rather than switching to the Nova Shop and back.
+    const perk=(id,key,label,level,detail)=>{
+      const max=novaMaxLevel(id),next=level<max?novaLevelCost(id,level+1):null;
+      return `<div class="crit-field crit-perk"><span>${label}</span><div class="crit-step"><button class="btn secondary" data-perk-down="${id}" ${level<=0?'disabled':''}>−</button><input type="number" id="${key}" value="${level}" min="0" max="${max}" step="1"><button class="btn secondary" data-perk-up="${id}" ${level>=max?'disabled':''}>+</button></div><small>${detail} · level ${level}/${max}</small><small class="crit-cost">Spent ${fmt(spent(id))} Nova${next?` · next rank ${fmt(next)}`:' · maxed'}</small></div>`;
+    };
+    app.innerHTML=`<div class="breadcrumbs"><a href="#/">Homepage</a> / Critical Calculator</div>
+      <div class="base-heading"><div><p class="eyebrow">Pickaxe planner</p><h1>Critical Calculator</h1><p class="lead">What your pickaxe removes per swing, and which Nova crit upgrade is the best next buy.</p></div><button class="btn secondary" id="critReset">Reset to my Nova levels</button></div>
+      <section class="crit-inputs">
+        ${perk(CRIT_UPGRADE_IDS.chance,'critChance','Critical Chance',current.chanceLevel,`now ${(p.chance*100).toFixed(0)}% chance`)}
+        ${perk(CRIT_UPGRADE_IDS.amount,'critAmount','Critical Amount',current.amountLevel,`crits do ×${(1+p.amount).toFixed(2)}`)}
+        ${perk(CRIT_UPGRADE_IDS.multi,'critMulti','Multi Crit',current.multiLevel,`${p.rolls} crit roll${p.rolls===1?'':'s'} in total`)}
+        ${num('critPickaxe','Pickaxe level',current.pickaxe,0,masteryFloor?`Pickaxe Mastery keeps ${masteryFloor}`:'Set Pickaxe Mastery in Nova Shop')}
+        ${num('critAstromech','Astromech companion levels',current.astromech,0,autoAstro?`Your companion adds ${autoAstro}`:'No Astromech companion')}
+        <label class="side-check crit-check"><input type="checkbox" id="critChopper" ${current.chopper?'checked':''}> Chopper equipped <small>+${Math.round(CHOPPER_CRIT_BONUS*100)}% chance and amount</small></label>
+      </section>
+      <div class="base-top crit-stats">
+        <div class="stat"><small>Base hit</small><strong>${p.base.toFixed(1)}s</strong><em>level ${current.pickaxe}${current.astromech?` + ${current.astromech}`:''} = ${current.pickaxe+current.astromech}</em></div>
+        <div class="stat"><small>Average per swing</small><strong>${p.perHit.toFixed(1)}s</strong><em>×${p.multiplier.toFixed(3)} from crits</em></div>
+        <div class="stat"><small>Chance to crit</small><strong>${(p.chance*100).toFixed(0)}%</strong><em>${p.chance>1?'guaranteed, and carries into the chain':'per swing'}</em></div>
+        <div class="stat"><small>Crit amount</small><strong>${(p.amount*100).toFixed(0)}%</strong><em>a crit does ×${(1+p.amount).toFixed(2)}</em></div>
+      </div>
+      ${best?`<div class="notice crit-best"><strong>Best next buy: ${best.name} ${best.to}</strong> — ${(best.gain*100).toFixed(2)}% more damage for ${fmt(best.cost)} Nova, which is ${best.value.toFixed(2)}% per 1,000 crystals${best.note?` (${best.note})`:''}.</div>`:''}
+      <section class="scrap-calculator crit-table"><div><p class="eyebrow">Next rank</p><h2>Which upgrade to buy</h2><p>Ranked by damage bought per Nova Crystal. You have spent ${fmt(totalSpent)} Nova on crit perks so far.</p></div>
+      <table><thead><tr><th>Upgrade</th><th>To</th><th>Cost</th><th>Seconds/hit</th><th>Damage</th><th>Per 1K Nova</th><th>Nova per 1%</th></tr></thead><tbody>
+      ${options.map((o,i)=>{const after=critProfile({...current,...(o.id===CRIT_UPGRADE_IDS.chance?{chanceLevel:o.to}:o.id===CRIT_UPGRADE_IDS.amount?{amountLevel:o.to}:{multiLevel:o.to,chanceLevel:Math.max(current.chanceLevel,MULTI_CRIT_REQUIRES_CHANCE)})});
+        return `<tr class="${i===0?'crit-pick':''}"><th>${o.name}${o.note?`<small class="crit-note">${o.note}</small>`:''}</th><td>${o.to}</td><td>${fmt(o.cost)}</td><td>${after.perHit.toFixed(1)}s<small class="crit-note">from ${p.perHit.toFixed(1)}s</small></td><td>+${(o.gain*100).toFixed(2)}%</td><td>${o.value.toFixed(2)}%</td><td>${fmt(Math.round(o.cost/(o.gain*100)))}</td></tr>`}).join('')||'<tr><td colspan="7">Everything is maxed.</td></tr>'}
+      </tbody></table></section>
+      <div class="notice"><strong>Rebirth crit buffs are not included yet.</strong> The model has a slot for them, so they will fold in once the numbers are known.</div>`;
+    const bind=(id,key)=>{const el=document.querySelector('#'+id);if(el)el.onchange=()=>{setCritSetting(key,Number(el.type==='checkbox'?(el.checked?1:0):el.value)||0);render()}};
+    bind('critPickaxe','pickaxe');bind('critAstromech','astromech');bind('critChopper','chopper');
+    // Perk levels write through to the Nova Shop itself.
+    const setPerk=(id,level)=>{setNovaLevel(id,Math.max(0,level),false);save();render()};
+    [['critChance',CRIT_UPGRADE_IDS.chance],['critAmount',CRIT_UPGRADE_IDS.amount],['critMulti',CRIT_UPGRADE_IDS.multi]]
+      .forEach(([field,id])=>{const el=document.querySelector('#'+field);if(el)el.onchange=()=>setPerk(id,Number(el.value)||0)});
+    document.querySelectorAll('[data-perk-up]').forEach(b=>b.onclick=()=>setPerk(b.dataset.perkUp,novaLevelFor(b.dataset.perkUp)+1));
+    document.querySelectorAll('[data-perk-down]').forEach(b=>b.onclick=()=>setPerk(b.dataset.perkDown,novaLevelFor(b.dataset.perkDown)-1));
+    document.querySelector('#critReset').onclick=()=>{['chopper','pickaxe','astromech'].forEach(k=>localStorage.removeItem('droid-archive-crit-'+k));render();toast('Pickaxe and companion reset to your Base')};
+  };
+  render();
+}
 function optimisePage(){
   const baseP=placements(),currentIncome=incomeForPlaced(baseP.placed),plan=optimiseBase(baseP,currentIncome),p=optimisedPlacements(baseP,plan),steps=safeOptimiseStepPlan(baseP,p),stepsCollapsed=localStorage.getItem('droid-archive-optimise-steps-collapsed')==='1',income=plan.income||currentIncome,gain=Math.max(0,income-currentIncome),currentScrap=scrapPayoutsForIncome(currentIncome),optimisedScrap=scrapPayoutsForIncome(income),scrapGain={hit:Math.max(0,(optimisedScrap.hit||0)-(currentScrap.hit||0)),break:Math.max(0,(optimisedScrap.break||0)-(currentScrap.break||0))},rebirthPick=p.placed.reduce((map,x)=>{const previous=map.get(x.name);if(!previous||VARIANTS.indexOf(x.variant)>VARIANTS.indexOf(previous.variant))map.set(x.name,{variant:x.variant,key:`${x.source}:${x.unit}`});return map},new Map()),currentMap=new Map(baseP.placed.map(x=>[`${x.source}:${x.unit}`,x]));
   const nothingToDo=!steps.filter(x=>x.type!=='note').length&&!p.sell.length&&gain<=1;
@@ -1617,7 +1760,7 @@ todoPage=patchNotesPage;
 
 let lastRoutePath='';
 function donatePage(){app.innerHTML=`<div class="breadcrumbs"><a href="#/">Homepage</a> / Donate</div><section class="donate-hero"><div class="donate-hero-copy"><p class="eyebrow">Support the archives</p><h1>Buy me a coffee</h1><p>Droid Archives is a free community project. If it has helped you plan your base, track your collection, or prepare for rebirths, you can optionally support its continued development.</p><a class="donate-button" href="https://buymeacoffee.com/droidarchives" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">☕</span> Support Droid Archives</a></div><div class="donate-coffee" aria-hidden="true"><span>☕</span></div></section><section class="donate-content"><div class="donate-message"><p class="eyebrow">Thank you</p><h2>Your support helps keep this project going</h2><p>Donations help with the time and costs involved in maintaining droid data, images, calculators, profiles, and new features for the community.</p><div class="donate-disclaimer"><strong>Support only — no rewards or benefits</strong><p>Donating is completely voluntary. You will not receive in-game items, site features, account benefits, priority support, or anything else in return. Your donation only supports the continued upkeep and development of Droid Archives.</p></div><p class="donate-free"><strong>Droid Archives remains free for everyone.</strong></p></div><a class="donate-qr-card" href="https://buymeacoffee.com/droidarchives" target="_blank" rel="noopener noreferrer" aria-label="Open the Droid Archives Buy Me a Coffee page"><span>Scan to support</span><img src="assets/other/bmc_qr.png" alt="QR code for the Droid Archives Buy Me a Coffee page"><small>buymeacoffee.com/droidarchives</small></a></section>`}
-function route(){const path=location.hash.slice(1).split('?')[0]||'/',routeChanged=path!==lastRoutePath;lastRoutePath=path;if(path==='/todo'||path==='/donate'||path==='/groups')app.querySelector('.archive-timers')?.remove();document.querySelector('.sidebar').classList.remove('mobile-open');renderBaseSidebar(()=>route());renderCloudHeader();if(path==='/')home();else if(path==='/droids')droidsPage();else if(path==='/droidex')droidexPage();else if(path==='/nova-shop')novaShopPage();else if(path.startsWith('/nova-shop/'))novaDetailPage(path.split('/')[2]);else if(path==='/cantina-shop')cantinaShopPage();else if(path==='/groups')groupsPage();else if(path==='/galactic-reports'&&GALACTIC_REPORTS_ENABLED)galacticReportsPage();else if(path==='/todo')todoPage();else if(path==='/donate')donatePage();else if(path==='/base')basePageV2();else if(path==='/droid-calc')droidCalcPage();else if(path==='/rebirth')rebirthPage();else if(path==='/optimise')optimisePage();else if(path==='/lucky-droid')luckyDroidPageV2();else if(path.startsWith('/droid/'))detailPage(path.split('/')[2]);else notFound();decorateSharedView();if(routeChanged){try{app.focus({preventScroll:true})}catch{app.focus()}scrollTo(0,0)}setTimeout(showPatchNotesOnce,80);publishCompanionState()}
+function route(){const path=location.hash.slice(1).split('?')[0]||'/',routeChanged=path!==lastRoutePath;lastRoutePath=path;if(path==='/todo'||path==='/donate'||path==='/groups')app.querySelector('.archive-timers')?.remove();document.querySelector('.sidebar').classList.remove('mobile-open');renderBaseSidebar(()=>route());renderCloudHeader();if(path==='/')home();else if(path==='/droids')droidsPage();else if(path==='/droidex')droidexPage();else if(path==='/nova-shop')novaShopPage();else if(path.startsWith('/nova-shop/'))novaDetailPage(path.split('/')[2]);else if(path==='/cantina-shop')cantinaShopPage();else if(path==='/groups')groupsPage();else if(path==='/galactic-reports'&&GALACTIC_REPORTS_ENABLED)galacticReportsPage();else if(path==='/todo')todoPage();else if(path==='/donate')donatePage();else if(path==='/base')basePageV2();else if(path==='/droid-calc')droidCalcPage();else if(path==='/rebirth')rebirthPage();else if(path==='/crit-calc')critCalcPage();else if(path==='/optimise')optimisePage();else if(path==='/lucky-droid')luckyDroidPageV2();else if(path.startsWith('/droid/'))detailPage(path.split('/')[2]);else notFound();decorateSharedView();if(routeChanged){try{app.focus({preventScroll:true})}catch{app.focus()}scrollTo(0,0)}setTimeout(showPatchNotesOnce,80);publishCompanionState()}
 const routeWithoutActiveNavigation=route;
 const activeNavigationHref=path=>path.startsWith('/droid/')||path==='/droids'?'#/droids':path.startsWith('/nova-shop')?'#/nova-shop':`#${path}`;
 const commandIcon=name=>{
