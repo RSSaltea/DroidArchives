@@ -58,11 +58,14 @@ function publishCompanionState(optimise){
 }
 const slug=s=>s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
 const fmt=n=>{if(!n)return '—';const u=[['T',1e12],['B',1e9],['M',1e6],['K',1e3]];for(const [s,v] of u)if(n>=v)return `${(n/v).toLocaleString(undefined,{maximumFractionDigits:2})}${s}`;return n.toLocaleString()};
+// Ordered to match the banners in game: Stellar, Mythic, Galactic. Offsets are
+// minutes past the hour and land the same in UK time either way, since BST is a
+// whole hour ahead of UTC. Stellar lands on the hour, read off a 15:07 countdown
+// at 01:44:53 BST, which agrees with Mythic (10:07 to :55) and Galactic (00:07
+// to :45) from the same screenshot.
 const SPAWN_TIMERS=[
+  {id:'stellar',name:'Stellar Spawn',intervalMinutes:60,offsetMinutes:0,note:'Every 60 minutes',image:'assets/events/beskar-spawn.png'},
   {id:'mythic',name:'Mythic Spawn',intervalMinutes:60,offsetMinutes:55,note:'Every 60 minutes',image:'assets/events/mythic-spawn.png'},
-  // Kept disabled so this slot can be re-enabled and changed to Stellar as soon
-  // as its spawn schedule is known.
-  {id:'beskar',name:'Beskar Spawn',intervalMinutes:15,offsetMinutes:0,note:'Every 15 minutes',image:'assets/events/beskar-spawn.png',enabled:false},
   {id:'galactic',name:'Galactic Spawn',intervalMinutes:60,offsetMinutes:45,note:'Every 60 minutes',image:'assets/events/galactic-spawn.png'}
 ];
 const activeSpawnTimers=()=>SPAWN_TIMERS.filter(timer=>timer.enabled!==false);

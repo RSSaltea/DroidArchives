@@ -1,4 +1,4 @@
-:root{--ink:#25211c;--muted:#6f675c;--paper:#f7f4ed;--panel:#fffdf8;--line:#d8d0c2;--green:#35694b;--green2:#244c37;--gold:#b88735;--blue:#3e6f87;--shadow:0 2px 8px #332b2014}
+﻿:root{--ink:#25211c;--muted:#6f675c;--paper:#f7f4ed;--panel:#fffdf8;--line:#d8d0c2;--green:#35694b;--green2:#244c37;--gold:#b88735;--blue:#3e6f87;--shadow:0 2px 8px #332b2014}
 .theme-button{width:36px;height:36px;border:1px solid #505651;background:#1d201e;color:#f0c85b;border-radius:4px;cursor:pointer;font-size:17px}
 .discord-button,.donate-icon-button{display:grid;place-items:center;width:36px;height:36px;flex:0 0 36px;border:1px solid #505651;background:#1d201e;border-radius:4px;text-decoration:none;transition:background .15s,border-color .15s,color .15s}.discord-button{color:#c9ceff}.discord-button svg,.donate-icon-button svg{width:21px;height:21px;fill:currentColor}.discord-button:hover,.discord-button:focus-visible{background:#5865f2;border-color:#7c86ff;color:#fff;outline:none}.donate-icon-button{color:#ffdf00}.donate-icon-button:hover,.donate-icon-button:focus-visible{background:#ffdf00;border-color:#ffec69;color:#171717;outline:none}
 .quick-grid{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
@@ -79,8 +79,8 @@ h2{font-size:22px;border-bottom:1px solid var(--line);padding-bottom:9px;margin-
 .spawn-timer small{color:#8995aa;font-size:10px;letter-spacing:0}
 .spawn-mythic{border-color:#6a2948;background:linear-gradient(135deg,#173160,#182035 54%,#281527)}
 .spawn-mythic strong{color:#ffafc0}
-.spawn-beskar{border-color:#515a68;background:linear-gradient(135deg,#151923,#1d2633)}
-.spawn-beskar strong{color:#eef3ff}
+.spawn-stellar{border-color:#8a7326;background:linear-gradient(135deg,#1c1708,#2a2210 58%,#1a1508)}
+.spawn-stellar strong{color:#ffdf6b}
 .spawn-rainbow{border-color:#26647a;background:linear-gradient(135deg,#111a2b,#151827 58%,#271830)}
 .spawn-rainbow strong{background:linear-gradient(90deg,#ff7a40,#ffe15b,#62e77d,#54d9ff,#d27cff);-webkit-background-clip:text;background-clip:text;color:transparent}
 .spawn-galactic{border-color:#7f47ff;background:radial-gradient(circle at 18% 22%,#cbb7ff33,transparent 18%),radial-gradient(circle at 74% 34%,#ff7cff24,transparent 16%),linear-gradient(135deg,#11142b,#201242 58%,#34175d)}
