@@ -1,4 +1,4 @@
-﻿const VARIANTS=['DEFAULT','GOLD','DIAMOND','RAINBOW','BESKAR','GALACTIC','STELLAR'];
+const VARIANTS=['DEFAULT','GOLD','DIAMOND','RAINBOW','BESKAR','GALACTIC','STELLAR'];
 const GOOGLE_CLIENT_ID='639634997022-sla3g6plurr364s6liq4vouj003rcaus.apps.googleusercontent.com';
 const DRIVE_SCOPE='https://www.googleapis.com/auth/drive.appdata';
 const CLOUD_FILE_NAME='droid-archives-cloud-save.json';
@@ -468,7 +468,7 @@ const novaLevelCost=(id,level)=>novaUpgrade(id)?.levels?.find(l=>Number(l.level)
 const novaMaxLevel=id=>novaUpgrade(id)?.levels?.length??0;
 // Multi Crit needs Critical Chance first, so its true price is the missing
 // Critical Chance ranks plus its own.
-const MULTI_CRIT_REQUIRES_CHANCE=8;
+const MULTI_CRIT_REQUIRES_CHANCE=4;
 function critUpgradeOptions(current){
   const {chanceLevel,amountLevel,multiLevel}=current;
   const now=critProfile(current).multiplier;
@@ -483,17 +483,21 @@ function critUpgradeOptions(current){
     out.push({id:CRIT_UPGRADE_IDS.amount,name:'Critical Amount',to:amountLevel+1,cost,gain:gain({amountLevel:amountLevel+1}),note:''});
   }
   if(multiLevel<novaMaxLevel(CRIT_UPGRADE_IDS.multi)){
-    let cost=novaLevelCost(CRIT_UPGRADE_IDS.multi,multiLevel+1),note='',chanceTo=chanceLevel;
+    // Its own price, not a bundle. If Critical Chance is not high enough yet the
+    // rank is simply locked, and what it takes to unlock is stated separately.
+    const cost=novaLevelCost(CRIT_UPGRADE_IDS.multi,multiLevel+1);
+    let locked=false,note='';
     if(chanceLevel<MULTI_CRIT_REQUIRES_CHANCE){
       let extra=0;
       for(let l=chanceLevel+1;l<=MULTI_CRIT_REQUIRES_CHANCE;l++)extra+=novaLevelCost(CRIT_UPGRADE_IDS.chance,l)||0;
-      cost+=extra;chanceTo=MULTI_CRIT_REQUIRES_CHANCE;
-      note=`includes ${fmt(extra)} to reach Critical Chance ${MULTI_CRIT_REQUIRES_CHANCE}`;
+      locked=true;note=`locked · needs Critical Chance ${MULTI_CRIT_REQUIRES_CHANCE}, another ${fmt(extra)} Nova`;
     }
-    out.push({id:CRIT_UPGRADE_IDS.multi,name:'Multi Crit',to:multiLevel+1,cost,gain:gain({multiLevel:multiLevel+1,chanceLevel:chanceTo}),note});
+    out.push({id:CRIT_UPGRADE_IDS.multi,name:'Multi Crit',to:multiLevel+1,cost,gain:gain({multiLevel:multiLevel+1}),note,locked});
   }
-  // Ranked by damage bought per crystal, which is what decides the best buy.
-  return out.filter(x=>x.cost).map(x=>({...x,value:x.gain/x.cost*1000})).sort((a,b)=>b.value-a.value);
+  // Ranked by damage bought per crystal. Anything still locked sorts last, since
+  // it is not actually a purchase you can make yet.
+  return out.filter(x=>x.cost).map(x=>({...x,value:x.gain/x.cost*1000}))
+    .sort((a,b)=>(a.locked?1:0)-(b.locked?1:0)||b.value-a.value);
 }
 const PRODUCTIVE_STATIONS=['WORKER','ASTROMECH','BATTLE'];
 const replacementKey=x=>`${x.source}:${x.unit}`;
@@ -1302,7 +1306,7 @@ function critCalcPage(){
     // What each perk has cost you so far, and what the next rank adds.
     const spent=id=>{const u=novaUpgrade(id);return(u?.levels||[]).filter(l=>Number(l.level)<=novaLevelFor(id)).reduce((s,l)=>s+(l.cost||0),0)};
     const totalSpent=Object.values(CRIT_UPGRADE_IDS).reduce((s,id)=>s+spent(id),0);
-    const p=critProfile(current),options=critUpgradeOptions(current),best=options[0];
+    const p=critProfile(current),options=critUpgradeOptions(current),best=options.find(o=>!o.locked);
     const num=(id,label,value,max,hint)=>`<label class="crit-field"><span>${label}</span><input type="number" id="${id}" value="${value}" min="0" ${max?`max="${max}"`:''} step="1"><small>${hint}</small></label>`;
     // Nova perks get plus and minus buttons so levels can be pushed from here
     // rather than switching to the Nova Shop and back.
@@ -1326,11 +1330,11 @@ function critCalcPage(){
         <div class="stat"><small>Chance to crit</small><strong>${(p.chance*100).toFixed(0)}%</strong><em>${p.chance>1?'guaranteed, and carries into the chain':'per swing'}</em></div>
         <div class="stat"><small>Crit amount</small><strong>${(p.amount*100).toFixed(0)}%</strong><em>a crit does ×${(1+p.amount).toFixed(2)}</em></div>
       </div>
-      ${best?`<div class="notice crit-best"><strong>Best next buy: ${best.name} ${best.to}</strong> — ${(best.gain*100).toFixed(2)}% more damage for ${fmt(best.cost)} Nova, which is ${best.value.toFixed(2)}% per 1,000 crystals${best.note?` (${best.note})`:''}.</div>`:''}
-      <section class="scrap-calculator crit-table"><div><p class="eyebrow">Next rank</p><h2>Which upgrade to buy</h2><p>Ranked by damage bought per Nova Crystal. You have spent ${fmt(totalSpent)} Nova on crit perks so far.</p></div>
-      <table><thead><tr><th>Upgrade</th><th>To</th><th>Cost</th><th>Seconds/hit</th><th>Damage</th><th>Per 1K Nova</th><th>Nova per 1%</th></tr></thead><tbody>
-      ${options.map((o,i)=>{const after=critProfile({...current,...(o.id===CRIT_UPGRADE_IDS.chance?{chanceLevel:o.to}:o.id===CRIT_UPGRADE_IDS.amount?{amountLevel:o.to}:{multiLevel:o.to,chanceLevel:Math.max(current.chanceLevel,MULTI_CRIT_REQUIRES_CHANCE)})});
-        return `<tr class="${i===0?'crit-pick':''}"><th>${o.name}${o.note?`<small class="crit-note">${o.note}</small>`:''}</th><td>${o.to}</td><td>${fmt(o.cost)}</td><td>${after.perHit.toFixed(1)}s<small class="crit-note">from ${p.perHit.toFixed(1)}s</small></td><td>+${(o.gain*100).toFixed(2)}%</td><td>${o.value.toFixed(2)}%</td><td>${fmt(Math.round(o.cost/(o.gain*100)))}</td></tr>`}).join('')||'<tr><td colspan="7">Everything is maxed.</td></tr>'}
+      ${best?`<div class="notice crit-best"><strong>Best next buy: ${best.name} ${best.to}</strong> — ${fmt(best.cost)} Nova for ${(best.gain*100).toFixed(2)}% more damage, working out at ${fmt(Math.round(best.cost/(best.gain*100)))} Nova for each 1%.</div>`:''}
+      <section class="scrap-calculator crit-table"><div><p class="eyebrow">Next rank</p><h2>Which upgrade to buy</h2><p>The cheapest damage first: the last column is what one percent of extra damage costs you, so smaller is better. You have spent ${fmt(totalSpent)} Nova on crit perks so far.</p></div>
+      <table><thead><tr><th>Upgrade</th><th>To</th><th>Cost</th><th>Seconds/hit</th><th>Extra damage</th><th>Nova per 1% damage</th></tr></thead><tbody>
+      ${options.map((o,i)=>{const after=critProfile({...current,...(o.id===CRIT_UPGRADE_IDS.chance?{chanceLevel:o.to}:o.id===CRIT_UPGRADE_IDS.amount?{amountLevel:o.to}:{multiLevel:o.to})});
+        return `<tr class="${o===best?String.fromCharCode(99,114,105,116,45,112,105,99,107):o.locked?String.fromCharCode(99,114,105,116,45,108,111,99,107,101,100):String()}"><th>${o.name}${o.note?`<small class="crit-note">${o.note}</small>`:''}</th><td>${o.to}</td><td>${fmt(o.cost)}</td><td>${after.perHit.toFixed(1)}s<small class="crit-note">from ${p.perHit.toFixed(1)}s</small></td><td>+${(o.gain*100).toFixed(2)}%</td><td>${fmt(Math.round(o.cost/(o.gain*100)))}</td></tr>`}).join('')||'<tr><td colspan="6">Everything is maxed.</td></tr>'}
       </tbody></table></section>
       <div class="notice"><strong>Rebirth crit buffs are not included yet.</strong> The model has a slot for them, so they will fold in once the numbers are known.</div>`;
     const bind=(id,key)=>{const el=document.querySelector('#'+id);if(el)el.onchange=()=>{setCritSetting(key,Number(el.type==='checkbox'?(el.checked?1:0):el.value)||0);render()}};

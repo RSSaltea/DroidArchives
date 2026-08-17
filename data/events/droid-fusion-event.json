@@ -1,0 +1,11 @@
+{
+  "id": "droid-fusion-event",
+  "name": "Droid Fusion",
+  "category": "Limited event",
+  "description": "A Droid Fusion event is coming to Droid Tycoon.",
+  "startsAt": "2026-08-22T20:00:00Z",
+  "durationHours": 24,
+  "endedRetentionHours": 2,
+  "homepage": true,
+  "image": "assets/events/droid-fusion-update.png"
+}

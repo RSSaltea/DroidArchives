@@ -620,7 +620,7 @@
       "category": "featured",
       "icon": "assets/nova-shop/Icon_CritMulti.png",
       "description": "Allows up to five total Critical hits. Each successful additional roll halves the next roll chance.",
-      "prerequisite": "Critical Chance level 8",
+      "prerequisite": "Critical Chance level 4",
       "levels": [
         {
           "level": 1,

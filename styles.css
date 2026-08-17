@@ -1,4 +1,4 @@
-﻿:root{--ink:#25211c;--muted:#6f675c;--paper:#f7f4ed;--panel:#fffdf8;--line:#d8d0c2;--green:#35694b;--green2:#244c37;--gold:#b88735;--blue:#3e6f87;--shadow:0 2px 8px #332b2014}
+:root{--ink:#25211c;--muted:#6f675c;--paper:#f7f4ed;--panel:#fffdf8;--line:#d8d0c2;--green:#35694b;--green2:#244c37;--gold:#b88735;--blue:#3e6f87;--shadow:0 2px 8px #332b2014}
 .theme-button{width:36px;height:36px;border:1px solid #505651;background:#1d201e;color:#f0c85b;border-radius:4px;cursor:pointer;font-size:17px}
 .discord-button,.donate-icon-button{display:grid;place-items:center;width:36px;height:36px;flex:0 0 36px;border:1px solid #505651;background:#1d201e;border-radius:4px;text-decoration:none;transition:background .15s,border-color .15s,color .15s}.discord-button{color:#c9ceff}.discord-button svg,.donate-icon-button svg{width:21px;height:21px;fill:currentColor}.discord-button:hover,.discord-button:focus-visible{background:#5865f2;border-color:#7c86ff;color:#fff;outline:none}.donate-icon-button{color:#ffdf00}.donate-icon-button:hover,.donate-icon-button:focus-visible{background:#ffdf00;border-color:#ffec69;color:#171717;outline:none}
 .quick-grid{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
@@ -523,3 +523,5 @@ html[data-theme="dark"] .sidebar a.active{background:#202633;color:#fff}
 .crit-perk .crit-step .btn{min-width:34px;padding:8px 0;font-size:15px;line-height:1}
 .crit-perk .crit-cost{color:#8fd9ef;font-weight:700}
 .crit-table td small.crit-note{display:block;color:var(--muted);font-size:10px;font-weight:600}
+.crit-table tr.crit-locked th,.crit-table tr.crit-locked td{opacity:.55}
+.crit-table tr.crit-locked th{color:#ff9a8a}

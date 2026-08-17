@@ -2,6 +2,21 @@
   "version": 1,
   "notes": [
     {
+      "id": "2026-08-17-critical-calculator",
+      "date": "2026-08-17",
+      "title": "Critical Calculator",
+      "summary": "Work out what your pickaxe actually removes per swing, and which Nova crit upgrade is the best next buy.",
+      "changes": [
+        "Added a Critical Calculator that takes your Critical Chance, Critical Amount, Multi Crit, pickaxe level, Astromech companion and whether you have Chopper, and tells you your average seconds removed per swing.",
+        "It ranks the three crit upgrades by how much damage each one buys per Nova Crystal, and shows the cost, the resulting seconds per hit, and how much Nova each 1% of damage works out at.",
+        "You can change your Nova levels straight from the calculator, so you do not have to keep switching to the Nova Shop and back. They are the same numbers, not a copy.",
+        "Pickaxe level starts at whatever Pickaxe Mastery keeps for you and your Astromech companion's levels are read from your Base, and you can override either.",
+        "Multi Crit is shown as locked until you have the Critical Chance rank it needs, with the extra cost spelled out, so it cannot be recommended before you can actually buy it.",
+        "<em>Rebirth critical buffs are not included yet. If you know what they are, please post them in the Discord and they will be added.</em>"
+      ],
+      "showOnStartup": true
+    },
+    {
       "id": "2026-08-17-base-map",
       "date": "2026-08-17",
       "title": "Base map",
