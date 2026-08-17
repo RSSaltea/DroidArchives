@@ -11,7 +11,7 @@
         "Slots work the same on the map: click an empty one to add a droid, and hover a droid for the usual quality, lock, swap and remove buttons.",
         "You can drag droids between slots on the map just like the normal view.",
         "Added an upstairs and downstairs toggle, since the Firing Range Battle slots are split across two floors.",
-        "<em>This is a work in progress and some slots may not be in the right place yet.</em>"
+        "<em>This is a work in progress and some slots may not unlock the right spot yet.</em>"
       ],
       "showOnStartup": true
     },
