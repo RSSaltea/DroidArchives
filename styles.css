@@ -502,3 +502,9 @@ html[data-theme="dark"] .sidebar a.active{background:#202633;color:#fff}
 .map-pin-actions>button{position:static;width:17px;height:17px;min-width:0;padding:0;display:grid;place-items:center;font-size:10px;line-height:1;border-radius:4px;cursor:pointer}
 .map-pin-actions .slot-complete{width:17px;height:17px;left:auto;right:auto;bottom:auto;font-size:10px;letter-spacing:0}
 @media(max-width:900px){.map-pin-face{width:26px;height:26px}.map-pin-actions>button{width:14px;height:14px;font-size:9px}}
+.base-map-toggle{gap:7px}
+.base-map-toggle svg{width:16px;height:16px;flex:0 0 16px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round;stroke-linecap:round}
+.map-pin[draggable="true"]{cursor:grab}
+.map-pin.drag-source{opacity:.4}
+.map-pin.drag-target .map-pin-face{outline:2px dashed #7fd1a0;outline-offset:3px;border-radius:6px}
+.map-pin.drag-target{z-index:7}
