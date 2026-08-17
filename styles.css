@@ -479,16 +479,16 @@ html[data-theme="dark"] .sidebar a.active{background:#202633;color:#fff}
 .base-map>header{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:12px}
 .base-map>header strong{display:block;font-size:15px}
 .base-map>header span{display:block;color:var(--muted);font-size:12px;font-weight:700}
-.base-map-art{position:relative;width:100%;max-width:1280px;margin:0 auto}
+.base-map-art{position:relative;width:100%;max-width:1190px;margin:0 auto}
 .base-map-art>img{display:block;width:100%;height:auto;border-radius:6px}
 .base-layout-v2.map-mode{opacity:.92}
 @media(max-width:650px){.base-map{padding:12px}.base-map>header{flex-direction:column;align-items:flex-start;gap:8px}.map-slot{min-width:20px;border-width:1px}}
 .map-pin{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:2px;z-index:2}
 .map-pin:hover,.map-pin:focus-within{z-index:6}
-.map-pin-face{display:grid;place-items:center;width:34px;height:34px;padding:0;border:0;background:none;cursor:pointer;line-height:0}
+.map-pin-face{display:grid;place-items:center;width:32px;height:32px;padding:0;border:0;background:none;cursor:pointer;line-height:0}
 .map-pin-face img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 1px 3px #000c)}
-.map-pin-face .slot-icon img{width:17px;height:17px;opacity:.75}
-.map-pin-face .slot-icon{font-size:15px;opacity:.75;line-height:1}
+.map-pin-face .slot-icon img{width:16px;height:16px;opacity:.75}
+.map-pin-face .slot-icon{font-size:14px;opacity:.75;line-height:1}
 .map-pin-face.open{border-radius:6px;background:#0e142088}
 .map-pin-face.open:hover{background:#153024cc}
 .map-pin-face.open:hover .slot-icon{opacity:1}
@@ -499,9 +499,9 @@ html[data-theme="dark"] .sidebar a.active{background:#202633;color:#fff}
 .map-pin.pinned .map-pin-face{filter:drop-shadow(0 0 5px #ffe184aa)}
 .map-pin-actions{display:flex;gap:1px;opacity:0;pointer-events:none;transition:opacity .12s}
 .map-pin:hover .map-pin-actions,.map-pin:focus-within .map-pin-actions{opacity:1;pointer-events:auto}
-.map-pin-actions>button{position:static;width:17px;height:17px;min-width:0;padding:0;display:grid;place-items:center;font-size:10px;line-height:1;border-radius:4px;cursor:pointer}
-.map-pin-actions .slot-complete{width:17px;height:17px;left:auto;right:auto;bottom:auto;font-size:10px;letter-spacing:0}
-@media(max-width:900px){.map-pin-face{width:26px;height:26px}.map-pin-actions>button{width:14px;height:14px;font-size:9px}}
+.map-pin-actions>button{position:static;width:16px;height:16px;min-width:0;padding:0;display:grid;place-items:center;font-size:10px;line-height:1;border-radius:4px;cursor:pointer}
+.map-pin-actions .slot-complete{width:16px;height:16px;left:auto;right:auto;bottom:auto;font-size:10px;letter-spacing:0}
+@media(max-width:900px){.map-pin-face{width:24px;height:24px}.map-pin-actions>button{width:13px;height:13px;font-size:9px}}
 .map-pin[draggable="true"]{cursor:grab}
 .map-pin.drag-source{opacity:.4}
 .map-pin.drag-target .map-pin-face{outline:2px dashed #7fd1a0;outline-offset:3px;border-radius:6px}
