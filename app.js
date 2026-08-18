@@ -1179,9 +1179,9 @@ function stepHtml(step,index){
   // Following a plan is the cheapest way to gather slot-choice data, so each
   // send-to-work step can record where the droid actually ended up.
   const free=step.freeSlots||[];
-  const options=free.map(slot=>`<option value="${slot}" ${step.logged===slot?'selected':''}>${stationSlotLabel(step.to,slot)}</option>`).join('');
+  const options=free.map(spot=>`<option value="${spot.station}:${spot.slot}" ${slotLogSame(step.logged,spot)?'selected':''}>${stationSlotLabel(spot.station,spot.slot)}</option>`).join('');
   const record=step.kind==='work'&&slotLogTracking()&&slotLabAllowed()&&free.length
-    ?`<label class="step-record"><small>Landed in?</small><select data-log-step="${escapeAttr(step.text)}"><option value="">${free.length} free…</option>${options}</select></label>`
+    ?`<label class="step-record"><small>Landed in?</small><select data-log-step="${escapeAttr(step.text)}"><option value="">${free.length} it could take…</option>${options}</select></label>`
     :'';
   return `${tick}<span class="step-thumb">${d?picture(d,step.unit.variant):''}</span><span class="step-text">${text}${assumed}</span>${record}${skip}`;
 }
@@ -1605,12 +1605,14 @@ function optimisePage(){
     picker.onchange=()=>{
       const step=steps.find(x=>x.text===picker.dataset.logStep);
       if(!step||picker.value==='')return;
-      const landed=Number(picker.value);
+      const cut=picker.value.indexOf(':');
+      const spot={station:picker.value.slice(0,cut),slot:Number(picker.value.slice(cut+1))};
       // The options came from the free set, so this cannot be an occupied slot.
-      slotLogAdd({station:step.to,fromStation:step.from,fromSlot:step.fromSlot,
-        free:step.freeSlots,landed,droid:step.unit?.name||''});
-      slotLogSession.set(step.text,landed);
-      toast(`Recorded · ${stationSlotLabel(step.to,landed)}`);
+      slotLogAdd({station:spot.station,fromStation:step.from,fromSlot:step.fromSlot,
+        free:step.freeSlots,landed:spot.slot,plannedStation:step.to,
+        droid:step.unit?.name||'',droidType:state.droids.find(d=>d.name===step.unit?.name)?.type||''});
+      slotLogSession.set(step.text,spot);
+      toast(`Recorded · ${stationSlotLabel(spot.station,spot.slot)}`);
       optimisePage();
     };
   });
@@ -2018,30 +2020,37 @@ const slotLogTracking=()=>{try{return localStorage.getItem('droid-archive-slot-t
 const slotLogSetTracking=on=>{try{localStorage.setItem('droid-archive-slot-track',on?'1':'0')}catch(e){}};
 // Which slots of a station are free right now, ignoring any this plan has already
 // filled — those are gone by the time the next droid is sent.
-function slotLogFree(station,taken){
-  const occupied=new Set(placements().placed.filter(x=>x.station===station).map(x=>x.slot));
-  for(const slot of taken||[])occupied.add(slot);
-  return stationSlotIndices(station).filter(slot=>!occupied.has(slot));
+// Every slot a droid sent to work could land in, across all the stations that
+// take one. Which station it picks is part of what is being measured, so
+// narrowing this to the planned station would throw away the answer.
+function slotLogFree(taken){
+  const placed=placements().placed,out=[];
+  for(const station of WORK_STATIONS){
+    const occupied=new Set(placed.filter(x=>x.station===station).map(x=>x.slot));
+    for(const gone of taken||[])if(gone.station===station)occupied.add(gone.slot);
+    for(const slot of stationSlotIndices(station))if(!occupied.has(slot))out.push({station,slot});
+  }
+  return out;
 }
+const slotLogSame=(a,b)=>Boolean(a)&&Boolean(b)&&a.station===b.station&&a.slot===b.slot;
 // Each send-to-work step offers the slots free when its droid is sent, which
 // means minus anything an earlier step in the same plan has already been
 // recorded as taking.
 function annotateLogSlots(steps){
   if(!slotLabAllowed()||!slotLogTracking())return;
-  const taken={};
+  const taken=[];
   for(const step of steps){
     if(step.kind!=='work'||!Number.isInteger(step.fromSlot))continue;
-    const already=taken[step.to]||(taken[step.to]=[]);
-    step.freeSlots=slotLogFree(step.to,already);
-    step.logged=slotLogSession.get(step.text)??null;
-    if(Number.isInteger(step.logged))already.push(step.logged);
+    step.freeSlots=slotLogFree(taken);
+    step.logged=slotLogSession.get(step.text)||null;
+    if(step.logged)taken.push(step.logged);
   }
 }
 function slotLogAdd(row){
   if(!Number.isInteger(row.landed)||!row.station)return false;
   // A landing outside the free set means the Base is out of date, and a wrong row
   // is worse than no row.
-  if(!row.free.includes(row.landed))return false;
+  if(!row.free.some(slot=>slot.station===row.station&&slot.slot===row.landed))return false;
   const rows=slotLogAll();
   // Which save this came from. Profiles differ in rebirth and unlocked slots, so
   // a row is only interpretable next to the profile that produced it. While a
@@ -2062,18 +2071,27 @@ function slotLogAdd(row){
 // predicts the log best is the one Optimise should be using.
 const SLOT_RULES_UNDER_TEST=[
   {id:'nearest',name:'Nearest free slot to where it started',
-   pick:row=>slotLogNearest(row.station,row.free,row.fromStation,row.fromSlot)},
-  {id:'mission',name:'Mission slots first, then nearest',
+   pick:row=>slotLogNearest(row.free,row.fromStation,row.fromSlot)},
+  {id:'mission',name:'Own station first, mission slots before the rest',
    pick:row=>{
-     if(row.station==='ASTROMECH'){
-       const mission=row.free.filter(slot=>ASTROMECH_MISSION_SLOTS.includes(slot));
-       if(mission.length)return slotLogNearest(row.station,mission,row.fromStation,row.fromSlot);
-     }
-     return slotLogNearest(row.station,row.free,row.fromStation,row.fromSlot);
+     // Auto-route sends a droid to its own type of station when one is free.
+     const home=row.free.filter(spot=>spot.station===row.droidType);
+     const pool=home.length?home:row.free;
+     const mission=pool.filter(spot=>spot.station==='ASTROMECH'&&ASTROMECH_MISSION_SLOTS.includes(spot.slot));
+     return slotLogNearest(mission.length?mission:pool,row.fromStation,row.fromSlot);
    }},
-  {id:'fixed',name:'The fixed order the app ships with',
-   pick:row=>slotFillOrder(row.station).find(slot=>row.free.includes(slot))},
-  {id:'lowest',name:'Lowest free slot number',pick:row=>Math.min(...row.free)},
+  {id:'fixed',name:'The station and slot orders the app ships with',
+   pick:row=>{
+     const home=row.free.filter(spot=>spot.station===row.droidType);
+     const pool=home.length?home:row.free;
+     for(const station of[...NEAREST_ORDER,'UPGRADE_CHIP']){
+       const here=pool.filter(spot=>spot.station===station);
+       if(!here.length)continue;
+       const order=slotFillOrder(station);
+       return here.slice().sort((a,b)=>order.indexOf(a.slot)-order.indexOf(b.slot))[0];
+     }
+     return pool[0];
+   }},
 ];
 // Distance between two slots on the map. Both floors are drawn on one image, so
 // changing floor gets a flat penalty rather than real geometry.
@@ -2090,23 +2108,23 @@ function slotLogPoint(station,slot){
   }
   return null;
 }
-function slotLogNearest(station,free,fromStation,fromSlot){
+function slotLogNearest(free,fromStation,fromSlot){
   const start=slotLogPoint(fromStation,fromSlot);
   if(!start||!free.length)return free[0];
   let best=null;
-  for(const slot of free){
-    const point=slotLogPoint(station,slot);
+  for(const spot of free){
+    const point=slotLogPoint(spot.station,spot.slot);
     if(!point)continue;
     const gap=Math.hypot(point.x-start.x,point.y-start.y)+(point.upstairs!==start.upstairs?SLOT_FLOOR_PENALTY:0);
-    if(!best||gap<best.gap)best={slot,gap};
+    if(!best||gap<best.gap)best={spot,gap};
   }
-  return best?best.slot:free[0];
+  return best?best.spot:free[0];
 }
 function slotLogScores(rows){
   return SLOT_RULES_UNDER_TEST.map(rule=>{
     const per={};let hit=0;
     for(const row of rows){
-      const right=rule.pick(row)===row.landed;
+      const right=slotLogSame(rule.pick(row),{station:row.station,slot:row.landed});
       if(right)hit++;
       const bucket=per[row.station]||(per[row.station]={hit:0,n:0});
       bucket.n++;if(right)bucket.hit++;
