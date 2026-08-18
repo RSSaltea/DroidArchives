@@ -1152,9 +1152,11 @@ function stepHtml(step,index){
   const skip=step.type==='sell'&&step.unit?`<button class="step-skip" data-skip-sell="${step.unit.source}:${step.unit.unit}" title="${escapeAttr(`Keep ${plainUnitName(step.unit)} and work out the plan again`)}">Keep</button>`:'';
   // Following a plan is the cheapest way to gather slot-choice data, so each
   // send-to-work step can record where the droid actually ended up.
-  const logged=step.logged?`<b class="step-logged">landed in ${step.to==='LOUNGE'?'Lounge':stationName(step.to)} ${step.logged}</b>`:'';
-  const record=step.kind==='work'&&slotLogTracking()&&slotLabAllowed()&&Number.isInteger(step.fromSlot)
-    ?`<label class="step-record">${logged?'':`<small>Landed in?</small><input type="text" inputmode="numeric" placeholder="slot" data-log-step="${escapeAttr(step.text)}">`}${logged}</label>`:'';
+  const free=step.freeSlots||[];
+  const options=free.map(slot=>`<option value="${slot}" ${step.logged===slot?'selected':''}>${stationSlotLabel(step.to,slot)}</option>`).join('');
+  const record=step.kind==='work'&&slotLogTracking()&&slotLabAllowed()&&free.length
+    ?`<label class="step-record"><small>Landed in?</small><select data-log-step="${escapeAttr(step.text)}"><option value="">${free.length} free…</option>${options}</select></label>`
+    :'';
   return `${tick}<span class="step-thumb">${d?picture(d,step.unit.variant):''}</span><span class="step-text">${text}${assumed}</span>${record}${skip}`;
 }
 function normaliseProjectedForSteps(baseP,projected){const keyOf=x=>`${x.source}:${x.unit}`,groupOf=x=>`${x.name}:${x.variant}`,cloneRows=rows=>rows.map(x=>({...x})),placed=cloneRows(projected.placed),sell=cloneRows(projected.sell),overflow=cloneRows(projected.overflow);for(const group of [...new Set([...placed,...sell].map(groupOf))]){const current=baseP.placed.filter(x=>groupOf(x)===group),targets=placed.filter(x=>groupOf(x)===group),sells=sell.filter(x=>groupOf(x)===group);if(current.length<2||!sells.length)continue;const used=new Set(),take=picker=>{const row=current.find(x=>!used.has(keyOf(x))&&picker(x));if(row)used.add(keyOf(row));return row};for(const target of targets){const exact=take(x=>x.station===target.station&&x.slot===target.slot),sameStation=exact||take(x=>x.station===target.station),any=sameStation||take(()=>true);if(any){target.source=any.source;target.unit=any.unit}}for(const sold of sells){const any=take(()=>true);if(any){sold.source=any.source;sold.unit=any.unit}}}return{...projected,placed,sell,overflow}}
@@ -1188,7 +1190,7 @@ const toggleTickedStep=text=>{const list=optimiseTickedSteps(),i=list.indexOf(te
 // since the keys are positions in the roster and those shift.
 const sparedFromSelling=()=>readList('droid-archive-optimise-spared');
 const spareFromSelling=key=>{const list=sparedFromSelling();if(!list.includes(key))list.push(key);writeList('droid-archive-optimise-spared',list)};
-const clearOptimiseMarks=()=>{writeList('droid-archive-optimise-spared',[]);writeList('droid-archive-optimise-ticked',[])};
+const clearOptimiseMarks=()=>{slotLogSession.clear();writeList('droid-archive-optimise-spared',[]);writeList('droid-archive-optimise-ticked',[])};
 const ROSTER='ROSTER',SOLD='SOLD';
 const WORK_STATIONS=[...PRODUCTIVE_STATIONS,'UPGRADE_CHIP'];
 const STAGING_STATIONS=['LOUNGE','COMPANION'];
@@ -1536,6 +1538,7 @@ function critCalcPage(){
 function optimisePage(){
   const baseP=placements(),currentIncome=incomeForPlaced(baseP.placed),plan=optimiseBase(baseP,currentIncome),p=optimisedPlacements(baseP,plan),steps=safeOptimiseStepPlan(baseP,p),stepsCollapsed=localStorage.getItem('droid-archive-optimise-steps-collapsed')==='1',income=plan.income||currentIncome,gain=Math.max(0,income-currentIncome),currentScrap=scrapPayoutsForIncome(currentIncome),optimisedScrap=scrapPayoutsForIncome(income),scrapGain={hit:Math.max(0,(optimisedScrap.hit||0)-(currentScrap.hit||0)),break:Math.max(0,(optimisedScrap.break||0)-(currentScrap.break||0))},rebirthPick=p.placed.reduce((map,x)=>{const previous=map.get(x.name);if(!previous||VARIANTS.indexOf(x.variant)>VARIANTS.indexOf(previous.variant))map.set(x.name,{variant:x.variant,key:`${x.source}:${x.unit}`});return map},new Map()),currentMap=new Map(baseP.placed.map(x=>[`${x.source}:${x.unit}`,x]));
   const nothingToDo=!steps.filter(x=>x.type!=='note').length&&!p.sell.length&&gain<=1;
+  annotateLogSlots(steps);
   const classicSteps=optimiseStepStyle()==='classic',visits=classicSteps?[]:optimiseVisits(steps);
   const stepsEyebrow=classicSteps?'Slot-by-slot order':`One walk round the base · ${visits.length} stop${visits.length===1?'':'s'}`;
   const stepsList=classicSteps
@@ -1571,22 +1574,17 @@ function optimisePage(){
     trackHost.querySelector('small').textContent=`${slotLogAll().length} landings recorded`;
     button.onclick=()=>{slotLogSetTracking(!slotLogTracking());rerender()};
   }
-  // Slots this plan has already filled are no longer free for the next droid.
-  const takenThisPlan={};
-  document.querySelectorAll('[data-log-step]').forEach(input=>{
-    input.onchange=()=>{
-      const step=steps.find(x=>x.text===input.dataset.logStep);
-      const landed=Number(input.value.trim())-1;
-      if(!step||!Number.isInteger(landed)||landed<0)return;
-      const taken=takenThisPlan[step.to]||(takenThisPlan[step.to]=[]);
-      const free=slotLogFree(step.to,taken);
-      if(!slotLogAdd({station:step.to,fromStation:step.from,fromSlot:step.fromSlot,free,landed,droid:step.unit?.name||''})){
-        toast(`${stationName(step.to)} ${landed+1} was not free — update your Base first`);
-        input.value='';return;
-      }
-      taken.push(landed);
-      step.logged=landed+1;
-      toast('Landing recorded');
+
+  document.querySelectorAll('[data-log-step]').forEach(picker=>{
+    picker.onchange=()=>{
+      const step=steps.find(x=>x.text===picker.dataset.logStep);
+      if(!step||picker.value==='')return;
+      const landed=Number(picker.value);
+      // The options came from the free set, so this cannot be an occupied slot.
+      slotLogAdd({station:step.to,fromStation:step.from,fromSlot:step.fromSlot,
+        free:step.freeSlots,landed,droid:step.unit?.name||''});
+      slotLogSession.set(step.text,landed);
+      toast(`Recorded · ${stationSlotLabel(step.to,landed)}`);
       rerender();
     };
   });
@@ -1986,6 +1984,7 @@ function donatePage(){app.innerHTML=`<div class="breadcrumbs"><a href="#/">Homep
 // putting it in the profile would mean touching export, import, validate and the
 // cloud schema, any of which could lose a Base. Export from the Slot Lab instead.
 const SLOT_LOG_KEY='droid-archive-slot-log';
+const slotLogSession=new Map();
 const slotLogAll=()=>{try{const rows=JSON.parse(localStorage.getItem(SLOT_LOG_KEY)||'[]');return Array.isArray(rows)?rows:[]}catch(e){return[]}};
 const slotLogWrite=rows=>{try{localStorage.setItem(SLOT_LOG_KEY,JSON.stringify(rows.slice(-4000)))}catch(e){}};
 const slotLogClear=()=>slotLogWrite([]);
@@ -1997,6 +1996,20 @@ function slotLogFree(station,taken){
   const occupied=new Set(placements().placed.filter(x=>x.station===station).map(x=>x.slot));
   for(const slot of taken||[])occupied.add(slot);
   return stationSlotIndices(station).filter(slot=>!occupied.has(slot));
+}
+// Each send-to-work step offers the slots free when its droid is sent, which
+// means minus anything an earlier step in the same plan has already been
+// recorded as taking.
+function annotateLogSlots(steps){
+  if(!slotLabAllowed()||!slotLogTracking())return;
+  const taken={};
+  for(const step of steps){
+    if(step.kind!=='work'||!Number.isInteger(step.fromSlot))continue;
+    const already=taken[step.to]||(taken[step.to]=[]);
+    step.freeSlots=slotLogFree(step.to,already);
+    step.logged=slotLogSession.get(step.text)??null;
+    if(Number.isInteger(step.logged))already.push(step.logged);
+  }
 }
 function slotLogAdd(row){
   if(!Number.isInteger(row.landed)||!row.station)return false;
