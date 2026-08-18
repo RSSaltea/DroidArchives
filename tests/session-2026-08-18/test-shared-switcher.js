@@ -85,8 +85,10 @@ ok('openGroupProfile leaves the shared profile it finds first',
   /if\(state\.sharedView\)await exitSharedProfile\(false\)/.test(src));
 ok('switchCloudProfile does the same for your own',
   /function switchCloudProfile\(id\)\{if\(state\.sharedView\)\{exitSharedProfile\(false\)/.test(src));
-ok('and the slot log session is cleared on the way, so rows are not misattributed',
-  /async function openGroupProfile\(groupId,ownerId,profileId\)\{slotLogSession\.clear\(\)/.test(src));
+// Nothing is logged on a group profile at all, and the plan-local recordings are
+// keyed by profile, so hopping in and out costs you nothing you had recorded.
+ok('and your own recordings survive the hop',
+  !/async function openGroupProfile\(groupId,ownerId,profileId\)\{slotLogSession\.clear\(\)/.test(src));
 
 console.log('\n=== the header dropdown gets it for free ===');
 ok('the header renders the same panel',src.includes("cloudSidebarHtml().replace('<div class=\"side-rule\"></div>','')"));

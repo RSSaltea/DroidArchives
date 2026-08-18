@@ -102,7 +102,7 @@ function profileDataFromState(){return{owned:state.owned,blueprints:state.bluepr
 function cloneProfileData(data){return JSON.parse(JSON.stringify(data))}
 function cloneProfileBaseOnly(data){const copy=cloneProfileData(data);copy.droidex=[];return copy}
 function blankProfileData(){return{owned:[],blueprints:[],droidex:[],novaUpgrades:{},cantinaPurchases:{},multiplier:1,cycle:0,rebirth:0,superRebirthGoal:35,optimiseFreeBuild:false,optimiseFreeBuildMode:'upgrade-cost',optimiseKeepDroidex:true,autoCompleteBuilds:false,companionGoals:null,preferredCompanions:[],autoPurchaseSlots:true,purchasedSlots:[],loungePurchased:0,novaLevel:0,rebirthTracker:{notUsingBase:false,entries:{}}}}
-function applyProfileData(data){slotLogSession.clear();const next=validateBaseImport({base:{owned:normalizeDroidRows(data?.owned||[]),blueprints:normalizeDroidRows(data?.blueprints||[]),droidex:normalizeDroidRows(data?.droidex||[]),novaUpgrades:data?.novaUpgrades||{},cantinaPurchases:data?.cantinaPurchases||{},multiplier:data?.multiplier,cycle:data?.cycle,rebirth:data?.rebirth,superRebirthGoal:data?.superRebirthGoal,optimiseFreeBuild:data?.optimiseFreeBuild,optimiseFreeBuildMode:data?.optimiseFreeBuildMode,optimiseKeepDroidex:data?.optimiseKeepDroidex,companionGoals:data?.companionGoals,preferredCompanions:data?.preferredCompanions,autoCompleteBuilds:data?.autoCompleteBuilds,autoPurchaseSlots:data?.autoPurchaseSlots,purchasedSlots:data?.purchasedSlots,loungePurchased:data?.loungePurchased,novaLevel:data?.novaLevel,rebirthTracker:data?.rebirthTracker}});state.owned=next.owned;state.blueprints=next.blueprints;state.droidex=next.droidex;state.novaUpgrades=next.novaUpgrades;state.cantinaPurchases=next.cantinaPurchases;state.multiplier=next.multiplier;state.cycle=next.cycle;state.rebirth=next.rebirth;state.superRebirthGoal=next.superRebirthGoal;state.optimiseFreeBuild=next.optimiseFreeBuild;state.optimiseFreeBuildMode=next.optimiseFreeBuildMode;state.optimiseKeepDroidex=next.optimiseKeepDroidex!==false;state.companionGoals=Array.isArray(next.companionGoals)?next.companionGoals:null;state.preferredCompanions=Array.isArray(next.preferredCompanions)?next.preferredCompanions:[];state.autoCompleteBuilds=Boolean(next.autoCompleteBuilds);state.autoPurchaseSlots=next.autoPurchaseSlots;state.purchasedSlots=next.purchasedSlots;state.loungePurchased=next.loungePurchased;state.novaLevel=next.novaLevel;state.rebirthTracker=next.rebirthTracker;syncCantinaPackUpgrades();autoPurchaseEligibleSlots()}
+function applyProfileData(data){const next=validateBaseImport({base:{owned:normalizeDroidRows(data?.owned||[]),blueprints:normalizeDroidRows(data?.blueprints||[]),droidex:normalizeDroidRows(data?.droidex||[]),novaUpgrades:data?.novaUpgrades||{},cantinaPurchases:data?.cantinaPurchases||{},multiplier:data?.multiplier,cycle:data?.cycle,rebirth:data?.rebirth,superRebirthGoal:data?.superRebirthGoal,optimiseFreeBuild:data?.optimiseFreeBuild,optimiseFreeBuildMode:data?.optimiseFreeBuildMode,optimiseKeepDroidex:data?.optimiseKeepDroidex,companionGoals:data?.companionGoals,preferredCompanions:data?.preferredCompanions,autoCompleteBuilds:data?.autoCompleteBuilds,autoPurchaseSlots:data?.autoPurchaseSlots,purchasedSlots:data?.purchasedSlots,loungePurchased:data?.loungePurchased,novaLevel:data?.novaLevel,rebirthTracker:data?.rebirthTracker}});state.owned=next.owned;state.blueprints=next.blueprints;state.droidex=next.droidex;state.novaUpgrades=next.novaUpgrades;state.cantinaPurchases=next.cantinaPurchases;state.multiplier=next.multiplier;state.cycle=next.cycle;state.rebirth=next.rebirth;state.superRebirthGoal=next.superRebirthGoal;state.optimiseFreeBuild=next.optimiseFreeBuild;state.optimiseFreeBuildMode=next.optimiseFreeBuildMode;state.optimiseKeepDroidex=next.optimiseKeepDroidex!==false;state.companionGoals=Array.isArray(next.companionGoals)?next.companionGoals:null;state.preferredCompanions=Array.isArray(next.preferredCompanions)?next.preferredCompanions:[];state.autoCompleteBuilds=Boolean(next.autoCompleteBuilds);state.autoPurchaseSlots=next.autoPurchaseSlots;state.purchasedSlots=next.purchasedSlots;state.loungePurchased=next.loungePurchased;state.novaLevel=next.novaLevel;state.rebirthTracker=next.rebirthTracker;syncCantinaPackUpgrades();autoPurchaseEligibleSlots()}
 function saveLocal(){localStorage.setItem('droid-archive-owned',JSON.stringify(state.owned));localStorage.setItem('droid-archive-blueprints',JSON.stringify(state.blueprints));localStorage.setItem('droid-archive-droidex',JSON.stringify(state.droidex));localStorage.setItem('droid-archive-nova-upgrades',JSON.stringify(state.novaUpgrades));localStorage.setItem('droid-archive-cantina-purchases',JSON.stringify(state.cantinaPurchases));localStorage.setItem('droid-archive-multiplier',state.multiplier);localStorage.setItem('droid-archive-cycle',state.cycle);localStorage.setItem('droid-archive-rebirth',state.rebirth);localStorage.setItem('droid-archive-super-rebirth-goal',state.superRebirthGoal);localStorage.setItem('droid-archive-optimise-free-build',state.optimiseFreeBuild?'1':'0');localStorage.setItem('droid-archive-optimise-free-build-mode',state.optimiseFreeBuildMode);localStorage.setItem('droid-archive-optimise-keep-droidex',state.optimiseKeepDroidex===false?'0':'1');localStorage.setItem('droid-archive-companion-goals',JSON.stringify(state.companionGoals||null));localStorage.setItem('droid-archive-preferred-companions',JSON.stringify(state.preferredCompanions||[]));localStorage.setItem('droid-archive-auto-complete-builds',state.autoCompleteBuilds?'1':'0');localStorage.setItem('droid-archive-auto-purchase-slots',state.autoPurchaseSlots?'1':'0');localStorage.setItem('droid-archive-purchased-slots',JSON.stringify(state.purchasedSlots));localStorage.setItem('droid-archive-lounge-purchased',state.loungePurchased);localStorage.setItem('droid-archive-nova-level',state.novaLevel);localStorage.setItem('droid-archive-rebirth-tracker',JSON.stringify(state.rebirthTracker));localStorage.setItem('droid-archive-theme',state.theme);localStorage.setItem('droid-archive-active-profile',state.cloud.activeProfileId||'');localStorage.setItem('droid-archive-sync-provider',state.cloud.enabled?'supabase':'local');if(state.cloud.fileId)localStorage.setItem('droid-archive-cloud-file-id',state.cloud.fileId)}
 function localDocFromCurrent(name='Main'){const id=cloudId();return{app:'Droid Archives',version:1,updatedAt:new Date().toISOString(),activeProfileId:id,profiles:[{id,name,updatedAt:new Date().toISOString(),data:profileDataFromState()}]}}
 function normalizeProfileDoc(doc){if(!doc||!Array.isArray(doc.profiles)||!doc.profiles.length)return localDocFromCurrent();doc.profiles=doc.profiles.map((p,i)=>({id:p.id||`profile-${Date.now()}-${i}`,name:p.name||`Profile ${i+1}`,updatedAt:p.updatedAt||new Date().toISOString(),data:{owned:p.data?.owned||[],blueprints:p.data?.blueprints||[],droidex:p.data?.droidex||[],novaUpgrades:p.data?.novaUpgrades||{},cantinaPurchases:p.data?.cantinaPurchases||{},multiplier:p.data?.multiplier??1,cycle:p.data?.cycle??0,rebirth:p.data?.rebirth??0,superRebirthGoal:p.data?.superRebirthGoal??30,optimiseFreeBuild:Boolean(p.data?.optimiseFreeBuild),optimiseFreeBuildMode:p.data?.optimiseFreeBuildMode||'upgrade-cost',optimiseKeepDroidex:p.data?.optimiseKeepDroidex!==false,companionGoals:Array.isArray(p.data?.companionGoals)?p.data.companionGoals:null,preferredCompanions:Array.isArray(p.data?.preferredCompanions)?p.data.preferredCompanions:[],autoCompleteBuilds:Boolean(p.data?.autoCompleteBuilds),autoPurchaseSlots:p.data?.autoPurchaseSlots===undefined?true:Boolean(p.data.autoPurchaseSlots),purchasedSlots:Array.isArray(p.data?.purchasedSlots)?p.data.purchasedSlots:[],loungePurchased:p.data?.loungePurchased??0,novaLevel:p.data?.novaLevel??0,rebirthTracker:normalizeRebirthTracker(p.data?.rebirthTracker)}}));doc.activeProfileId=doc.activeProfileId&&doc.profiles.some(p=>p.id===doc.activeProfileId)?doc.activeProfileId:doc.profiles[0].id;doc.updatedAt=doc.updatedAt||new Date().toISOString();return doc}
@@ -826,8 +826,8 @@ baseRebirthSummaryHtml=()=>`${personalBaseRebirthSummaryHtml()}${combinedGroupOu
 let sharedProfileSaveTimer=null;
 function scheduleSharedProfileSave(){clearTimeout(sharedProfileSaveTimer);sharedProfileSaveTimer=setTimeout(()=>saveSharedProfileNow().catch(error=>{toast(error.message);decorateSharedView()}),900)}
 async function saveSharedProfileNow(){const view=state.sharedView;if(!view||!view.canEdit)return;clearTimeout(sharedProfileSaveTimer);if(view.saving)return view.savePromise.then(()=>state.sharedView===view?saveSharedProfileNow():undefined);view.saving=true;decorateSharedView();const profileData=profileDataFromState(),savedVersion=view.changeVersion||0;view.savePromise=(async()=>{const {data,error}=await supabaseClient.rpc('save_shared_droid_archive_profile',{target_group_id:view.groupId,target_owner_id:view.ownerId,target_profile_id:view.profileId,profile_data:profileData,expected_updated_at:view.profile.updatedAt||null});if(error)throw Error(error.message);view.profile.data=profileData;view.profile.updatedAt=data.updatedAt;view.savedVersion=savedVersion;const workspaceProfile=state.groups.workspace.find(group=>group.id===view.groupId)?.profiles?.find(profile=>profile.ownerId===view.ownerId&&profile.profileId===view.profileId);if(workspaceProfile){workspaceProfile.data=cloneProfileData(profileData);workspaceProfile.updatedAt=data.updatedAt}})();try{await view.savePromise}finally{view.saving=false;view.savePromise=null;decorateSharedView()}}
-async function openGroupProfile(groupId,ownerId,profileId){slotLogSession.clear();if(!cloudConnected())return showAuthModal('signin');const group=state.groups.workspace.find(item=>item.id===groupId);if(!group)throw Error('That group is no longer available.');const profile=groupAvailableProfiles(group).find(item=>String(item.ownerId)===String(ownerId)&&String(item.profileId)===String(profileId));if(!profile)throw Error('That shared profile is no longer available.');if(String(profile.ownerId)===String(state.cloud.user.id)){switchCloudProfile(profile.profileId);location.hash='#/base';return}if(state.sharedView)await exitSharedProfile(false);clearTimeout(cloudSaveTimer);updateActiveCloudProfile();cacheCloudDocLocally();saveLocal();const view={groupId,groupName:group.name,ownerId:profile.ownerId,ownerName:profile.ownerName,profileId:profile.profileId,profileName:profile.profileName,profile:{...profile,data:cloneProfileData(profile.data)},canEdit:Boolean(profile.canEdit),saving:false,savePromise:null,changeVersion:0,savedVersion:0};state.sharedView=view;applyProfileData(view.profile.data);if(location.hash==='#/base')route();else location.hash='#/base';toast(`Viewing ${view.ownerName} · ${view.profileName}`)}
-async function exitSharedProfile(goToGroups=true){slotLogSession.clear();if(!state.sharedView)return;let saveError=null;if(state.sharedView.canEdit)try{await saveSharedProfileNow()}catch(error){saveError=error}state.sharedView=null;const own=activeCloudProfile();if(own)applyProfileData(own.data);cacheCloudDocLocally();saveLocal();scheduleCloudSave();if(saveError)toast(`Shared changes were not saved: ${saveError.message}`);if(goToGroups){location.hash='#/groups';route()}}
+async function openGroupProfile(groupId,ownerId,profileId){if(!cloudConnected())return showAuthModal('signin');const group=state.groups.workspace.find(item=>item.id===groupId);if(!group)throw Error('That group is no longer available.');const profile=groupAvailableProfiles(group).find(item=>String(item.ownerId)===String(ownerId)&&String(item.profileId)===String(profileId));if(!profile)throw Error('That shared profile is no longer available.');if(String(profile.ownerId)===String(state.cloud.user.id)){switchCloudProfile(profile.profileId);location.hash='#/base';return}if(state.sharedView)await exitSharedProfile(false);clearTimeout(cloudSaveTimer);updateActiveCloudProfile();cacheCloudDocLocally();saveLocal();const view={groupId,groupName:group.name,ownerId:profile.ownerId,ownerName:profile.ownerName,profileId:profile.profileId,profileName:profile.profileName,profile:{...profile,data:cloneProfileData(profile.data)},canEdit:Boolean(profile.canEdit),saving:false,savePromise:null,changeVersion:0,savedVersion:0};state.sharedView=view;applyProfileData(view.profile.data);if(location.hash==='#/base')route();else location.hash='#/base';toast(`Viewing ${view.ownerName} · ${view.profileName}`)}
+async function exitSharedProfile(goToGroups=true){if(!state.sharedView)return;let saveError=null;if(state.sharedView.canEdit)try{await saveSharedProfileNow()}catch(error){saveError=error}state.sharedView=null;const own=activeCloudProfile();if(own)applyProfileData(own.data);cacheCloudDocLocally();saveLocal();scheduleCloudSave();if(saveError)toast(`Shared changes were not saved: ${saveError.message}`);if(goToGroups){location.hash='#/groups';route()}}
 function decorateSharedView(){const view=state.sharedView;if(!view)return;let banner=app.querySelector('.shared-profile-banner');if(!banner){app.insertAdjacentHTML('afterbegin',`<section class="shared-profile-banner ${view.canEdit?'editable':'readonly'}"><div><small>${view.canEdit?'Shared editing enabled':'Read-only shared profile'}</small><strong>${escapeAttr(view.ownerName)} · ${escapeAttr(view.profileName)}</strong><span>${view.canEdit?'Changes sync to the owner’s profile.':'The owner has not allowed changes.'}</span></div><button class="btn secondary" data-shared-exit>Return to my profiles</button></section>`);banner=app.querySelector('.shared-profile-banner')}const status=banner.querySelector('small'),statusText=view.saving?'Saving shared profile…':view.canEdit?'Shared editing enabled':'Read-only shared profile';if(status&&status.textContent!==statusText)status.textContent=statusText;banner.querySelector('[data-shared-exit]').onclick=()=>exitSharedProfile().catch(error=>toast(error.message));if(!view.canEdit){app.querySelectorAll('button:not([data-shared-exit]),input,select,textarea').forEach(control=>control.disabled=true);document.querySelectorAll('#baseSidebarControls input,#baseSidebarControls select:not(#cloudProfileSelect),#baseSidebarControls button:not([data-shared-exit])').forEach(control=>control.disabled=true)}}
 function connectCloud(){showAuthModal('signin')}
 async function signOutCloud(){if(state.sharedView)await exitSharedProfile(false);if(supabaseClient)await supabaseClient.auth.signOut();state.cloud.session=null;state.cloud.user=null;state.cloud.doc=null;state.groups={workspace:[],loading:false,loaded:false,error:'',loadPromise:null};state.sharedView=null;state.cloud.enabled=false;state.cloud.reconnecting=false;state.cloud.status='Local save';localStorage.setItem('droid-archive-sync-provider','local');toast('Signed out');route();renderCloudHeader()}
@@ -1210,7 +1210,7 @@ function stepHtml(step,index){
   // send-to-work step can record where the droid actually ended up.
   const free=step.freeSlots||[];
   const options=free.map(spot=>`<option value="${spot.station}:${spot.slot}" ${slotLogSame(step.logged,spot)?'selected':''}>${stationSlotLabel(spot.station,spot.slot)}</option>`).join('');
-  const record=step.kind==='work'&&!state.sharedView&&slotLogTracking()&&slotLabAllowed()&&free.length
+  const record=(step.kind==='work'||step.to==='LOUNGE')&&!state.sharedView&&slotLogTracking()&&slotLabAllowed()&&free.length
     ?`<label class="step-record"><small>Landed in?</small><select data-log-step="${escapeAttr(step.text)}"><option value="">${free.length} it could take…</option>${options}</select></label>`
     :'';
   return `${tick}<span class="step-thumb">${d?picture(d,step.unit.variant):''}</span><span class="step-text">${text}${assumed}</span>${record}${skip}`;
@@ -2059,7 +2059,35 @@ function donatePage(){app.innerHTML=`<div class="breadcrumbs"><a href="#/">Homep
 // putting it in the profile would mean touching export, import, validate and the
 // cloud schema, any of which could lose a Base. Export from the Slot Lab instead.
 const SLOT_LOG_KEY='droid-archive-slot-log';
-const slotLogSession=new Map();
+// Landings you have recorded against the plan on screen. Kept in localStorage
+// rather than in memory: tabbing out lets the Supabase session refresh, which
+// reloads the profile, and that used to wipe every recording. The dropdowns all
+// reset to their placeholder and, worse, the free-slot lists further down the
+// plan silently went back to offering slots an earlier step had already taken.
+//   Scoped to the profile that produced them, so switching profile shows an empty
+// set without anything having to be cleared, and switching back finds them again.
+const SLOT_SESSION_KEY='droid-archive-slot-session';
+const SLOT_SESSION_MAX=400;
+const slotSessionProfile=()=>activeProfile()?.id||'local';
+const slotSessionRead=()=>{
+  const empty={profileId:slotSessionProfile(),entries:{}};
+  try{const store=JSON.parse(localStorage.getItem(SLOT_SESSION_KEY)||'null');
+    return store&&store.entries&&store.profileId===slotSessionProfile()?store:empty}
+  catch(e){return empty}
+};
+const slotSessionWrite=store=>{try{localStorage.setItem(SLOT_SESSION_KEY,JSON.stringify(store))}catch(e){}};
+const slotLogSession={
+  get:text=>slotSessionRead().entries[text]||undefined,
+  set(text,spot){
+    const store=slotSessionRead();
+    delete store.entries[text];store.entries[text]=spot;
+    // Insertion-ordered, so trimming the front drops the oldest recordings.
+    const keys=Object.keys(store.entries);
+    for(const stale of keys.slice(0,Math.max(0,keys.length-SLOT_SESSION_MAX)))delete store.entries[stale];
+    slotSessionWrite(store);
+  },
+  clear(){slotSessionWrite({profileId:slotSessionProfile(),entries:{}})}
+};
 const slotLogAll=()=>{try{
   const stored=JSON.parse(localStorage.getItem(SLOT_LOG_KEY)||'[]');
   if(!Array.isArray(stored))return[];
@@ -2071,16 +2099,17 @@ const slotLogWrite=rows=>{try{localStorage.setItem(SLOT_LOG_KEY,JSON.stringify(r
 const slotLogClear=()=>slotLogWrite([]);
 const slotLogTracking=()=>{try{return localStorage.getItem('droid-archive-slot-track')==='1'}catch(e){return false}};
 const slotLogSetTracking=on=>{try{localStorage.setItem('droid-archive-slot-track',on?'1':'0')}catch(e){}};
-// Which slots of a station are free right now, ignoring any this plan has already
-// filled — those are gone by the time the next droid is sent.
-// Every slot a droid sent to work could land in, across all the stations that
-// take one. Which station it picks is part of what is being measured, so
-// narrowing this to the planned station would throw away the answer.
-function slotLogFree(taken,freed){
+// Which slots are free right now, ignoring any this plan has already filled —
+// those are gone by the time the next droid is sent.
+//   For a droid sent to work the station is part of what is being measured, so
+// every station that takes a worker is offered; narrowing it to the planned one
+// would throw away the answer. For a droid sent to the Lounge the station is not
+// in doubt, only the slot, so the caller passes just that.
+function slotLogFree(taken,freed,stations=WORK_STATIONS){
   const placed=placements().placed,out=[];
   const key=spot=>`${spot.station}:${spot.slot}`;
   const vacated=new Set((freed||[]).map(key));
-  for(const station of WORK_STATIONS){
+  for(const station of stations){
     const occupied=new Set(placed.filter(x=>x.station===station&&!vacated.has(key(x))).map(x=>x.slot));
     for(const gone of taken||[])if(gone.station===station)occupied.add(gone.slot);
     for(const slot of stationSlotIndices(station))if(!occupied.has(slot))out.push({station,slot});
@@ -2100,8 +2129,12 @@ function annotateLogSlots(steps){
   // you work down.
   const taken=[],freed=[];
   for(const step of steps){
-    if(step.kind==='work'&&Number.isInteger(step.fromSlot)){
-      step.freeSlots=slotLogFree(taken,freed);
+    // Sending a droid to the Lounge is the same measurement as sending it to work:
+    // you pick the droid, the game picks the slot. The station is known there, so
+    // only the Lounge's own slots are offered.
+    const lounge=step.to==='LOUNGE';
+    if((step.kind==='work'||lounge)&&Number.isInteger(step.fromSlot)){
+      step.freeSlots=slotLogFree(taken,freed,lounge?['LOUNGE']:undefined);
       step.logged=slotLogSession.get(step.text)||null;
       if(step.logged)taken.push(step.logged);
     }
@@ -2145,7 +2178,7 @@ const SLOT_RULES_UNDER_TEST=[
    pick:row=>{
      const home=row.free.filter(spot=>spot.station===row.droidType);
      const pool=home.length?home:row.free;
-     for(const station of[...NEAREST_ORDER,'UPGRADE_CHIP']){
+     for(const station of[...NEAREST_ORDER,'UPGRADE_CHIP','LOUNGE']){
        const here=pool.filter(spot=>spot.station===station);
        if(!here.length)continue;
        const order=slotFillOrder(station,{station:row.fromStation,slot:row.fromSlot});
@@ -2218,149 +2251,11 @@ const SLOT_LAB_OWNERS=['xraffo@gmail.com'];
 // in with, so compare a normalised form rather than the raw text.
 const normaliseEmail=email=>String(email||'').trim().toLowerCase().replace(/@googlemail\.com$/,'@gmail.com');
 const slotLabAllowed=()=>SLOT_LAB_OWNERS.includes(normaliseEmail(galacticUserEmail()));
-// The slots this Base actually has right now, as the Base numbers them — not the
-// theoretical maximum. The Nova Shop Lounge slots especially are bought one at a
-// time, so a run built around "all 13" asks you to use slots that do not exist.
-const slotLabSlots=station=>stationSlotIndices(station).map(index=>index+1);
-const slotLabCeiling=station=>{const rule=SLOT_RULES[station];return rule?rule.initial+rule.unlocks.length:0};
-function slotLabRange(station){
-  const have=slotLabSlots(station),ceiling=slotLabCeiling(station),missing=ceiling-have.length;
-  const first=have[0],last=have[have.length-1];
-  // Non-contiguous is normal once slots are bought out of order, so spell the
-  // list out rather than implying a range.
-  const runs=have.every((slot,i)=>i===0||slot===have[i-1]+1);
-  const list=!have.length?'none':runs?(have.length===1?String(first):first+' to '+last):have.join(', ');
-  return{have,ceiling,missing,first,last,list,
-    note:missing?'This run covers '+stationName(station)+' '+list+'. The '+missing+' slot'+(missing===1?'':'s')+' you have not unlocked '+(missing===1?'is':'are')+' left out — re-run just those if you buy them later.':''};
-}
 
-// Answers persist so a sweep can be paused halfway through without losing it.
-const slotLabRead=()=>{try{return JSON.parse(localStorage.getItem('droid-archive-slot-lab')||'{}')||{}}catch(e){return{}}};
-const slotLabWrite=data=>{try{localStorage.setItem('droid-archive-slot-lab',JSON.stringify(data))}catch(e){}};
-// A sweep is one set-up, then a landing to write down for each slot you have,
-// then one restore. You do not put the base back between placements, only after.
-function slotLabSweep(id,title,why,setup,act,undo,range,extra){
-  const count=range.have.length;
-  if(count<2)return{id,title,why,note:'Skipped: '+title.replace(/^Phase [^·]*· /,'')+' needs at least two unlocked slots and this Base has '+count+'.',steps:[]};
-  // One fewer send than there are slots: whichever slot is still empty at the
-  // end is the last in the order, and that also saves a parking space.
-  const sends=count-1;
-  const steps=[{id:id+'-set',kind:'setup',text:setup+' All '+count+' have to be out of the station at once. If the Lounge cannot hold them all, make one your companion — that is your overflow, and there is no need to sell anything. You only send '+sends+' back, because the slot still empty at the end is the last in the order.'}];
-  for(let i=0;i<sends;i++)steps.push({id:id+'-'+(i+1),kind:'record',askFrom:'Which Lounge slot did it come from?',
-    text:act+' Droid '+(i+1)+' of '+sends+'.',
-    ask:i===0?'Which slot did the first one take?':'Which slot did droid '+(i+1)+' take?'});
-  steps.push({id:id+'-last',kind:'record',text:'One slot will still be empty. That is the last in the order, so note it rather than sending a droid for it.',ask:'Which slot was left over?'});
-  steps.push({id:id+'-undo',kind:'undo',text:undo});
-  return{id,title,why,note:[extra,range.note].filter(Boolean).join(' '),steps};
-}
-
-function slotLabProtocol(){
-  const W=slotLabRange('WORKER'),A=slotLabRange('ASTROMECH'),B=slotLabRange('BATTLE'),L=slotLabRange('LOUNGE');
-  // The Lounge is itself split over two floors, and it is the only place you can
-  // send a droid from that lets you change floor — so it stands in for testing
-  // whether height matters at all.
-  const loungeGround=L.have.filter(slot=>loungeSlotMeta(slot-1).kind==='base');
-  // A Battle slot upstairs that is not one of the two being compared, so a droid
-  // parked there can be told to work and will choose between the free pair.
-  const battleUpstairs=B.have.filter(slot=>slot>BATTLE_UPSTAIRS_FROM&&slot!==B.first&&slot!==B.last);
-  const rec=(id,text,ask,undo,ask2,askFrom)=>({id,kind:'record',text,ask,undo,ask2,askFrom});
-  const phases=[];
-
-  // Phase 0 needs two Worker slots to compare and two Lounge slots to send from.
-  const canOrigin=W.have.length>=2&&L.have.length>=2,canFloor=B.have.length>=2;
-  phases.push({id:'P0',title:'Phase 0 · Does where you stand change the answer?',
-    why:'You have to walk to a droid to give it an order, so you can never choose where you are standing independently of where it is. The question that can be answered is whether the DROID\u2019s starting spot changes where it lands \u2014 across the Base, and up a floor. If it does, no fixed list of slots can be right and everything below is measuring the wrong thing.',
-    note:'You cannot choose which slot a droid goes into — the game decides that, and it is the whole thing being measured. You can choose which droid to take out, so to fill one particular slot, make it the only free one in that station and then send a droid to work. Every step below is written as a removal for that reason. '+[W.note,L.note].filter(Boolean).join(' '),
-    steps:[
-      ...(canOrigin?[
-        {id:'P0-set',kind:'setup',text:'Park two droids in the Lounge so Worker '+W.first+' and Worker '+W.last+' are the only free Worker slots. Every other Worker slot stays filled.'},
-        rec('P0-1','Stand beside the Lounge and send the droid in Lounge slot '+L.first+' to work.','Which Worker slot did it take?','Send it straight back to the Lounge.'),
-        rec('P0-2','Now send the droid in Lounge slot '+L.last+' — the far end of the Lounge you have — to work.','Which Worker slot did it take?','Send it back to the Lounge. If this differs from the run above, stop and tell me: the order is not fixed and the rest of this changes.')]:[]),
-      ...(canFloor?[
-        {id:'P0-set2',kind:'setup',text:'Refill Worker completely. Now free Battle '+B.first+' and Battle '+B.last+' only, parking those two droids in the Lounge. Each run below starts a Battle droid somewhere different — you walk to the droid to give the order, so its spot is the only thing changing.'},
-        ...(loungeGround.length?[rec('P0-3','Take a Battle droid sitting anywhere in the ground-floor part of the Lounge — slots '+loungeGround[0]+' to '+loungeGround[loungeGround.length-1]+' — and send it to work.','Which Battle slot did it take?','Pull it straight back out to the Lounge, so Battle '+B.first+' and Battle '+B.last+' are the only free Battle slots again.')]:[]),
-        ...(battleUpstairs.length?[rec('P0-4','Now go upstairs to the Battle droid already sitting in Battle '+battleUpstairs[0]+' and tell it to go to work again. It leaves that slot and picks one of the two free ones — this is the only way to start a droid on the upper floor.','Which Battle slot did it take?','Pull it back out to the Lounge. Battle '+battleUpstairs[0]+' is now empty too, so refill it by leaving it as the only free Battle slot and sending one droid, then free '+B.first+' and '+B.last+' again.')]:[]),
-        ...(W.have.length?[rec('P0-5','If you happen to have a Battle droid already sitting in a Worker or Astromech slot — they end up there when Battle is full — tell that one to go to work. It starts from right across the Base. If you have not got one, leave this blank: the two runs above already answer the question.','Which Battle slot did it take?','Pull it back out to the Lounge.')]:[]),
-        {id:'P0-undo',kind:'undo',text:'Refill Battle, one slot at a time if you need particular droids in particular places. If those runs all landed in the same slot, the starting spot does not matter and a fixed order is safe to build on. If they did not, stop and tell me — the order is not fixed and the sweeps below would be measuring the wrong thing.'}]:[])]});
-
-  phases.push({id:'PA',title:'Phase A · Cross-station: by station, or by slot?',
-    why:'When a droid cannot get into its own station it goes elsewhere. If it prefers Astromech over Battle no matter which slots are open, that is a fixed station order and Phase C disappears entirely. If the winner moves with the slot, it is choosing by distance and Phase C is needed.',
-    steps:[
-      {id:'PA-set',kind:'setup',text:'Fill every Worker slot, so a Worker droid cannot go home, and keep one spare Worker droid in the Lounge to send. The exact pair of slots you free does not matter as long as you write down which pair it was — that is what the answer depends on.'},
-      rec('PA-1','Leave exactly one Astromech slot and one Battle slot free — whichever two are easiest to arrange — and send the spare Worker droid to work.','Where did it land?','Put it back in the Lounge.','Which two slots were free?','Which Lounge slot did the droid start in?'),
-      rec('PA-2','Now do it again with a different Astromech slot free — ideally one at the far end from last time — and one Battle slot. Send the spare Worker droid to work.','Where did it land?','Put it back in the Lounge.','Which two slots were free?','Which Lounge slot did the droid start in?'),
-      rec('PA-3','Once more, this time changing which Battle slot is free — an upstairs one is the most useful — with one Astromech slot. Send the spare Worker droid to work.','Where did it land?','Put it back in the Lounge.','Which two slots were free?','Which Lounge slot did the droid start in?'),
-      {id:'PA-undo',kind:'undo',text:'Refill everything. If it went to Astromech every time whichever slots were free, the choice is by station. If it followed a particular slot around, it is choosing by distance.'}]});
-
-  phases.push(slotLabSweep('PB-WORKER','Phase B1 · Worker slot order',
-    'Emptying only Worker means a Worker droid goes straight home, so each placement names the best slot still free. That is the whole order in one pass, instead of dozens of pairwise tests.',
-    'Move every Worker droid into the Lounge so all Worker slots are free. Leave every other station exactly as it is.',
-    'Send one Worker droid from the Lounge to work and note the slot it takes.',
-    'Leave Worker filled as it now stands — the next sweep does not need it emptied.',W));
-
-  phases.push(slotLabSweep('PB-ASTRO','Phase B2 · Astromech slot order',
-    'Same idea. The mission slots are 1, 3, 5, 7 and 9 — what this measures is which slot the game picks when you send an Astromech to work, which decides whether Optimise can just tell you to send it or has to tell you to swap it into a mission slot.',
-    'Move every Astromech droid into the Lounge so all Astromech slots are free. Leave the other stations alone.',
-    'Send one Astromech droid from the Lounge to work and note the slot it takes.',
-    'Leave Astromech as it now stands.',A));
-
-  phases.push(slotLabSweep('PB-BATTLE','Phase B3 · Battle slot order',
-    'The important one. Battle runs over two floors, and this settles the entire order in a single pass — including whether downstairs really is always preferred.',
-    'Move every Battle droid into the Lounge so all Battle slots are free, both floors. Leave the other stations alone.',
-    'Send one Battle droid from the Lounge to work and note the slot it takes.',
-    'Leave Battle as it now stands.',B,
-    'Slots 1 to '+BATTLE_UPSTAIRS_FROM+' are downstairs, '+(BATTLE_UPSTAIRS_FROM+1)+' upwards are upstairs.'));
-
-  phases.push(slotLabSweep('PB-LOUNGE','Phase B4 · Lounge slot order',
-    'Do this last: the Lounge is the parking space for every sweep above, so it has to be clear of them first. Your note about a droid landing in Lounge 8 suggests the Lounge may fill downwards — if the first placement here lands in the highest slot you have, that is confirmed and the app currently has it backwards.',
-    'Send every droid in the Lounge back to work first, so the Lounge is completely empty.',
-    'Send one droid from a credit station to the Lounge and note the slot it takes.',
-    'Put the base back however you like it. Phase B is done.',L));
-
-  phases.push({id:'PC',title:'Phase C · Cross-station order — only if Phase A disagreed',
-    why:'Skip this entirely if Phase A landed in Astromech all three times. It is only needed if the game picks by distance, in which case we need the order over the other two stations as each type of droid sees it. The first six placements are the ones that matter — that is the range the optimiser actually works in, so a partial answer here is worth far more than a complete one you never finish.',
-    steps:[
-      {id:'PC-set',kind:'setup',text:'Fill every Worker slot. Empty Astromech and Battle completely. Keep your spare Worker droids in the Lounge.'},
-      {id:'PC-W-1',kind:'record',text:'Send a Worker droid from the Lounge to work. Droid 1 of 6.',ask:'Where did it land?'},
-      {id:'PC-W-2',kind:'record',text:'Send another Worker droid to work. Droid 2 of 6.',ask:'Where did droid 2 land?'},
-      {id:'PC-W-3',kind:'record',text:'Send another Worker droid to work. Droid 3 of 6.',ask:'Where did droid 3 land?'},
-      {id:'PC-W-4',kind:'record',text:'Send another Worker droid to work. Droid 4 of 6.',ask:'Where did droid 4 land?'},
-      {id:'PC-W-5',kind:'record',text:'Send another Worker droid to work. Droid 5 of 6.',ask:'Where did droid 5 land?'},
-      {id:'PC-W-6',kind:'record',text:'Send another Worker droid to work. Droid 6 of 6.',ask:'Where did droid 6 land?'},
-      {id:'PC-undo',kind:'undo',text:'Refill Astromech and Battle. If you have the spare droids, repeat the same six with Astromech droids (Astromech full, Worker and Battle empty) and then with Battle droids — otherwise send what you have and stop there.'}]});
-
-  return phases.filter(phase=>phase.steps.length||phase.note);
-}
-
-// What you paste back to me. Only phases you have actually started show up.
-function slotLabReport(phases,values){
-  const lines=[];
-  for(const phase of phases){
-    const answered=phase.steps.filter(s=>s.kind==='record'&&values[s.id]);
-    if(!answered.length)continue;
-    lines.push(phase.title.replace(/^Phase [^·]*· /,''));
-    if(phase.id.indexOf('PB-')===0){
-      const rows=phase.steps.filter(s=>s.kind==='record');
-      const traced=rows.some(s=>values[s.id+':from']);
-      lines.push('  landing order: '+rows.map(s=>traced?(values[s.id+':from']||'?')+' -> '+(values[s.id]||'?'):(values[s.id]||'?')).join(', '));
-      if(traced)lines.push('  (read as: started in Lounge slot -> landed in slot)');
-    }
-    else for(const step of answered){
-      const bits=[];
-      if(values[step.id+':from'])bits.push('from Lounge '+values[step.id+':from']);
-      if(values[step.id+':free'])bits.push('free '+values[step.id+':free']);
-      lines.push('  '+step.id+': '+(bits.length?bits.join(', ')+' -> ':'')+values[step.id]);
-    }
-    lines.push('');
-  }
-  return lines.length?lines.join('\n').trim():'Nothing recorded yet.';
-}
-
-// The point of the log: which rule actually predicts what the game does. Shown on
-// the Slot Lab so the measured runs and the passive data sit together.
+// The point of the log: which rule actually predicts what the game does.
 function slotLogFindingsHtml(){
   const rows=slotLogAll();
-  if(!rows.length)return `<section class="lab-phase"><h2>Passive findings</h2><p class="lab-why">Nothing logged yet. Turn on <strong>Track slot choices</strong> on Optimise, then each step that sends a droid to work gets a box for where it landed. Following your normal plans is enough — no test runs needed.</p></section>`;
+  if(!rows.length)return `<section class="lab-phase"><h2>Findings</h2><p class="lab-why">Nothing logged yet. Turn on <strong>Track slot choices</strong> on Optimise, then each step that sends a droid to work gets a box for where it landed. Following your normal plans is enough — no test runs needed.</p></section>`;
   const scores=slotLogScores(rows),stations=[...new Set(rows.map(r=>r.station))];
   const counts=new Map();
   for(const row of rows){const key=row.profileId||'local';
@@ -2370,63 +2265,47 @@ function slotLogFindingsHtml(){
   const head=stations.map(st=>`<th>${stationName(st)}</th>`).join('');
   const body=scores.map(rule=>`<tr><td>${rule.name}</td><td><strong>${pct(rule.hit,rule.n)}%</strong><small>${rule.hit} of ${rule.n}</small></td>${stations.map(st=>{const b=rule.per[st];return `<td>${b?pct(b.hit,b.n)+'%':'—'}<small>${b?b.n+' seen':''}</small></td>`}).join('')}</tr>`).join('');
   const best=scores[0];
-  return `<section class="lab-phase"><h2>Passive findings</h2>
+  return `<section class="lab-phase"><h2>Findings</h2>
     <p class="lab-why"><strong>${rows.length}</strong> landings recorded during normal play. Each rule guesses the slot from where the droid started and which slots were free; the best one is what Optimise should be using.</p>
     <div class="lab-scores"><table><thead><tr><th>Rule</th><th>Overall</th>${head}</tr></thead><tbody>${body}</tbody></table></div>
     ${byProfile.length>1?`<p class="lab-why">Across ${byProfile.length} of your profiles: ${byProfile.map(p=>`<strong>${p.name}</strong> ${p.n}`).join(', ')}. They are pooled on purpose — how the game picks a slot is the same question whatever save you are on — but if one of them has a Base that is out of date, its rows will drag the scores down, so check its share looks sane. Group profiles are never recorded: a Base you only visit moves between visits, so its rows would be measuring a state you cannot check.</p>`:''}
-    <p class="lab-why">Leading: <strong>${best.name}</strong> at ${pct(best.hit,best.n)}%. Treat anything under about 200 landings as provisional. Note that <em>the fixed order</em> was worked out from the original sweeps, so it is scoring against its own source data here and will look better than it is until fresh landings come in — that is exactly what this log is for.</p>
-    <div class="lab-actions"><button class="btn" id="labLogCopy">Copy the log</button><button class="btn ghost" id="labLogClear">Clear the log</button></div></section>`;
+    <p class="lab-why">Leading: <strong>${best.name}</strong> at ${pct(best.hit,best.n)}%. Treat anything under about 200 landings as provisional. Battle still ships a fixed order worked out from the original sweeps, so it is scoring against its own source data and will look better than it is until fresh landings come in — which is exactly what this log is for.</p>
+    </section>`;
 }
 function slotLabPage(){
   if(!slotLabAllowed()){notFound();return}
-  const phases=slotLabProtocol();
-  const store=slotLabRead(),values=store.values||{},done=new Set(store.done||[]);
-  const persist=()=>slotLabWrite({values,done:[...done]});
-  const recordSteps=phases.flatMap(p=>p.steps.filter(s=>s.kind==='record'));
-  const answered=recordSteps.filter(s=>values[s.id]).length;
-
-  const stepHtml=step=>{
-    const tick='<label class="step-tick" title="Mark this step as done"><input type="checkbox" data-lab-tick="'+escapeAttr(step.id)+'" '+(done.has(step.id)?'checked':'')+'><span></span></label>';
-    const verb=step.kind==='setup'?'<span class="lab-verb setup">Set up</span>':step.kind==='undo'?'<span class="lab-verb undo">Put it back</span>':'<span class="lab-verb run">Run</span>';
-    const undo=step.undo?'<small class="lab-undo">Then: '+step.undo+'</small>':'';
-    const input=step.kind==='record'?'<label class="lab-answer"><small>'+step.ask+'</small><input type="text" inputmode="numeric" placeholder="slot" data-lab-input="'+escapeAttr(step.id)+'" value="'+escapeAttr(values[step.id]||'')+'"></label>':'';
-    // Some runs depend on which slots were free, so that gets written down too.
-    const origin=step.askFrom?'<label class="lab-answer"><small>'+step.askFrom+'</small><input type="text" placeholder="slot" data-lab-input="'+escapeAttr(step.id+':from')+'" value="'+escapeAttr(values[step.id+':from']||'')+'"></label>':'';
-    const setup=step.ask2?'<label class="lab-answer wide"><small>'+step.ask2+'</small><input type="text" placeholder="e.g. Astromech 3, Battle 7" data-lab-input="'+escapeAttr(step.id+':free')+'" value="'+escapeAttr(values[step.id+':free']||'')+'"></label>':'';
-    return '<li class="lab-step '+step.kind+(done.has(step.id)?' is-done':'')+'">'+tick+'<div><p>'+verb+' '+step.text+'</p>'+undo+origin+setup+input+'</div></li>';
-  };
-  const phaseHtml=phase=>'<section class="lab-phase"><h2>'+phase.title+'</h2><p class="lab-why">'+phase.why+'</p>'+(phase.note?'<p class="notice">'+phase.note+'</p>':'')+'<ol class="lab-steps">'+phase.steps.map(stepHtml).join('')+'</ol></section>';
-
+  const rows=slotLogAll();
+  const stamp=new Date().toISOString().slice(0,10);
   app.innerHTML='<div class="breadcrumbs"><a href="#/">Homepage</a> / Slot Lab</div>'+
     '<section class="base-heading"><div><p class="eyebrow">Private tool</p><h1>Slot Lab</h1>'+
-    '<p class="lead">Measuring how the game picks a slot, rather than guessing it from map dots placed by hand. Work down the list — every step says what to set up, what to do, and how to put the base back for the next one.</p></div>'+
-    '<div class="lab-actions"><button class="btn" id="labCopy">Copy results</button><button class="btn ghost" id="labReset">Start over</button></div></section>'+
-    '<div class="notice">Built from the slots this Base actually has, so nothing here asks for a slot you have not unlocked. <strong>'+answered+' of '+recordSteps.length+'</strong> landings recorded.</div>'+
-    phases.map(phaseHtml).join('')+
+    '<p class="lead">Every landing recorded during normal play, and how well each rule predicts them. Turn on <strong>Track slot choices</strong> on Optimise, then each step that sends a droid to work or to the Lounge gets a box for where it actually went.</p></div>'+
+    '<div class="lab-actions"><button class="btn" id="labExport">Export</button><button class="btn secondary" id="labCopy">Copy</button><button class="btn ghost" id="labReset">Reset</button></div></section>'+
     slotLogFindingsHtml()+
-    '<section class="lab-phase"><h2>Results so far</h2><p class="lab-why">Paste this back to me. Phases you have not started are left out.</p>'+
-    '<textarea class="form-control lab-output" id="labOutput" readonly rows="10">'+escapeAttr(slotLabReport(phases,values))+'</textarea></section>';
+    (rows.length?'<section class="lab-phase"><h2>The data</h2><p class="lab-why">'+rows.length+' landings, newest last. Export writes the same thing to a file.</p>'+
+      '<textarea class="form-control lab-output" id="labOutput" readonly rows="14">'+escapeAttr(JSON.stringify(rows,null,1))+'</textarea></section>':'');
 
-  const refresh=()=>{const out=document.querySelector('#labOutput');if(out)out.value=slotLabReport(phases,values)};
-  app.querySelectorAll('[data-lab-input]').forEach(input=>{
-    input.oninput=()=>{const value=input.value.trim();if(value)values[input.dataset.labInput]=value;else delete values[input.dataset.labInput];persist();refresh()};
-  });
-  app.querySelectorAll('[data-lab-tick]').forEach(box=>{
-    box.onchange=()=>{if(box.checked)done.add(box.dataset.labTick);else done.delete(box.dataset.labTick);persist();box.closest('.lab-step').classList.toggle('is-done',box.checked)};
-  });
-  const logCopy=document.querySelector('#labLogCopy');
-  if(logCopy)logCopy.onclick=async()=>{const text=JSON.stringify(slotLogAll(),null,1);
-    try{await navigator.clipboard.writeText(text);toast('Log copied')}catch(e){toast('Could not reach the clipboard')}};
-  const logClear=document.querySelector('#labLogClear');
-  if(logClear)logClear.onclick=()=>{if(!confirm('Delete every recorded landing?'))return;slotLogClear();toast('Log cleared');slotLabPage()};
-  document.querySelector('#labCopy').onclick=async()=>{
-    try{await navigator.clipboard.writeText(slotLabReport(phases,values));toast('Results copied')}
-    catch(e){document.querySelector('#labOutput').select();toast('Copy the box at the bottom')}
+  const text=()=>JSON.stringify(slotLogAll(),null,1);
+  const copy=async()=>{
+    try{await navigator.clipboard.writeText(text());toast('Log copied')}
+    catch(e){const box=document.querySelector('#labOutput');if(box){box.select();toast('Copy the box below')}else toast('Could not reach the clipboard')}
   };
-  document.querySelector('#labReset').onclick=()=>{
-    if(!confirm('Clear every recorded landing and start the run again?'))return;
-    slotLabWrite({values:{},done:[]});toast('Slot Lab cleared');slotLabPage();
+  const reset=()=>{
+    if(!confirm('Delete every recorded landing? There is no undo, so export first if you want to keep them.'))return;
+    slotLogClear();slotLogSession.clear();toast('Log cleared');slotLabPage();
   };
+  document.querySelector('#labExport').onclick=()=>{
+    if(!slotLogAll().length){toast('Nothing recorded yet');return}
+    // A file rather than the clipboard, so a long log survives being pasted
+    // somewhere with a length limit.
+    const blob=new Blob([text()],{type:'application/json'}),url=URL.createObjectURL(blob);
+    const link=document.createElement('a');
+    link.href=url;link.download='droid-archives-slot-log-'+stamp+'.json';
+    document.body.appendChild(link);link.click();link.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+    toast('Exported '+slotLogAll().length+' landings');
+  };
+  document.querySelector('#labCopy').onclick=copy;
+  document.querySelector('#labReset').onclick=reset;
 }
 
 // The link only exists for the account that owns the tool.

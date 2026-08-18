@@ -94,7 +94,7 @@ ok('the list holds only slots that were free',src.includes('const options=free.m
 ok('each option is named in full, floor included',src.includes('stationSlotLabel(spot.station,spot.slot)'));
 ok('and the control is hidden when nothing is free',src.includes('slotLabAllowed()&&free.length'));
 ok('free sets are worked out in plan order, allowing for what the steps above did',
-  src.includes('step.freeSlots=slotLogFree(taken,freed)'));
+  src.includes("step.freeSlots=slotLogFree(taken,freed,lounge?['LOUNGE']:undefined)"));
 ok('a recorded landing survives the rerender that follows it',
   src.includes('slotLogSession.set(step.text,spot)')&&src.includes('slotLogSession.get(step.text)'));
 ok('and is cleared when a layout is applied, since the plan changes then',
@@ -121,8 +121,14 @@ ok('and the rebirth, since profiles sit at different ones',run('slotLogAll()')[0
 ok('every profile writes to one pool, not one log each',src.includes("SLOT_LOG_KEY='droid-archive-slot-log'"));
 ok('the findings say which profiles contributed',src.includes('Across ${byProfile.length} of your profiles'));
 ok('and warn that a stale Base drags the scores down',src.includes('its rows will drag the scores down'));
-ok('switching profile clears the plan-local recording state',
-  /function applyProfileData\(data\)\{slotLogSession\.clear\(\)/.test(src));
+// Reloading the profile must NOT wipe the recordings. Tabbing out lets the cloud
+// session refresh, which reloads the profile, and clearing there reset every
+// dropdown and quietly made the free-slot lists further down the plan wrong.
+ok('reloading the profile no longer wipes the recordings',
+  !/function applyProfileData\(data\)\{slotLogSession\.clear\(\)/.test(src));
+ok('the recordings are scoped to the profile instead, so a switch shows an empty set',
+  src.includes("const slotSessionProfile=()=>activeProfile()?.id||'local';")&&
+  src.includes('store.profileId===slotSessionProfile()'));
 run('slotLogClear()');
 
 console.log('\n=== other peoples profiles are not tracked at all ===');
@@ -155,17 +161,22 @@ ok('a log with nothing shared is left alone',(()=>{
 run('slotLogClear()');
 
 console.log('\n=== nothing is even offered while a group profile is open ===');
-ok('the record box is withheld',src.includes("step.kind==='work'&&!state.sharedView&&slotLogTracking()"));
+ok('the record box is withheld',src.includes("(step.kind==='work'||step.to==='LOUNGE')&&!state.sharedView&&slotLogTracking()"));
 ok('the plan is not annotated with free sets',src.includes('if(state.sharedView||!slotLabAllowed()||!slotLogTracking())return;'));
 ok('and the Track button is hidden',src.includes('if(trackHost&&slotLabAllowed()&&!state.sharedView){'));
 ok('slotLogAdd refuses as a backstop, whatever the UI did',
   /function slotLogAdd\(row\)\{[\s\S]{0,400}if\(state\.sharedView\)return false;/.test(src));
 ok('the findings say group profiles are never recorded',
   src.includes('Group profiles are never recorded'));
-ok('opening a group profile clears the plan-local state',
-  /async function openGroupProfile\(groupId,ownerId,profileId\)\{slotLogSession\.clear\(\)/.test(src));
+// Popping into somebody's group profile and back must not cost you the
+// recordings you had made on your own Base. Nothing is recorded while you are in
+// one, and the store is keyed by profile, so neither needs to clear anything.
+ok('opening a group profile leaves your recordings alone',
+  !/async function openGroupProfile\(groupId,ownerId,profileId\)\{slotLogSession\.clear\(\)/.test(src));
 ok('and so does leaving one',
-  /async function exitSharedProfile\(goToGroups=true\)\{slotLogSession\.clear\(\)/.test(src));
+  !/async function exitSharedProfile\(goToGroups=true\)\{slotLogSession\.clear\(\)/.test(src));
+ok('the only thing that still clears them is applying a layout, which changes the Base',
+  /clearOptimiseMarks=\(\)=>\{slotLogSession\.clear\(\)/.test(src));
 run('slotLogClear()');
 
 console.log('\n=== the handlers redraw with something that exists ===');

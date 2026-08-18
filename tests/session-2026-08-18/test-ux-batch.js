@@ -14,8 +14,12 @@ const sandbox={console,
 };
 sandbox.unitName=x=>`${x.name} ${x.variant}`;
 vm.createContext(sandbox);
-for(const k of ['const escapeAttr=','const readList=','const writeList=','const optimiseTickedSteps=','const toggleTickedStep=','const sparedFromSelling=','const spareFromSelling=','const clearOptimiseMarks=','const STEP_VERB_TONE=','const stepTicked=','const variantLabel=','const plainUnitName=','const slotLogSession='])
+for(const k of ['const escapeAttr=','const readList=','const writeList=','const optimiseTickedSteps=','const toggleTickedStep=','const sparedFromSelling=','const spareFromSelling=','const clearOptimiseMarks=','const STEP_VERB_TONE=','const stepTicked=','const variantLabel=','const plainUnitName=',
+  'const SLOT_SESSION_KEY=','const SLOT_SESSION_MAX=','const slotSessionProfile=','const slotSessionWrite='])
   vm.runInContext(grabLine(k),sandbox);
+sandbox.activeProfile=()=>({id:'p1'});
+// The plan-local recordings live in localStorage now, so they span lines.
+for(const k of ['const slotSessionRead=','const slotLogSession='])vm.runInContext(grab(k),sandbox);
 vm.runInContext(grab('function stepHtml'),sandbox);
 vm.runInContext(grab('function droidWhereabouts'),sandbox);
 
