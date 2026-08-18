@@ -1949,10 +1949,14 @@ const slotLabWrite=data=>{try{localStorage.setItem('droid-archive-slot-lab',JSON
 function slotLabSweep(id,title,why,setup,act,undo,range,extra){
   const count=range.have.length;
   if(count<2)return{id,title,why,note:'Skipped: '+title.replace(/^Phase [^·]*· /,'')+' needs at least two unlocked slots and this Base has '+count+'.',steps:[]};
-  const steps=[{id:id+'-set',kind:'setup',text:setup}];
-  range.have.forEach((slot,i)=>steps.push({id:id+'-'+(i+1),kind:'record',askFrom:'Which Lounge slot did it come from?',
-    text:act+' Droid '+(i+1)+' of '+count+'.',
-    ask:i===0?'Which slot did the first one take?':'Which slot did droid '+(i+1)+' take?'}));
+  // One fewer send than there are slots: whichever slot is still empty at the
+  // end is the last in the order, and that also saves a parking space.
+  const sends=count-1;
+  const steps=[{id:id+'-set',kind:'setup',text:setup+' All '+count+' have to be out of the station at once. If the Lounge cannot hold them all, make one your companion — that is your overflow, and there is no need to sell anything. You only send '+sends+' back, because the slot still empty at the end is the last in the order.'}];
+  for(let i=0;i<sends;i++)steps.push({id:id+'-'+(i+1),kind:'record',askFrom:'Which Lounge slot did it come from?',
+    text:act+' Droid '+(i+1)+' of '+sends+'.',
+    ask:i===0?'Which slot did the first one take?':'Which slot did droid '+(i+1)+' take?'});
+  steps.push({id:id+'-last',kind:'record',text:'One slot will still be empty. That is the last in the order, so note it rather than sending a droid for it.',ask:'Which slot was left over?'});
   steps.push({id:id+'-undo',kind:'undo',text:undo});
   return{id,title,why,note:[extra,range.note].filter(Boolean).join(' '),steps};
 }
