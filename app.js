@@ -2023,10 +2023,12 @@ const slotLogSetTracking=on=>{try{localStorage.setItem('droid-archive-slot-track
 // Every slot a droid sent to work could land in, across all the stations that
 // take one. Which station it picks is part of what is being measured, so
 // narrowing this to the planned station would throw away the answer.
-function slotLogFree(taken){
+function slotLogFree(taken,freed){
   const placed=placements().placed,out=[];
+  const key=spot=>`${spot.station}:${spot.slot}`;
+  const vacated=new Set((freed||[]).map(key));
   for(const station of WORK_STATIONS){
-    const occupied=new Set(placed.filter(x=>x.station===station).map(x=>x.slot));
+    const occupied=new Set(placed.filter(x=>x.station===station&&!vacated.has(key(x))).map(x=>x.slot));
     for(const gone of taken||[])if(gone.station===station)occupied.add(gone.slot);
     for(const slot of stationSlotIndices(station))if(!occupied.has(slot))out.push({station,slot});
   }
@@ -2038,12 +2040,19 @@ const slotLogSame=(a,b)=>Boolean(a)&&Boolean(b)&&a.station===b.station&&a.slot==
 // recorded as taking.
 function annotateLogSlots(steps){
   if(!slotLabAllowed()||!slotLogTracking())return;
-  const taken=[];
+  // Walk the plan in order. Every step empties the slot its droid was in — a
+  // sell for good, a move until it lands somewhere — so by the time you reach a
+  // later step the slots above it have opened up. Landings you have already
+  // recorded close again; ones you have not are still unknown, and fill in as
+  // you work down.
+  const taken=[],freed=[];
   for(const step of steps){
-    if(step.kind!=='work'||!Number.isInteger(step.fromSlot))continue;
-    step.freeSlots=slotLogFree(taken);
-    step.logged=slotLogSession.get(step.text)||null;
-    if(step.logged)taken.push(step.logged);
+    if(step.kind==='work'&&Number.isInteger(step.fromSlot)){
+      step.freeSlots=slotLogFree(taken,freed);
+      step.logged=slotLogSession.get(step.text)||null;
+      if(step.logged)taken.push(step.logged);
+    }
+    if(Number.isInteger(step.fromSlot)&&step.from&&step.from!==ROSTER)freed.push({station:step.from,slot:step.fromSlot});
   }
 }
 function slotLogAdd(row){
