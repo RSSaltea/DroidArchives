@@ -2,13 +2,25 @@
   "version": 1,
   "notes": [
     {
+      "id": "2026-08-18-battle-floors-and-walking",
+      "date": "2026-08-18",
+      "title": "Battle floors, and a shorter walk round the Base",
+      "summary": "Optimise knows which Battle slot the game will use, says which floor it is on, and walks you round in a tighter loop.",
+      "changes": [
+        "Optimise now knows how the game picks a Battle slot. A free downstairs slot is always taken before an upstairs one, and among the upstairs slots it works back from the stairs, so Battle 11 goes before Battle 6. It used to assume the lowest slot number always won, which was wrong upstairs.",
+        "Anywhere a Battle slot is named now says which floor it is on, because the number alone does not tell you where to walk. That covers the step-by-step moves, the classic plan, the \"From:\" line in the Optimise preview, the Rebirth outlook and the needed list on Base.",
+        "Optimise now uses the real positions from the Base map to order your walk. Where two stations have the same amount to do it sends you to the nearer one, which on our test bases cut the walking by about 8% and by a quarter on the worst one.",
+        "Because Build slot 1 sits by the Worker ring, slot 2 in the Astromech room and slot 3 in the Battle room, Build now lands next to whichever room you are already in rather than sending you back across the Base."
+      ]
+    },
+    {
       "id": "2026-08-18-mission-slots",
       "date": "2026-08-18",
       "title": "Astromech mission slots, and clearer cycle requirements",
       "summary": "Optimise now stocks the mission slots on purpose, and the needed list tells you the cost and where the droid is.",
       "changes": [
         "Optimise now treats Astromech slots 1, 3, 5, 7 and 9 as the mission slots they are. R2-D2 takes one first because it comes back with two rewards, then CB-23 because it opens a mission nothing else reaches, then the other Astromech Iconics for their mission times, then simply the best Astromechs you own.",
-        "Droids holding a mission slot are never sold or moved to the Lounge to make room, and the preview says which slot they are holding and why.",
+        "Optimise picks the best droid in your whole roster for each mission slot, so anything already sitting in one that is not the best choice gets moved out or sold as usual. Only the droid it picks is then protected from being sold or lounged, and the preview says which slot it is holding and why.",
         "Locked droids and your own Companion and Upgrade Chip picks still come first, so nothing you chose yourself gets taken for a mission slot.",
         "\"Needed later in this cycle\" now works like the Rebirth outlook. If you own the droid but not at the right quality it turns amber instead of red, tells you how many chips the upgrade costs, and says which slot the copy is sitting in.",
         "Both of these work in the legacy interface as well as the modern one."

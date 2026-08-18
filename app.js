@@ -188,6 +188,20 @@ const SLOT_RULES={WORKER:{initial:4,unlocks:[1,4,7,10,12,14,16]},ASTROMECH:{init
 // Astromech slots 1, 3, 5, 7 and 9 send droids on missions; the rest just earn.
 // Mission slots are numbered as the Base shows them, so these are the indices.
 const ASTROMECH_MISSION_SLOTS=[0,2,4,6,8];
+// The order the game fills a station's slots when it places a droid for you.
+// Only Battle differs from plain slot order, because it is the only station
+// split over two floors. Measured in game:
+//   Battle 1 + 6 free -> took 1      Battle 2 + 6 free -> took 2
+//   Battle 6 + 11 free -> took 11
+// So a free downstairs slot beats a free upstairs one, and upstairs it works
+// back from the stairs — Battle 11 sits nearest them and Battle 6 furthest, which
+// is what the map coordinates show too. The downstairs order among 1-5 has not
+// been tested, so it is left as plain slot order.
+const SLOT_FILL_ORDER={BATTLE:[0,1,2,3,4,10,9,8,7,6,5]};
+const slotFillOrder=station=>{
+  const available=stationSlotIndices(station),preferred=SLOT_FILL_ORDER[station];
+  return preferred?preferred.filter(i=>available.includes(i)):available;
+};
 const TYPE_IMAGES={WORKER:'assets/types/Worker_Droid_-_Droid_-_Droid_Tycoon.png',ASTROMECH:'assets/types/Astromech_Droid_-_Droid_-_Droid_Tycoon.png',BATTLE:'assets/types/Battle_Droid_-_Droid_-_Droid_Tycoon.png'};
 const novaLevelFor=id=>Math.max(0,Number(state.novaUpgrades?.[id]||0));
 const stationName=type=>({WORKER:'Worker',ASTROMECH:'Astromech',BATTLE:'Battle',BUILD:'Build',LOUNGE:'Lounge',COMPANION:'Companion',UPGRADE_CHIP:'Upgrade Chip',BLUEPRINT_STORAGE:'Blueprint Storage'}[type]||type);
@@ -199,7 +213,14 @@ const loungeSlotLabel=index=>loungeSlotMeta(index).label;
 const lockedSlotLabel=(type,index)=>type==='COMPANION'&&index===1?'Unlock Second Companion in Nova Shop':type==='UPGRADE_CHIP'?'Unlock Upgrade Chip Station in Nova Shop':type==='LOUNGE'?loungeSlotLabel(index):`Unlocks at Rebirth ${slotUnlockRebirth(type,index)}`;
 const loungeDivider=index=>index===5?'<div class="upper-level-divider"><span>Upper Level</span></div>':index===9?'<div class="upper-level-divider"><span>Nova Shop</span></div>':'';
 // The Firing Range gained a second floor with the Rebirth 17-22 Battle slots.
-const slotDivider=(type,index)=>type==='LOUNGE'?loungeDivider(index):type==='BATTLE'&&index===5?'<div class="upper-level-divider"><span>Second Floor</span></div>':'';
+// Battle is the only station split over two floors, so a slot number on its own
+// does not tell you which one to walk to. Everything that names a Battle slot
+// says the floor as well.
+const BATTLE_UPSTAIRS_FROM=5;
+const slotFloor=(station,index)=>station==='BATTLE'?(index>=BATTLE_UPSTAIRS_FROM?'upstairs':'downstairs'):'';
+const floorNote=(station,index)=>{const floor=slotFloor(station,index);return floor?` (${floor})`:''};
+const stationSlotLabel=(station,index)=>`${stationName(station)} ${index+1}${floorNote(station,index)}`;
+const slotDivider=(type,index)=>type==='LOUNGE'?loungeDivider(index):type==='BATTLE'&&index===BATTLE_UPSTAIRS_FROM?'<div class="upper-level-divider"><span>Second Floor</span></div>':'';
 const slotPurchaseKey=(type,index)=>`${type}:${index}`;
 function slotUnlockRebirth(type,index){if(type==='LOUNGE'){const meta=loungeSlotMeta(index);return meta.kind==='rebirth'?meta.rebirth:null}const rule=SLOT_RULES[type];return rule&&index>=rule.initial?rule.unlocks[index-rule.initial]??null:null}
 function isSlotEligible(type,index,rebirth=state.rebirth){if(type==='LOUNGE'){const meta=loungeSlotMeta(index);return meta.kind==='base'||meta.kind==='rebirth'&&rebirth>=meta.rebirth||meta.kind==='nova'&&loungeNovaSlots()>=meta.level}if(type==='COMPANION')return index===0||index===1&&novaLevelFor('companion-slot')>=1;if(type==='UPGRADE_CHIP')return index===0&&novaLevelFor('upgrade-chip-station')>=1;const rule=SLOT_RULES[type];if(!rule)return false;if(index<rule.initial)return true;const unlock=slotUnlockRebirth(type,index);return unlock!==null&&rebirth>=unlock}
@@ -211,7 +232,7 @@ function eligibleRebirthSlots(rebirth=state.rebirth){return Object.keys(SLOT_RUL
 function autoPurchaseEligibleSlots(){if(!state.autoPurchaseSlots)return false;const bought=new Set(state.purchasedSlots),before=bought.size;eligibleRebirthSlots().forEach(x=>bought.add(slotPurchaseKey(x.type,x.index)));state.purchasedSlots=[...bought];return bought.size!==before}
 function purchaseRebirthSlot(type,index,onDone){const unlock=slotUnlockRebirth(type,index);if(unlock===null||state.rebirth<unlock)return;const key=slotPurchaseKey(type,index);if(!state.purchasedSlots.includes(key))state.purchasedSlots.push(key);save();toast(`${type[0]+type.slice(1).toLowerCase()} slot purchased`);onDone?.()}
 function expandedOwned(){return state.owned.flatMap((x,i)=>Array.from({length:x.qty},(_,unit)=>({...x,source:i,unit}))) }
-function placements(){const occupied=Object.fromEntries(Object.keys(SLOT_RULES).map(type=>[type,new Set()])),placed=[],overflow=[],pending=[];const claim=(x,station,slot)=>{occupied[station].add(slot);placed.push({...x,station,slot})},firstFree=station=>stationSlotIndices(station).find(i=>!occupied[station].has(i))??-1;for(const x of expandedOwned()){const station=x.preferred,slot=Number(x.preferredSlot);if(station&&SLOT_RULES[station]&&Number.isInteger(slot)&&isSlotUnlocked(station,slot)&&!occupied[station].has(slot))claim(x,station,slot);else pending.push(x)}for(const x of pending){const d=state.droids.find(y=>y.name===x.name);let station,slot=-1;if(x.preferred&&SLOT_RULES[x.preferred]&&(slot=firstFree(x.preferred))>=0)station=x.preferred;else if((slot=firstFree(d.type))>=0)station=d.type;else if((slot=firstFree('BUILD'))>=0)station='BUILD';station?claim(x,station,slot):overflow.push(x)}return{placed,overflow}}
+function placements(){const occupied=Object.fromEntries(Object.keys(SLOT_RULES).map(type=>[type,new Set()])),placed=[],overflow=[],pending=[];const claim=(x,station,slot)=>{occupied[station].add(slot);placed.push({...x,station,slot})},firstFree=station=>slotFillOrder(station).find(i=>!occupied[station].has(i))??-1;for(const x of expandedOwned()){const station=x.preferred,slot=Number(x.preferredSlot);if(station&&SLOT_RULES[station]&&Number.isInteger(slot)&&isSlotUnlocked(station,slot)&&!occupied[station].has(slot))claim(x,station,slot);else pending.push(x)}for(const x of pending){const d=state.droids.find(y=>y.name===x.name);let station,slot=-1;if(x.preferred&&SLOT_RULES[x.preferred]&&(slot=firstFree(x.preferred))>=0)station=x.preferred;else if((slot=firstFree(d.type))>=0)station=d.type;else if((slot=firstFree('BUILD'))>=0)station='BUILD';station?claim(x,station,slot):overflow.push(x)}return{placed,overflow}}
 function materializePlacements(p){const rows=[],indices=new Map();for(const x of [...p.placed,...p.overflow]){const index=rows.length,placed=Boolean(x.station);rows.push({name:x.name,variant:x.variant,qty:1,...(placed?{preferred:x.station,preferredSlot:x.slot}:x.preferred?{preferred:x.preferred}:{}),...(x.lockedSlot||x.lockedCompanion?{lockedSlot:true}:{}),...(x.built?{built:true}:{})});indices.set(`${x.source}:${x.unit}`,index)}state.owned=rows;return indices}
 function movePlacedDroid(p,source,targetStation,targetSlot,target){const indices=materializePlacements(p),sourceRow=state.owned[indices.get(`${source.source}:${source.unit}`)];if(!sourceRow)return;const oldStation=source.station,oldSlot=source.slot;sourceRow.preferred=targetStation;sourceRow.preferredSlot=targetSlot;if(target){const targetRow=state.owned[indices.get(`${target.source}:${target.unit}`)];if(targetRow){targetRow.preferred=oldStation;targetRow.preferredSlot=oldSlot}}save()}
 function toggleSlotLock(source,unit){const p=placements(),indices=materializePlacements(p),index=indices.get(`${source}:${unit}`),row=state.owned[index];if(!row)return;row.lockedSlot=!row.lockedSlot;save();toast(row.lockedSlot?'Droid slot locked for Optimise':'Droid slot unlocked')}
@@ -670,7 +691,7 @@ function requirementLocations(){
   const out=new Map();
   for(const unit of placements().placed){
     const key=`${unit.name}:${unit.variant}`;
-    if(!out.has(key))out.set(key,`${stationName(unit.station)} ${unit.slot+1}`);
+    if(!out.has(key))out.set(key,stationSlotLabel(unit.station,unit.slot));
   }
   return out;
 }
@@ -940,7 +961,7 @@ function basePageV2(){
 function stabiliseProjectedPlacements(baseP,placed){const current=new Map(baseP.placed.map(x=>[`${x.source}:${x.unit}`,x])),stations=[...new Set(placed.map(x=>x.station))],stable=[];for(const station of stations){const list=placed.filter(x=>x.station===station),slots=stationSlotIndices(station),used=new Set(),floating=[];for(const item of list){const old=current.get(`${item.source}:${item.unit}`);if(old?.station===station&&slots.includes(old.slot)&&!used.has(old.slot)){used.add(old.slot);stable.push({...item,slot:old.slot})}else floating.push(item)}const open=slots.filter(slot=>!used.has(slot));floating.forEach((item,index)=>stable.push({...item,slot:open[index]??item.slot}))}return stable}
 function optimisedPlacements(baseP,plan){
   const assigned=new Map((plan.assignments||[]).map(x=>[x.key,x])),current=new Map(baseP.placed.map(x=>[`${x.source}:${x.unit}`,x])),occupied=Object.fromEntries(Object.keys(SLOT_RULES).map(type=>[type,new Set()])),placed=[],overflow=[],sell=[],units=expandedOwned();
-  const claim=(unit,station,slot)=>{occupied[station].add(slot);placed.push({...unit,station,slot})},free=station=>stationSlotIndices(station).find(i=>!occupied[station].has(i))??-1,canKeep=(station,slot)=>station&&stationSlotIndices(station).includes(slot)&&!occupied[station].has(slot);
+  const claim=(unit,station,slot)=>{occupied[station].add(slot);placed.push({...unit,station,slot})},free=station=>slotFillOrder(station).find(i=>!occupied[station].has(i))??-1,canKeep=(station,slot)=>station&&stationSlotIndices(station).includes(slot)&&!occupied[station].has(slot);
   const lockedKeys=new Set(baseP.placed.filter(x=>x.lockedSlot||isBuilding(x)).map(x=>`${x.source}:${x.unit}`));
   for(const locked of baseP.placed.filter(x=>lockedKeys.has(`${x.source}:${x.unit}`)))if(canKeep(locked.station,locked.slot))claim(locked,locked.station,locked.slot);
   for(const unit of units){const key=`${unit.source}:${unit.unit}`,target=assigned.get(key);if(target)claim(unit,target.station,target.slot)}
@@ -1155,6 +1176,28 @@ const AUTO_ROUTE_MODEL='reroute';
 // wholesale reshuffle, where it would only burn its budget before handing over
 // to greedy() anyway — so past this many droids we skip straight to greedy.
 const ROUTE_SEARCH_LIMIT=60000,ROUTE_SEARCH_MS=60,ROUTE_SEARCH_MAX_DROIDS=16;
+// The middle of each station's slots on the map, used to order the walk. Build
+// is spread across three rooms — slot 1 by the Worker ring, slot 2 in the
+// Astromech room, slot 3 in the Battle room — so its centre sits between them
+// and it is never far from wherever you already are.
+const STATION_CENTRES=(()=>{
+  const out={},add=(station,list)=>{if(!list||!list.length)return;
+    const seen=out[station]||(out[station]=[0,0,0]);
+    for(const[x,y]of list){seen[0]+=x;seen[1]+=y;seen[2]++}};
+  for(const floor of MAP_FLOORS){
+    const spots=MAP_SPOTS[floor]||{};
+    add('WORKER',spots.WORKER);add('ASTROMECH',spots.ASTROMECH);add('BATTLE',spots.BATTLE);
+    add('BUILD',spots.BUILD);add('UPGRADE_CHIP',spots.UPGRADE_CHIP);
+    add('LOUNGE',spots.LOUNGE);add('LOUNGE',spots.LOUNGE_REBIRTH);add('LOUNGE',spots.LOUNGE_NOVA);
+  }
+  // The Companion slots are on you, not on the map, so treat them as reachable
+  // from anywhere rather than pretending they sit somewhere in particular.
+  return Object.fromEntries(Object.entries(out).map(([k,[x,y,n]])=>[k,[x/n,y/n]]));
+})();
+const stationGap=(a,b)=>{
+  const p=STATION_CENTRES[a],q=STATION_CENTRES[b];
+  return p&&q?Math.hypot(p[0]-q[0],p[1]-q[1]):0;
+};
 const placeName=station=>station===ROSTER?'Roster':stationName(station);
 
 function optimiseRoutePlan(baseP,rawProjected){
@@ -1162,6 +1205,7 @@ function optimiseRoutePlan(baseP,rawProjected){
   const units=new Map([...baseP.placed,...projected.placed,...projected.sell,...projected.overflow].map(x=>[keyOf(x),x]));
   const startAt=new Map([...units.keys()].map(key=>[key,ROSTER]));
   for(const x of baseP.placed)startAt.set(keyOf(x),x.station);
+  const goalSlotAt=new Map(projected.placed.map(x=>[keyOf(x),x.slot])),startSlotAt=new Map(baseP.placed.map(x=>[keyOf(x),x.slot]));
   const goalAt=new Map(projected.placed.map(x=>[keyOf(x),x.station])),sellKeys=new Set(projected.sell.map(keyOf)),lockedKeys=new Set(baseP.placed.filter(x=>x.lockedSlot).map(keyOf));
   const capacityOf=Object.fromEntries(Object.keys(SLOT_RULES).map(type=>[type,stationSlotIndices(type).length]));
   // Only droids that actually need a command are tracked. Everything else holds
@@ -1261,7 +1305,7 @@ function optimiseRoutePlan(baseP,rawProjected){
         seen.set(childKey,node.g);
         push({st,here:node.here,g:node.g,assumed:node.assumed+(action.assumed?1:0),parent:node,action});
       }
-      for(const station of stationsWithWork(node.st,node.here)){
+      for(const station of[...stationsWithWork(node.st,node.here)].sort((a,b)=>stationGap(node.here,b)-stationGap(node.here,a))){
         const childKey=node.st.join('|')+'@'+station;
         if(seen.has(childKey)&&seen.get(childKey)<=node.g+1)continue;
         seen.set(childKey,node.g+1);
@@ -1291,7 +1335,7 @@ function optimiseRoutePlan(baseP,rawProjected){
       const options=[...stationsWithWork(st,here)];
       if(!options.length)break;
       const workAt=station=>{const counts=countsFor(st);let n=0;for(let i=0;i<st.length;i++)if(movesFor(i,st,station,counts).length)n++;return n};
-      const scored=options.map(station=>[station,workAt(station)]).sort((a,b)=>b[1]-a[1]);
+      const scored=options.map(station=>[station,workAt(station)]).sort((a,b)=>b[1]-a[1]||stationGap(here,a[0])-stationGap(here,b[0]));
       here=scored[0][0];
       trail.push({kind:'travel',to:here});
     }
@@ -1308,15 +1352,18 @@ function optimiseRoutePlan(baseP,rawProjected){
   let{trail,complete}=plan(false);
   if(!complete){const retry=plan(true);if(retry.complete)({trail,complete}=retry)}
 
+  // Battle runs over two floors, so "a Battle slot" is not enough to walk to.
+  const toFloor=action=>floorNote(action.to,goalSlotAt.get(tracked[action.i]));
+  const fromFloor=(action,from)=>floorNote(from,startSlotAt.get(tracked[action.i]));
   const describe=(action,unit,from)=>{
     const name=unitName(unit);
-    if(action.kind==='sell')return{type:'sell',text:from===ROSTER?`Sell ${name}.`:`Sell ${name} from ${placeName(from)}.`};
-    if(action.kind==='work')return{type:'move',text:`Tell ${name} to go to work — it will take a ${placeName(action.to)} slot.`};
-    if(action.kind==='place')return{type:'move',text:`Carry ${name} to a ${placeName(action.to)} slot yourself — telling it to go to work would send it somewhere else.`};
+    if(action.kind==='sell')return{type:'sell',text:from===ROSTER?`Sell ${name}.`:`Sell ${name} from ${placeName(from)}${fromFloor(action,from)}.`};
+    if(action.kind==='work')return{type:'move',text:`Tell ${name} to go to work — it will take a ${placeName(action.to)}${toFloor(action)} slot.`};
+    if(action.kind==='place')return{type:'move',text:`Carry ${name} to a ${placeName(action.to)}${toFloor(action)} slot yourself — telling it to go to work would send it somewhere else.`};
     if(action.kind==='lounge')return{type:'move',text:`Send ${name} to the Lounge.`};
     if(action.kind==='companion')return{type:'move',text:`Make ${name} your companion.`};
-    if(action.to==='COMPANION')return{type:'move',text:`Make ${name} your companion to free its ${placeName(from)} slot — you will put it to work from there.`};
-    return{type:'move',text:`Send ${name} to the Lounge to free its ${placeName(from)} slot — you will put it to work from there.`};
+    if(action.to==='COMPANION')return{type:'move',text:`Make ${name} your companion to free its ${placeName(from)}${fromFloor(action,from)} slot — you will put it to work from there.`};
+    return{type:'move',text:`Send ${name} to the Lounge to free its ${placeName(from)}${fromFloor(action,from)} slot — you will put it to work from there.`};
   };
   const steps=[];let st=startState.slice(),here=null,visit=0;
   for(const action of trail){
@@ -1347,7 +1394,7 @@ function optimiseVisits(steps){
 // slot to move into rather than being walked round the base. It shares the same
 // target layout as optimiseRoutePlan, so the Upgrade Chip pick applies to both.
 const stationLabel=station=>station?`${station[0]+station.slice(1).toLowerCase()} station`:'roster';
-const slotLabel=p=>p?`${p.station} ${p.slot+1}`:'Roster';
+const slotLabel=p=>p?`${p.station} ${p.slot+1}${floorNote(p.station,p.slot)}`:'Roster';
 const sameDroidVariant=(a,b)=>a?.name===b?.name&&a?.variant===b?.variant;
 const sameSlot=(a,b)=>a?.station===b?.station&&a?.slot===b?.slot;
 function cleanOptimiseSteps(steps){const cleaned=[];for(let i=0;i<steps.length;i++){const a=steps[i],b=steps[i+1],hasSlots=a.from&&a.withFrom&&b?.from&&b?.to;if(hasSlots&&a.type==='swap'&&b.type==='move'&&b.to.station!=='BUILD'&&sameDroidVariant(a.unit,b.unit)&&sameSlot(a.withFrom,b.from)){cleaned.push({type:'move',unit:a.unit,from:a.from,to:b.to,text:`Move ${unitName(a.unit)} from ${slotLabel(a.from)} to empty ${slotLabel(b.to)}.`},{type:'move',unit:a.withUnit,from:a.withFrom,to:a.from,text:`Move ${unitName(a.withUnit)} from ${slotLabel(a.withFrom)} to empty ${slotLabel(a.from)}.`});i++;continue}cleaned.push(a)}const stationOrder=['WORKER','ASTROMECH','BATTLE','BUILD','LOUNGE','COMPANION','UPGRADE_CHIP','BLUEPRINT'];return cleaned.map((step,index)=>({...step,index})).filter(step=>!(step.type==='move'&&step.to?.station==='BUILD')&&!(step.type==='move'&&step.from?.station===step.to?.station)&&!(step.type==='swap'&&step.from?.station===step.withFrom?.station)).sort((a,b)=>a.type==='sell'&&b.type==='sell'?(stationOrder.indexOf(a.from?.station)-stationOrder.indexOf(b.from?.station))||((a.from?.slot??0)-(b.from?.slot??0))||a.index-b.index:a.type==='sell'?-1:b.type==='sell'?1:a.index-b.index)}
@@ -1459,7 +1506,7 @@ function optimisePage(){
     :`<ol class="optimise-visits" ${stepsCollapsed?'hidden':''}>${visits.map(v=>`<li class="optimise-visit"><h3>${placeName(v.at)}<small>${v.steps.length} droid${v.steps.length===1?'':'s'}</small></h3><ul>${v.steps.map(step=>`<li class="${stepTicked(step.text)?String.fromCharCode(115,116,101,112,45,100,111,110,101):String()}">${stepHtml(step)}</li>`).join('')}</ul></li>`).join('')}</ol>`;
   const stepsStyleToggle=`<button class="btn secondary optimise-style-toggle" id="toggleStepStyle" title="${classicSteps?'Switch to the route-based plan that groups moves by station':'Switch to the original slot-by-slot plan'}">${classicSteps?'Use route plan':'Use classic plan'}</button>`;
   const productive=p.placed.filter(x=>PRODUCTIVE_STATIONS.includes(x.station)),baseIncome=productive.reduce((sum,x)=>{const d=state.droids.find(y=>y.name===x.name);return sum+(d?.variants[x.variant]?.income||0)},0);
-  const originLabel=x=>{const origin=currentMap.get(`${x.source}:${x.unit}`);return origin?`${origin.station} ${origin.slot+1}`:'Roster'};
+  const originLabel=x=>{const origin=currentMap.get(`${x.source}:${x.unit}`);return origin?`${origin.station} ${origin.slot+1}${floorNote(origin.station,origin.slot)}`:'Roster'};
   const replacementLabel=(occupant,type,index)=>{const key=`${occupant.source}:${occupant.unit}`,origin=currentMap.get(key),original=baseP.placed.find(x=>x.station===type&&x.slot===index);if(origin?.station===type&&origin?.slot===index)return'';if(!original)return'Empty slot';if(`${original.source}:${original.unit}`===key)return'';return`${original.name} ${variantText(original.variant)}`};
   const slot=(type,index)=>{
     const occupant=p.placed.find(x=>x.station===type&&x.slot===index);
