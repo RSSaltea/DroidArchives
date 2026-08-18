@@ -2006,7 +2006,7 @@ function slotLabProtocol(){
     'Leave Worker filled as it now stands — the next sweep does not need it emptied.',W));
 
   phases.push(slotLabSweep('PB-ASTRO','Phase B2 · Astromech slot order',
-    'Same idea. This one also shows whether the mission slots really are 1, 3, 5, 7 and 9.',
+    'Same idea. The mission slots are 1, 3, 5, 7 and 9 — what this measures is which slot the game picks when you send an Astromech to work, which decides whether Optimise can just tell you to send it or has to tell you to swap it into a mission slot.',
     'Move every Astromech droid into the Lounge so all Astromech slots are free. Leave the other stations alone.',
     'Send one Astromech droid from the Lounge to work and note the slot it takes.',
     'Leave Astromech as it now stands.',A));
