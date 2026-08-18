@@ -2,6 +2,19 @@
   "version": 1,
   "notes": [
     {
+      "id": "2026-08-18-map-slot-unlocks",
+      "date": "2026-08-18",
+      "title": "Map slots now unlock in the right order",
+      "summary": "Every spot on the map is tied to the Rebirth that actually unlocks it.",
+      "changes": [
+        "Each dot on the map is now the slot it really is. Before, the spots were listed in the order they appear on the floor rather than the order the game unlocks them, so a marker could show the wrong Rebirth and the wrong droid could sit on it.",
+        "Hovering a locked spot tells you the Rebirth that opens it, and spots you have already reached but not bought are picked out so you can see what is waiting for you.",
+        "Build slots were wrong everywhere, not just on the map: the Base gave you all three from the start. You start with one, and the other two open at Rebirth 1 and Rebirth 2.",
+        "The map header no longer counts slots you have not unlocked, so \"spots filled\" is out of the slots you actually have, with the locked ones listed separately.",
+        "This clears the work in progress note from the Base map update."
+      ]
+    },
+    {
       "id": "2026-08-17-optimise-swap-fix",
       "date": "2026-08-17",
       "title": "Optimise: swaps through the Companion and chip slots",

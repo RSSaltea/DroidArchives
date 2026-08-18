@@ -493,6 +493,9 @@ html[data-theme="dark"] .sidebar a.active{background:#202633;color:#fff}
 .map-pin-face.open:hover{background:#153024cc}
 .map-pin-face.open:hover .slot-icon{opacity:1}
 .map-pin-face.locked{opacity:.32;cursor:default}
+/* Reached this Rebirth but not bought yet — worth spotting, unlike one you
+   simply cannot have for another ten Rebirths. */
+.map-pin-face.locked.unbought{opacity:.6;border-radius:6px;background:#2a210e88;box-shadow:0 0 0 1px #d8a23f66}
 .map-pin.filled .map-pin-face{filter:drop-shadow(0 0 4px #6fd3ff55)}
 .map-pin.matched .map-pin-face{filter:drop-shadow(0 0 5px #7fd1a0aa)}
 .map-pin.building .map-pin-face{filter:drop-shadow(0 0 5px #ff9a8acc)}

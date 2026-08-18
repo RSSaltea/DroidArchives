@@ -184,7 +184,7 @@ const rarityRank=d=>['COMMON','RARE','EPIC','LEGENDARY','MYTHIC','ICONIC'].index
 function futureUpgradeCostForUnit(unit,d){if(!d)return 0;const requirements=(state.rebirths[state.cycle]||[]).flatMap(r=>(r.requiredDroids||[]).filter(i=>i.droidName===unit.name&&r.to>state.rebirth&&r.to<=rebirthGoal()).map(i=>i.variant));if(!requirements.length)return 0;const target=requirements.reduce((best,variant)=>VARIANTS.indexOf(variant)>VARIANTS.indexOf(best)?variant:best,requirements[0]);return chipsToVariant(d,unit.variant,target)}
 function optimiseStorageKeepScore(item){const d=state.droids.find(x=>x.name===item.unit.name),income=d?.variants[item.unit.variant]?.income||0;if(optimiseFreeBuildMode()==='rarity-income')return rarityRank(d)*1e9+income;if(optimiseFreeBuildMode()==='unused-income')return income;return -futureUpgradeCostForUnit(item.unit,d)}
 function droidCycleStatus(d,ownedVariant,selected=true){const requirements=(state.rebirths[state.cycle]||[]).flatMap(r=>(r.requiredDroids||[]).filter(i=>i.droidName===d.name).map(i=>({at:r.to,variant:i.variant}))),future=requirements.filter(r=>r.at>state.rebirth&&requirementWithinGoal(r)),next=future.find(r=>r.at===state.rebirth+1),later=future.filter(r=>r.at>state.rebirth+1);if(!selected&&future.length)return{kind:'unused',label:'Duplicate · not used for rebirth'};if(next){const enough=VARIANTS.indexOf(ownedVariant)>=VARIANTS.indexOf(next.variant),chips=chipsToVariant(d,ownedVariant,next.variant);return enough?{kind:'current',label:`Next R: ${next.at} ${variantText(next.variant)}`}:{kind:'current-short',label:`Next R: ${next.at} · Upgrade to ${variantText(next.variant)} · ${fmt(chips)} chips`}}if(!later.length)return{kind:'unused',label:'No further rebirth use'};const max=later.reduce((best,item)=>VARIANTS.indexOf(item.variant)>VARIANTS.indexOf(best.variant)?item:best,later[0]),enough=VARIANTS.indexOf(ownedVariant)>=VARIANTS.indexOf(max.variant),chips=chipsToVariant(d,ownedVariant,max.variant),rebirths=[...new Set(later.map(item=>item.at))].join(', ');return enough?{kind:'ready',label:`Ready through R: ${max.at} ${variantText(max.variant)}`}:{kind:'upgrade',label:`R: ${rebirths} · Upgrade to ${variantText(max.variant)} · ${fmt(chips)} chips`}}
-const SLOT_RULES={WORKER:{initial:4,unlocks:[1,4,7,10,12,14,16]},ASTROMECH:{initial:3,unlocks:[2,5,8,11,13,15]},BATTLE:{initial:2,unlocks:[3,6,9,17,18,19,20,21,22]},BUILD:{initial:3,unlocks:[]},LOUNGE:{initial:5,unlocks:Array(8).fill(99)},COMPANION:{initial:2,unlocks:[]},UPGRADE_CHIP:{initial:1,unlocks:[]}};
+const SLOT_RULES={WORKER:{initial:4,unlocks:[1,4,7,10,12,14,16]},ASTROMECH:{initial:3,unlocks:[2,5,8,11,13,15]},BATTLE:{initial:2,unlocks:[3,6,9,17,18,19,20,21,22]},BUILD:{initial:1,unlocks:[1,2]},LOUNGE:{initial:5,unlocks:Array(8).fill(99)},COMPANION:{initial:2,unlocks:[]},UPGRADE_CHIP:{initial:1,unlocks:[]}};
 const TYPE_IMAGES={WORKER:'assets/types/Worker_Droid_-_Droid_-_Droid_Tycoon.png',ASTROMECH:'assets/types/Astromech_Droid_-_Droid_-_Droid_Tycoon.png',BATTLE:'assets/types/Battle_Droid_-_Droid_-_Droid_Tycoon.png'};
 const novaLevelFor=id=>Math.max(0,Number(state.novaUpgrades?.[id]||0));
 const stationName=type=>({WORKER:'Worker',ASTROMECH:'Astromech',BATTLE:'Battle',BUILD:'Build',LOUNGE:'Lounge',COMPANION:'Companion',UPGRADE_CHIP:'Upgrade Chip',BLUEPRINT_STORAGE:'Blueprint Storage'}[type]||type);
@@ -352,7 +352,26 @@ function chipSellCalculatorHtml(p){
 // The Battle station spans both floors: the five ground-floor dots are slots 0-4
 // and the six upstairs ones are 5-10, matching the Rebirth 17-22 unlocks.
 const MAP_SPOTS={
-  downstairs:{WORKER:[[73.52,40.21],[75.96,40.65],[77.79,42.16],[68.97,69.34],[76.24,70.75],[62.82,72.97],[80.09,79.79],[60.46,80.1],[78.51,87.64],[63.26,88.35],[71.49,91.68]],ASTROMECH:[[20.99,40.2],[29.11,40.2],[34.46,40.2],[39.8,40.2],[20.1,51.32],[26.19,55.17],[30.44,55.17],[36.48,55.17],[45.27,55.17]],BATTLE:[[71.96,21.61],[67.07,22.21],[61.04,22.98],[70.08,23.37],[64.49,24.07]],BUILD:[[67.39,32.37],[41.92,48.32],[70.03,53.47]],BLUEPRINT:[[79.46,55.57],[80.5,56.57],[81.55,57.48]],UPGRADE_CHIP:[[61.83,66.63]],LOUNGE:[[95.85,44.64],[96.02,51.22],[82.13,51.54],[86.13,56.33],[92.52,56.33]],LOUNGE_REBIRTH:[[93.47,29.94],[94.97,32.44],[95.06,35.42],[94.52,38.31]],LOUNGE_NOVA:[[89,26.97],[86.12,27.12],[91.56,27.95],[83.58,28.62]]},
+  // Each list is in slot order, not map order — position 0 is the slot you start
+  // with and the rest follow the unlock sequence, so a dot always carries the
+  // Rebirth its slot really needs. Taken from the numbered maps in assets/map.
+  downstairs:{
+    // 1, 2, 3, 4, then rb1 rb4 rb7 rb10 rb12 rb14 rb16
+    WORKER:[[76.24,70.75],[80.09,79.79],[68.97,69.34],[62.82,72.97],[60.46,80.1],[63.26,88.35],[71.49,91.68],[78.51,87.64],[77.79,42.16],[75.96,40.65],[73.52,40.21]],
+    // 1, 2, 3, then rb2 rb5 rb8 rb11 rb13 rb15
+    ASTROMECH:[[20.1,51.32],[29.11,40.2],[20.99,40.2],[34.46,40.2],[39.8,40.2],[36.48,55.17],[45.27,55.17],[30.44,55.17],[26.19,55.17]],
+    // 1, 2, then rb3 rb6 rb9 — the Rebirth 17-22 slots are upstairs
+    BATTLE:[[61.04,22.98],[64.49,24.07],[67.07,22.21],[70.08,23.37],[71.96,21.61]],
+    // 1, then rb1 rb2
+    BUILD:[[70.03,53.47],[41.92,48.32],[67.39,32.37]],
+    BLUEPRINT:[[79.46,55.57],[80.5,56.57],[81.55,57.48]],UPGRADE_CHIP:[[61.83,66.63]],
+    // 1-5, then rb17 rb18 rb19 rb20. The Nova dots are unlabelled on the map, so
+    // they carry on round the same arc past rb20.
+    LOUNGE:[[82.13,51.54],[86.13,56.33],[92.52,56.33],[95.85,44.64],[96.02,51.22]],
+    LOUNGE_REBIRTH:[[94.52,38.31],[95.06,35.42],[94.97,32.44],[93.47,29.94]],
+    LOUNGE_NOVA:[[91.56,27.95],[89,26.97],[86.12,27.12],[83.58,28.62]]
+  },
+  // rb17 down to rb22, top to bottom.
   upstairs:{BATTLE:[[65.13,11.47],[65.48,14.69],[65.74,17.71],[66.09,20.83],[66.27,24.16],[66.53,27.68]]}
 };
 const MAP_FLOORS=['downstairs','upstairs'];
@@ -368,7 +387,12 @@ const mapFloor=()=>MAP_FLOORS.includes(localStorage.getItem('droid-archive-map-f
 // the five ground-floor Battle slots for the six above them.
 function baseMapHtml(p){
   const floor=mapFloor(),other=floor==='downstairs'?'upstairs':'downstairs';
-  const markers=mapFloorSlots(floor).map(spot=>{
+  const spots=mapFloorSlots(floor);
+  // A spot you have not unlocked yet is not a spot. These decide what the header
+  // counts, so "spots filled" is out of the slots this Base actually has.
+  const available=s=>s.station==='BLUEPRINT_STORAGE'?s.index<capacity('BLUEPRINT_STORAGE'):isSlotEligible(s.station,s.index)&&isSlotPurchased(s.station,s.index);
+  const filledAt=s=>s.station==='BLUEPRINT_STORAGE'?state.blueprints.some(b=>Number(b.slot)===s.index):p.placed.some(x=>x.station===s.station&&x.slot===s.index);
+  const markers=spots.map(spot=>{
     const {station,index,x,y}=spot,pos=`left:${x}%;top:${y}%`;
     if(station==='BLUEPRINT_STORAGE'){
       const bp=state.blueprints.find(b=>Number(b.slot)===index),locked=index>=capacity('BLUEPRINT_STORAGE');
@@ -395,11 +419,14 @@ function baseMapHtml(p){
       return `<div class="map-pin filled ${match?'matched':''} ${building?'building':''} ${locked?'pinned':''}" style="${pos}" data-slot-station="${station}" data-slot-index="${index}"${building?'':drag}><div class="map-pin-actions">${actions}</div><a class="map-pin-face" draggable="false" href="#/droid/${slug(d.name)}" title="${escapeAttr(`${occupant.name} ${variantLabel(occupant.variant)} · ${stationName(station)} ${index+1}${building?' · still building':''}`)}">${picture(d,occupant.variant)}</a></div>`;
     }
     const eligible=isSlotEligible(station,index),purchased=isSlotPurchased(station,index);
-    if(!eligible||!purchased)return `<div class="map-pin" style="${pos}"><span class="map-pin-face locked" title="${escapeAttr(lockedSlotLabel(station,index)||`Locked ${stationName(station)} slot`)}"><span class="slot-icon">${stationIcon(station)}</span></span></div>`;
+    // Two different kinds of unavailable: not reached yet, or reached and not
+    // bought. Only the second one is something you can go and do right now.
+    if(!eligible||!purchased)return `<div class="map-pin" style="${pos}"><span class="map-pin-face locked ${eligible?'unbought':''}" title="${escapeAttr(eligible?`${stationName(station)} slot ${index+1} — unlocked at Rebirth ${slotUnlockRebirth(station,index)}, not bought yet`:lockedSlotLabel(station,index)||`Locked ${stationName(station)} slot`)}"><span class="slot-icon">${stationIcon(station)}</span></span></div>`;
     return `<div class="map-pin" style="${pos}" data-slot-station="${station}" data-slot-index="${index}"><button class="map-pin-face open" data-station="${station}" data-slot-index="${index}" title="${escapeAttr(`Add to ${stationName(station)} slot ${index+1}`)}"><span class="slot-icon">${stationIcon(station)}</span></button></div>`;
   }).join('');
-  const counts=mapFloorSlots(floor).reduce((n,s)=>n+(p.placed.some(x=>x.station===s.station&&x.slot===s.index)?1:0),0);
-  return `<section class="base-map"><header><div><strong>${floor==='upstairs'?'Upstairs':'Downstairs'}</strong><span>${counts} of ${mapFloorSlots(floor).length} spots filled</span></div><button class="btn secondary" id="toggleMapFloor">Go ${other}</button></header><div class="base-map-art"><img src="assets/map/map.png" alt="Overhead map of the base, ${floor}">${markers}</div></section>`;
+  const usable=spots.filter(available),locked=spots.length-usable.length;
+  const counts=usable.reduce((n,s)=>n+(filledAt(s)?1:0),0);
+  return `<section class="base-map"><header><div><strong>${floor==='upstairs'?'Upstairs':'Downstairs'}</strong><span>${counts} of ${usable.length} spots filled${locked?` · ${locked} still locked`:''}</span></div><button class="btn secondary" id="toggleMapFloor">Go ${other}</button></header><div class="base-map-art"><img src="assets/map/map.png" alt="Overhead map of the base, ${floor}">${markers}</div></section>`;
 }
 function mapFloorSlots(floor){
   const spots=MAP_SPOTS[floor]||{},out=[];
