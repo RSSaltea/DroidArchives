@@ -198,6 +198,18 @@ const ASTROMECH_MISSION_SLOTS=[0,2,4,6,8];
 //   Battle     11, 10, 5, 4, 9, 3, 8, 2, 7, 6, 1
 //   Lounge     10, 9, 8, 7, 6, then 4, 1, 5, 2, 3
 //
+// CAUTION on the Lounge order. Every send in that sweep started from a Battle
+// slot, and the five downstairs origins all landed in the upper circle while the
+// four upstairs origins all landed in base slots — so the split may be about
+// where the droid came from rather than about the Lounge having an order at all.
+// Sending Worker droids instead could well give something different. It is kept
+// because it matches an observed run and plain slot order matched none, but it
+// is the least trustworthy line here and costs little if wrong, since a droid in
+// the Lounge earns nothing wherever it sits.
+//
+// The Astromech result does not have that problem: mission slots were taken from
+// both halves of the Lounge, and every even slot came later regardless of origin.
+//
 // Two of these carry real meaning. Astromech fills all five mission slots — 1,
 // 3, 5, 7 and 9 — before it touches a single even one, so the first five
 // Astromechs you send to work are the ones that go on missions. And the Lounge
