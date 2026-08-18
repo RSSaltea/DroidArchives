@@ -573,3 +573,5 @@ html[data-theme="dark"] .sidebar a.active{background:#202633;color:#fff}
 .lab-answer input{width:110px;min-height:30px;padding:4px 8px;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:4px;font:inherit;font-size:12px}
 .lab-output{width:100%;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;white-space:pre}
 @media(max-width:760px){.lab-answer{flex-direction:column;align-items:flex-start;gap:3px}.lab-answer input{width:100%}}
+/* Runs whose answer depends on which slots were free record that too. */
+.lab-answer.wide input{width:230px}

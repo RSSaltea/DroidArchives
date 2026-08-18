@@ -1966,7 +1966,7 @@ function slotLabProtocol(){
   // A Battle slot upstairs that is not one of the two being compared, so a droid
   // parked there can be told to work and will choose between the free pair.
   const battleUpstairs=B.have.filter(slot=>slot>BATTLE_UPSTAIRS_FROM&&slot!==B.first&&slot!==B.last);
-  const rec=(id,text,ask,undo)=>({id,kind:'record',text,ask,undo});
+  const rec=(id,text,ask,undo,ask2)=>({id,kind:'record',text,ask,undo,ask2});
   const phases=[];
 
   // Phase 0 needs two Worker slots to compare and two Lounge slots to send from.
@@ -1989,11 +1989,11 @@ function slotLabProtocol(){
   phases.push({id:'PA',title:'Phase A · Cross-station: by station, or by slot?',
     why:'When a droid cannot get into its own station it goes elsewhere. If it prefers Astromech over Battle no matter which slots are open, that is a fixed station order and Phase C disappears entirely. If the winner moves with the slot, it is choosing by distance and Phase C is needed.',
     steps:[
-      {id:'PA-set',kind:'setup',text:'Fill every Worker slot, so a Worker droid cannot go home, and keep one spare Worker droid in the Lounge to send.'},
-      rec('PA-1','Free Astromech '+A.first+' and Battle '+B.first+' only. Send the spare Worker droid to work.','Where did it land?','Put it back in the Lounge and refill both slots.'),
-      rec('PA-2','Free Astromech '+A.last+' and Battle '+B.first+' only. Send the spare Worker droid to work.','Where did it land?','Put it back in the Lounge and refill both slots.'),
-      rec('PA-3','Free Astromech '+A.first+' and Battle '+B.last+' only. Send the spare Worker droid to work.','Where did it land?','Put it back in the Lounge and refill both slots.'),
-      {id:'PA-undo',kind:'undo',text:'Refill everything. If all three landed in Astromech the choice is by station, so you can skip Phase C — tell me and you are finished after Phase B.'}]});
+      {id:'PA-set',kind:'setup',text:'Fill every Worker slot, so a Worker droid cannot go home, and keep one spare Worker droid in the Lounge to send. The exact pair of slots you free does not matter as long as you write down which pair it was — that is what the answer depends on.'},
+      rec('PA-1','Leave exactly one Astromech slot and one Battle slot free — whichever two are easiest to arrange — and send the spare Worker droid to work.','Where did it land?','Put it back in the Lounge.','Which two slots were free?'),
+      rec('PA-2','Now do it again with a different Astromech slot free — ideally one at the far end from last time — and one Battle slot. Send the spare Worker droid to work.','Where did it land?','Put it back in the Lounge.','Which two slots were free?'),
+      rec('PA-3','Once more, this time changing which Battle slot is free — an upstairs one is the most useful — with one Astromech slot. Send the spare Worker droid to work.','Where did it land?','Put it back in the Lounge.','Which two slots were free?'),
+      {id:'PA-undo',kind:'undo',text:'Refill everything. If it went to Astromech every time whichever slots were free, the choice is by station. If it followed a particular slot around, it is choosing by distance.'}]});
 
   phases.push(slotLabSweep('PB-WORKER','Phase B1 · Worker slot order',
     'Emptying only Worker means a Worker droid goes straight home, so each placement names the best slot still free. That is the whole order in one pass, instead of dozens of pairwise tests.',
@@ -2043,7 +2043,7 @@ function slotLabReport(phases,values){
     if(!answered.length)continue;
     lines.push(phase.title.replace(/^Phase [^·]*· /,''));
     if(phase.id.indexOf('PB-')===0)lines.push('  landing order: '+phase.steps.filter(s=>s.kind==='record').map(s=>values[s.id]||'?').join(', '));
-    else for(const step of answered)lines.push('  '+step.id+': '+values[step.id]);
+    else for(const step of answered)lines.push('  '+step.id+': '+(values[step.id+':free']?'free '+values[step.id+':free']+' -> ':'')+values[step.id]);
     lines.push('');
   }
   return lines.length?lines.join('\n').trim():'Nothing recorded yet.';
@@ -2062,7 +2062,9 @@ function slotLabPage(){
     const verb=step.kind==='setup'?'<span class="lab-verb setup">Set up</span>':step.kind==='undo'?'<span class="lab-verb undo">Put it back</span>':'<span class="lab-verb run">Run</span>';
     const undo=step.undo?'<small class="lab-undo">Then: '+step.undo+'</small>':'';
     const input=step.kind==='record'?'<label class="lab-answer"><small>'+step.ask+'</small><input type="text" inputmode="numeric" placeholder="slot" data-lab-input="'+escapeAttr(step.id)+'" value="'+escapeAttr(values[step.id]||'')+'"></label>':'';
-    return '<li class="lab-step '+step.kind+(done.has(step.id)?' is-done':'')+'">'+tick+'<div><p>'+verb+' '+step.text+'</p>'+undo+input+'</div></li>';
+    // Some runs depend on which slots were free, so that gets written down too.
+    const setup=step.ask2?'<label class="lab-answer wide"><small>'+step.ask2+'</small><input type="text" placeholder="e.g. Astromech 3, Battle 7" data-lab-input="'+escapeAttr(step.id+':free')+'" value="'+escapeAttr(values[step.id+':free']||'')+'"></label>':'';
+    return '<li class="lab-step '+step.kind+(done.has(step.id)?' is-done':'')+'">'+tick+'<div><p>'+verb+' '+step.text+'</p>'+undo+setup+input+'</div></li>';
   };
   const phaseHtml=phase=>'<section class="lab-phase"><h2>'+phase.title+'</h2><p class="lab-why">'+phase.why+'</p>'+(phase.note?'<p class="notice">'+phase.note+'</p>':'')+'<ol class="lab-steps">'+phase.steps.map(stepHtml).join('')+'</ol></section>';
 
