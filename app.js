@@ -1359,7 +1359,7 @@ function optimiseRoutePlan(baseP,rawProjected){
     const name=unitName(unit);
     if(action.kind==='sell')return{type:'sell',text:from===ROSTER?`Sell ${name}.`:`Sell ${name} from ${placeName(from)}${fromFloor(action,from)}.`};
     if(action.kind==='work')return{type:'move',text:`Tell ${name} to go to work — it will take a ${placeName(action.to)}${toFloor(action)} slot.`};
-    if(action.kind==='place')return{type:'move',text:`Carry ${name} to a ${placeName(action.to)}${toFloor(action)} slot yourself — telling it to go to work would send it somewhere else.`};
+    if(action.kind==='place')return{type:'move',text:`Swap ${name} into a ${placeName(action.to)}${toFloor(action)} slot — make it your companion, then swap it with whoever is in the slot you want. Sending it to work would put it somewhere else.`};
     if(action.kind==='lounge')return{type:'move',text:`Send ${name} to the Lounge.`};
     if(action.kind==='companion')return{type:'move',text:`Make ${name} your companion.`};
     if(action.to==='COMPANION')return{type:'move',text:`Make ${name} your companion to free its ${placeName(from)}${fromFloor(action,from)} slot — you will put it to work from there.`};
