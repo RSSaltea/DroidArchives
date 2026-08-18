@@ -1959,13 +1959,20 @@ function slotLabSweep(id,title,why,setup,act,undo,range,extra){
 
 function slotLabProtocol(){
   const W=slotLabRange('WORKER'),A=slotLabRange('ASTROMECH'),B=slotLabRange('BATTLE'),L=slotLabRange('LOUNGE');
+  // The Lounge is itself split over two floors, and it is the only place you can
+  // send a droid from that lets you change floor — so it stands in for testing
+  // whether height matters at all.
+  const loungeGround=L.have.filter(slot=>loungeSlotMeta(slot-1).kind==='base');
+  // A Battle slot upstairs that is not one of the two being compared, so a droid
+  // parked there can be told to work and will choose between the free pair.
+  const battleUpstairs=B.have.filter(slot=>slot>BATTLE_UPSTAIRS_FROM&&slot!==B.first&&slot!==B.last);
   const rec=(id,text,ask,undo)=>({id,kind:'record',text,ask,undo});
   const phases=[];
 
   // Phase 0 needs two Worker slots to compare and two Lounge slots to send from.
   const canOrigin=W.have.length>=2&&L.have.length>=2,canFloor=B.have.length>=2;
   phases.push({id:'P0',title:'Phase 0 · Does where you stand change the answer?',
-    why:'If the answer moves with you, or with where the droid started, then no fixed list of slots can be right and everything below is measuring the wrong thing. These are the cheapest runs here and they rule it out.',
+    why:'You have to walk to a droid to give it an order, so you can never choose where you are standing independently of where it is. The question that can be answered is whether the DROID\u2019s starting spot changes where it lands \u2014 across the Base, and up a floor. If it does, no fixed list of slots can be right and everything below is measuring the wrong thing.',
     note:[W.note,L.note].filter(Boolean).join(' '),
     steps:[
       ...(canOrigin?[
@@ -1973,10 +1980,11 @@ function slotLabProtocol(){
         rec('P0-1','Stand beside the Lounge and send the droid in Lounge slot '+L.first+' to work.','Which Worker slot did it take?','Send it straight back to the Lounge.'),
         rec('P0-2','Now send the droid in Lounge slot '+L.last+' — the far end of the Lounge you have — to work.','Which Worker slot did it take?','Send it back to the Lounge. If this differs from the run above, stop and tell me: the order is not fixed and the rest of this changes.')]:[]),
       ...(canFloor?[
-        {id:'P0-set2',kind:'setup',text:'Refill Worker completely. Now free Battle '+B.first+' and Battle '+B.last+' only, parking those two droids in the Lounge.'},
-        rec('P0-3','Stand downstairs and send a Battle droid from the Lounge to work.','Which Battle slot did it take?','Send it back to the Lounge.'),
-        rec('P0-4','Go upstairs and send another Battle droid from the Lounge to work.','Which Battle slot did it take?','Send it back to the Lounge.'),
-        {id:'P0-undo',kind:'undo',text:'Put both Battle droids back so Battle is full again. Runs 3 and 4 also settle whether Battle '+B.first+' beats Battle '+B.last+', which none of your earlier tests covered.'}]:[])]});
+        {id:'P0-set2',kind:'setup',text:'Refill Worker completely. Now free Battle '+B.first+' and Battle '+B.last+' only, parking those two droids in the Lounge. Each run below starts a Battle droid somewhere different — you walk to the droid to give the order, so its spot is the only thing changing.'},
+        ...(loungeGround.length?[rec('P0-3','Put a Battle droid in Lounge slot '+loungeGround[0]+' — ground floor — and send it to work from there.','Which Battle slot did it take?','Put it back in that same Lounge slot.')]:[]),
+        ...(battleUpstairs.length?[rec('P0-4','Now go upstairs to the Battle droid already sitting in Battle '+battleUpstairs[0]+' and tell it to go to work again. It will leave that slot and choose between the two free ones — this is the only way to start a droid on the upper floor.','Which Battle slot did it take?','Put it back in Battle '+battleUpstairs[0]+'.')]:[]),
+        ...(W.have.length?[rec('P0-5','Now put a Battle droid in Worker slot '+W.first+', right across the Base, and tell it to go to work from there. Battle has room, so it will leave Worker for it.','Which Battle slot did it take?','Put everything back.')]:[]),
+        {id:'P0-undo',kind:'undo',text:'Refill Battle. If all of those landed in the same slot, the starting spot does not matter and a fixed order is safe to build on. They also settle whether Battle '+B.first+' beats Battle '+B.last+', which none of your earlier tests covered.'}]:[])]});
 
   phases.push({id:'PA',title:'Phase A · Cross-station: by station, or by slot?',
     why:'When a droid cannot get into its own station it goes elsewhere. If it prefers Astromech over Battle no matter which slots are open, that is a fixed station order and Phase C disappears entirely. If the winner moves with the slot, it is choosing by distance and Phase C is needed.',
