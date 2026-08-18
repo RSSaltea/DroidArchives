@@ -1210,7 +1210,7 @@ function stepHtml(step,index){
   // send-to-work step can record where the droid actually ended up.
   const free=step.freeSlots||[];
   const options=free.map(spot=>`<option value="${spot.station}:${spot.slot}" ${slotLogSame(step.logged,spot)?'selected':''}>${stationSlotLabel(spot.station,spot.slot)}</option>`).join('');
-  const record=step.kind==='work'&&slotLogTracking()&&slotLabAllowed()&&free.length
+  const record=step.kind==='work'&&!state.sharedView&&slotLogTracking()&&slotLabAllowed()&&free.length
     ?`<label class="step-record"><small>Landed in?</small><select data-log-step="${escapeAttr(step.text)}"><option value="">${free.length} it could take…</option>${options}</select></label>`
     :'';
   return `${tick}<span class="step-thumb">${d?picture(d,step.unit.variant):''}</span><span class="step-text">${text}${assumed}</span>${record}${skip}`;
@@ -1636,9 +1636,10 @@ function optimisePage(){
   document.querySelector('#toggleOptimiseSteps')?.addEventListener('click',()=>{localStorage.setItem('droid-archive-optimise-steps-collapsed',stepsCollapsed?'0':'1');optimisePage()});
   document.querySelector('#toggleStepStyle')?.addEventListener('click',()=>{localStorage.setItem('droid-archive-optimise-step-style',classicSteps?'route':'classic');optimisePage();toast(classicSteps?'Using the route plan':'Using the classic slot-by-slot plan')});
   document.querySelector('#applyOptimised')?.addEventListener('click',async event=>{const button=event.currentTarget,label=button.textContent;button.disabled=true;button.textContent='Applying…';try{await applyOptimisedLayout(plan)}finally{if(button.isConnected){button.disabled=false;button.textContent=label}}});
-  // Owner only: arm tracking, then every send-to-work step offers a box.
+  // Owner only, and only on your own Base: arm tracking, then every send-to-work
+  // step offers a box.
   const trackHost=document.querySelector('#optimiseTrack');
-  if(trackHost&&slotLabAllowed()){
+  if(trackHost&&slotLabAllowed()&&!state.sharedView){
     trackHost.hidden=false;
     const button=trackHost.querySelector('button');
     button.textContent=slotLogTracking()?'Tracking slots · on':'Track slot choices';
@@ -2059,7 +2060,13 @@ function donatePage(){app.innerHTML=`<div class="breadcrumbs"><a href="#/">Homep
 // cloud schema, any of which could lose a Base. Export from the Slot Lab instead.
 const SLOT_LOG_KEY='droid-archive-slot-log';
 const slotLogSession=new Map();
-const slotLogAll=()=>{try{const rows=JSON.parse(localStorage.getItem(SLOT_LOG_KEY)||'[]');return Array.isArray(rows)?rows:[]}catch(e){return[]}};
+const slotLogAll=()=>{try{
+  const stored=JSON.parse(localStorage.getItem(SLOT_LOG_KEY)||'[]');
+  if(!Array.isArray(stored))return[];
+  const mine=stored.filter(row=>!row.shared);
+  if(mine.length!==stored.length)slotLogWrite(mine);
+  return mine;
+}catch(e){return[]}};
 const slotLogWrite=rows=>{try{localStorage.setItem(SLOT_LOG_KEY,JSON.stringify(rows.slice(-4000)))}catch(e){}};
 const slotLogClear=()=>slotLogWrite([]);
 const slotLogTracking=()=>{try{return localStorage.getItem('droid-archive-slot-track')==='1'}catch(e){return false}};
@@ -2085,7 +2092,7 @@ const slotLogSame=(a,b)=>Boolean(a)&&Boolean(b)&&a.station===b.station&&a.slot==
 // means minus anything an earlier step in the same plan has already been
 // recorded as taking.
 function annotateLogSlots(steps){
-  if(!slotLabAllowed()||!slotLogTracking())return;
+  if(state.sharedView||!slotLabAllowed()||!slotLogTracking())return;
   // Walk the plan in order. Every step empties the slot its droid was in — a
   // sell for good, a move until it lands somewhere — so by the time you reach a
   // later step the slots above it have opened up. Landings you have already
@@ -2102,20 +2109,19 @@ function annotateLogSlots(steps){
   }
 }
 function slotLogAdd(row){
+  // Only your own saves. A shared Base is somebody else's, and it moves without
+  // you: slots get bought and droids get shuffled between your visits, so a row
+  // from one is measuring a Base you cannot see the state of.
+  if(state.sharedView)return false;
   if(!Number.isInteger(row.landed)||!row.station)return false;
   // A landing outside the free set means the Base is out of date, and a wrong row
   // is worse than no row.
   if(!row.free.some(slot=>slot.station===row.station&&slot.slot===row.landed))return false;
   const rows=slotLogAll();
-  // Which save this came from. Profiles differ in rebirth and unlocked slots, so
-  // a row is only interpretable next to the profile that produced it. While a
-  // group profile is open the Base on screen is theirs, not yours, so the row has
-  // to be attributed to them - tagging it with your own profile would be worse
-  // than not recording it at all.
-  const view=state.sharedView,profile=activeProfile();
-  const source=view
-    ?{profileId:view.profileId||'shared',profile:`${view.ownerName} · ${view.profileName}`,ownerId:view.ownerId,shared:true}
-    :{profileId:profile?.id||'local',profile:profile?.name||'Local save',shared:false};
+  // Which of your saves this came from. Profiles differ in rebirth and unlocked
+  // slots, so a row is only interpretable next to the one that produced it.
+  const profile=activeProfile();
+  const source={profileId:profile?.id||'local',profile:profile?.name||'Local save'};
   rows.push({...row,...source,at:new Date().toISOString(),rebirth:state.rebirth});
   slotLogWrite(rows);
   return true;
@@ -2367,7 +2373,7 @@ function slotLogFindingsHtml(){
   return `<section class="lab-phase"><h2>Passive findings</h2>
     <p class="lab-why"><strong>${rows.length}</strong> landings recorded during normal play. Each rule guesses the slot from where the droid started and which slots were free; the best one is what Optimise should be using.</p>
     <div class="lab-scores"><table><thead><tr><th>Rule</th><th>Overall</th>${head}</tr></thead><tbody>${body}</tbody></table></div>
-    ${byProfile.length>1?`<p class="lab-why">Across ${byProfile.length} profiles: ${byProfile.map(p=>`<strong>${p.name}</strong> ${p.n}`).join(', ')}. They are pooled on purpose — how the game picks a slot is the same question whatever save you are on — but if one of them has a Base that is out of date, its rows will drag the scores down, so check its share looks sane.</p>`:''}
+    ${byProfile.length>1?`<p class="lab-why">Across ${byProfile.length} of your profiles: ${byProfile.map(p=>`<strong>${p.name}</strong> ${p.n}`).join(', ')}. They are pooled on purpose — how the game picks a slot is the same question whatever save you are on — but if one of them has a Base that is out of date, its rows will drag the scores down, so check its share looks sane. Group profiles are never recorded: a Base you only visit moves between visits, so its rows would be measuring a state you cannot check.</p>`:''}
     <p class="lab-why">Leading: <strong>${best.name}</strong> at ${pct(best.hit,best.n)}%. Treat anything under about 200 landings as provisional. Note that <em>the fixed order</em> was worked out from the original sweeps, so it is scoring against its own source data here and will look better than it is until fresh landings come in — that is exactly what this log is for.</p>
     <div class="lab-actions"><button class="btn" id="labLogCopy">Copy the log</button><button class="btn ghost" id="labLogClear">Clear the log</button></div></section>`;
 }

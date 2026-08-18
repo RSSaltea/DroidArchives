@@ -19,10 +19,11 @@ vm.createContext(sandbox);
 vm.runInContext(/const MAP_SPOTS=\{[\s\S]*?\n\};/.exec(src)[0],sandbox);
 vm.runInContext(line('const MEASURED_FILL_ORDER='),sandbox);
 vm.runInContext(/const slotFillOrder=\(station,origin\)=>\{[\s\S]*?\n\};/.exec(src)[0],sandbox);
-for(const k of ['const ASTROMECH_MISSION_SLOTS=','const SLOT_LOG_KEY=','const slotLogAll=','const slotLogWrite=',
+for(const k of ['const ASTROMECH_MISSION_SLOTS=','const SLOT_LOG_KEY=','const slotLogWrite=',
   'const slotLogClear=','const slotLogTracking=','const slotLogSetTracking=','const SLOT_FLOOR_PENALTY=','const SLOT_GAP_UNREACHABLE='])
   vm.runInContext(line(k),sandbox);
-for(const k of ['function slotLogPoint','function slotWalkGap','function slotLogNearest','function slotLogScores','function slotLogAdd'])
+// slotLogAll filters as it reads now, so it spans lines like the functions do.
+for(const k of ['const slotLogAll=','function slotLogPoint','function slotWalkGap','function slotLogNearest','function slotLogScores','function slotLogAdd'])
   vm.runInContext(grab(k),sandbox);
 vm.runInContext(line('const slotLogSame='),sandbox);
 vm.runInContext(block('const SLOT_RULES_UNDER_TEST='),sandbox);
@@ -104,7 +105,7 @@ ok('steps carry where the droid started',src.includes('fromSlot:startSlotAt.get(
 ok('the plan is annotated before it is drawn',src.includes('annotateLogSlots(steps);'));
 ok('the log lives outside the profile, so no Base can be lost to it',
   src.includes("SLOT_LOG_KEY='droid-archive-slot-log'"));
-ok('owner only',src.includes('if(trackHost&&slotLabAllowed())'));
+ok('owner only, and only on your own Base',src.includes('if(trackHost&&slotLabAllowed()&&!state.sharedView)'));
 ok('findings appear on the Slot Lab',src.includes('slotLogFindingsHtml()+'));
 ok('styled',css.includes('.step-record select{')&&css.includes('.lab-scores table{'));
 
@@ -118,31 +119,49 @@ ok('a row records which profile produced it',(()=>{const r=run('slotLogAll()')[0
   return r.profileId==='p1'&&r.profile==='Main'})(),JSON.stringify(run('slotLogAll()')[0]||{}));
 ok('and the rebirth, since profiles sit at different ones',run('slotLogAll()')[0].rebirth===34);
 ok('every profile writes to one pool, not one log each',src.includes("SLOT_LOG_KEY='droid-archive-slot-log'"));
-ok('the findings say which profiles contributed',src.includes('Across ${byProfile.length} profiles'));
+ok('the findings say which profiles contributed',src.includes('Across ${byProfile.length} of your profiles'));
 ok('and warn that a stale Base drags the scores down',src.includes('its rows will drag the scores down'));
 ok('switching profile clears the plan-local recording state',
   /function applyProfileData\(data\)\{slotLogSession\.clear\(\)/.test(src));
 run('slotLogClear()');
 
-console.log('\n=== other peoples profiles ===');
-// While a group profile is open the Base on screen is theirs. A row tagged with
-// your own profile would be actively wrong, not merely incomplete.
+console.log('\n=== other peoples profiles are not tracked at all ===');
+// A shared Base is somebody else's and it moves without you: slots are bought and
+// droids shuffled between your visits, so a row from one measures a state you
+// cannot check. Your own saves only.
 run('slotLogClear()');
 sandbox.state.sharedView={ownerId:'u2',ownerName:'Alexx',profileId:'p9',profileName:'Main'};
 sandbox.state.rebirth=12;
-run(`slotLogAdd({station:'BATTLE',fromStation:'LOUNGE',fromSlot:0,free:[{station:'BATTLE',slot:0},{station:'BATTLE',slot:9}],landed:9})`);
-const shared=run('slotLogAll()')[0];
-ok('a landing on their Base is recorded',Boolean(shared));
-ok('attributed to them, not to you',shared.profile==='Alexx · Main'&&shared.profileId==='p9',shared.profile);
-ok('flagged as somebody elses',shared.shared===true);
-ok('with their owner id kept',shared.ownerId==='u2');
-ok('and their rebirth, not yours',shared.rebirth===12);
+const refused=run(`slotLogAdd({station:'BATTLE',fromStation:'LOUNGE',fromSlot:0,free:[{station:'BATTLE',slot:0},{station:'BATTLE',slot:9}],landed:9})`);
+ok('a landing on their Base is refused',refused===false,String(refused));
+ok('and nothing is written',run('slotLogAll()').length===0,String(run('slotLogAll()').length));
 sandbox.state.sharedView=null;sandbox.state.rebirth=34;
 run(`slotLogAdd({station:'WORKER',fromStation:'LOUNGE',fromSlot:0,free:[{station:'WORKER',slot:1},{station:'WORKER',slot:2}],landed:2})`);
-const mine=run('slotLogAll()')[1];
-ok('your own rows are unaffected',mine.profile==='Main'&&mine.shared===false&&mine.rebirth===34);
-ok('both land in the same pool, since the game behaves the same on any Base',
-  run('slotLogAll()').length===2);
+const mine=run('slotLogAll()')[0];
+ok('your own rows still record normally',mine.profile==='Main'&&mine.profileId==='p1'&&mine.rebirth===34,JSON.stringify(mine));
+ok('and carry no shared flag to carry',mine.shared===undefined,String(mine.shared));
+
+console.log('\n=== rows collected before, on somebody elses Base, are dropped ===');
+// Reading purges rather than a one-off migration, so a stale tab or an older
+// build cannot put them back.
+run('slotLogWrite([{station:"WORKER",landed:1,profile:"Alexx · Main",profileId:"p9",ownerId:"u2",shared:true},{station:"WORKER",landed:2,profile:"Main",profileId:"p1"}])');
+const kept=run('slotLogAll()');
+ok('the shared row is gone',kept.length===1&&kept[0].profile==='Main',JSON.stringify(kept));
+ok('and the purge is committed, not just filtered on the way out',
+  run('JSON.parse(localStorage.getItem(SLOT_LOG_KEY)).length')===1);
+ok('a log with nothing shared is left alone',(()=>{
+  run('slotLogWrite([{station:"WORKER",landed:1,profile:"Main",profileId:"p1"}])');
+  return run('slotLogAll()').length===1})());
+run('slotLogClear()');
+
+console.log('\n=== nothing is even offered while a group profile is open ===');
+ok('the record box is withheld',src.includes("step.kind==='work'&&!state.sharedView&&slotLogTracking()"));
+ok('the plan is not annotated with free sets',src.includes('if(state.sharedView||!slotLabAllowed()||!slotLogTracking())return;'));
+ok('and the Track button is hidden',src.includes('if(trackHost&&slotLabAllowed()&&!state.sharedView){'));
+ok('slotLogAdd refuses as a backstop, whatever the UI did',
+  /function slotLogAdd\(row\)\{[\s\S]{0,400}if\(state\.sharedView\)return false;/.test(src));
+ok('the findings say group profiles are never recorded',
+  src.includes('Group profiles are never recorded'));
 ok('opening a group profile clears the plan-local state',
   /async function openGroupProfile\(groupId,ownerId,profileId\)\{slotLogSession\.clear\(\)/.test(src));
 ok('and so does leaving one',
@@ -166,6 +185,8 @@ console.log('\n=== the plan is simulated forward ===');
 // it — a sell for good, a move until it lands.
 const CAP2={WORKER:5,ASTROMECH:2,BATTLE:1,UPGRADE_CHIP:1};
 const sb2={console,Math,Number,Array,Set,Map,ROSTER:'ROSTER',
+  // Your own Base: annotateLogSlots bails out on a shared one.
+  state:{sharedView:null},
   WORK_STATIONS:['WORKER','ASTROMECH','BATTLE','UPGRADE_CHIP'],
   stationSlotIndices:x=>Array.from({length:CAP2[x]||0},(_,i)=>i),
   slotLabAllowed:()=>true,slotLogTracking:()=>true,slotLogSession:new Map(),
