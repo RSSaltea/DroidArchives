@@ -1950,7 +1950,7 @@ function slotLabSweep(id,title,why,setup,act,undo,range,extra){
   const count=range.have.length;
   if(count<2)return{id,title,why,note:'Skipped: '+title.replace(/^Phase [^·]*· /,'')+' needs at least two unlocked slots and this Base has '+count+'.',steps:[]};
   const steps=[{id:id+'-set',kind:'setup',text:setup}];
-  range.have.forEach((slot,i)=>steps.push({id:id+'-'+(i+1),kind:'record',
+  range.have.forEach((slot,i)=>steps.push({id:id+'-'+(i+1),kind:'record',askFrom:'Which Lounge slot did it come from?',
     text:act+' Droid '+(i+1)+' of '+count+'.',
     ask:i===0?'Which slot did the first one take?':'Which slot did droid '+(i+1)+' take?'}));
   steps.push({id:id+'-undo',kind:'undo',text:undo});
@@ -1966,7 +1966,7 @@ function slotLabProtocol(){
   // A Battle slot upstairs that is not one of the two being compared, so a droid
   // parked there can be told to work and will choose between the free pair.
   const battleUpstairs=B.have.filter(slot=>slot>BATTLE_UPSTAIRS_FROM&&slot!==B.first&&slot!==B.last);
-  const rec=(id,text,ask,undo,ask2)=>({id,kind:'record',text,ask,undo,ask2});
+  const rec=(id,text,ask,undo,ask2,askFrom)=>({id,kind:'record',text,ask,undo,ask2,askFrom});
   const phases=[];
 
   // Phase 0 needs two Worker slots to compare and two Lounge slots to send from.
@@ -1990,9 +1990,9 @@ function slotLabProtocol(){
     why:'When a droid cannot get into its own station it goes elsewhere. If it prefers Astromech over Battle no matter which slots are open, that is a fixed station order and Phase C disappears entirely. If the winner moves with the slot, it is choosing by distance and Phase C is needed.',
     steps:[
       {id:'PA-set',kind:'setup',text:'Fill every Worker slot, so a Worker droid cannot go home, and keep one spare Worker droid in the Lounge to send. The exact pair of slots you free does not matter as long as you write down which pair it was — that is what the answer depends on.'},
-      rec('PA-1','Leave exactly one Astromech slot and one Battle slot free — whichever two are easiest to arrange — and send the spare Worker droid to work.','Where did it land?','Put it back in the Lounge.','Which two slots were free?'),
-      rec('PA-2','Now do it again with a different Astromech slot free — ideally one at the far end from last time — and one Battle slot. Send the spare Worker droid to work.','Where did it land?','Put it back in the Lounge.','Which two slots were free?'),
-      rec('PA-3','Once more, this time changing which Battle slot is free — an upstairs one is the most useful — with one Astromech slot. Send the spare Worker droid to work.','Where did it land?','Put it back in the Lounge.','Which two slots were free?'),
+      rec('PA-1','Leave exactly one Astromech slot and one Battle slot free — whichever two are easiest to arrange — and send the spare Worker droid to work.','Where did it land?','Put it back in the Lounge.','Which two slots were free?','Which Lounge slot did the droid start in?'),
+      rec('PA-2','Now do it again with a different Astromech slot free — ideally one at the far end from last time — and one Battle slot. Send the spare Worker droid to work.','Where did it land?','Put it back in the Lounge.','Which two slots were free?','Which Lounge slot did the droid start in?'),
+      rec('PA-3','Once more, this time changing which Battle slot is free — an upstairs one is the most useful — with one Astromech slot. Send the spare Worker droid to work.','Where did it land?','Put it back in the Lounge.','Which two slots were free?','Which Lounge slot did the droid start in?'),
       {id:'PA-undo',kind:'undo',text:'Refill everything. If it went to Astromech every time whichever slots were free, the choice is by station. If it followed a particular slot around, it is choosing by distance.'}]});
 
   phases.push(slotLabSweep('PB-WORKER','Phase B1 · Worker slot order',
@@ -2042,8 +2042,18 @@ function slotLabReport(phases,values){
     const answered=phase.steps.filter(s=>s.kind==='record'&&values[s.id]);
     if(!answered.length)continue;
     lines.push(phase.title.replace(/^Phase [^·]*· /,''));
-    if(phase.id.indexOf('PB-')===0)lines.push('  landing order: '+phase.steps.filter(s=>s.kind==='record').map(s=>values[s.id]||'?').join(', '));
-    else for(const step of answered)lines.push('  '+step.id+': '+(values[step.id+':free']?'free '+values[step.id+':free']+' -> ':'')+values[step.id]);
+    if(phase.id.indexOf('PB-')===0){
+      const rows=phase.steps.filter(s=>s.kind==='record');
+      const traced=rows.some(s=>values[s.id+':from']);
+      lines.push('  landing order: '+rows.map(s=>traced?(values[s.id+':from']||'?')+' -> '+(values[s.id]||'?'):(values[s.id]||'?')).join(', '));
+      if(traced)lines.push('  (read as: started in Lounge slot -> landed in slot)');
+    }
+    else for(const step of answered){
+      const bits=[];
+      if(values[step.id+':from'])bits.push('from Lounge '+values[step.id+':from']);
+      if(values[step.id+':free'])bits.push('free '+values[step.id+':free']);
+      lines.push('  '+step.id+': '+(bits.length?bits.join(', ')+' -> ':'')+values[step.id]);
+    }
     lines.push('');
   }
   return lines.length?lines.join('\n').trim():'Nothing recorded yet.';
@@ -2063,8 +2073,9 @@ function slotLabPage(){
     const undo=step.undo?'<small class="lab-undo">Then: '+step.undo+'</small>':'';
     const input=step.kind==='record'?'<label class="lab-answer"><small>'+step.ask+'</small><input type="text" inputmode="numeric" placeholder="slot" data-lab-input="'+escapeAttr(step.id)+'" value="'+escapeAttr(values[step.id]||'')+'"></label>':'';
     // Some runs depend on which slots were free, so that gets written down too.
+    const origin=step.askFrom?'<label class="lab-answer"><small>'+step.askFrom+'</small><input type="text" placeholder="slot" data-lab-input="'+escapeAttr(step.id+':from')+'" value="'+escapeAttr(values[step.id+':from']||'')+'"></label>':'';
     const setup=step.ask2?'<label class="lab-answer wide"><small>'+step.ask2+'</small><input type="text" placeholder="e.g. Astromech 3, Battle 7" data-lab-input="'+escapeAttr(step.id+':free')+'" value="'+escapeAttr(values[step.id+':free']||'')+'"></label>':'';
-    return '<li class="lab-step '+step.kind+(done.has(step.id)?' is-done':'')+'">'+tick+'<div><p>'+verb+' '+step.text+'</p>'+undo+setup+input+'</div></li>';
+    return '<li class="lab-step '+step.kind+(done.has(step.id)?' is-done':'')+'">'+tick+'<div><p>'+verb+' '+step.text+'</p>'+undo+origin+setup+input+'</div></li>';
   };
   const phaseHtml=phase=>'<section class="lab-phase"><h2>'+phase.title+'</h2><p class="lab-why">'+phase.why+'</p>'+(phase.note?'<p class="notice">'+phase.note+'</p>':'')+'<ol class="lab-steps">'+phase.steps.map(stepHtml).join('')+'</ol></section>';
 
