@@ -820,8 +820,8 @@ baseRebirthSummaryHtml=()=>`${personalBaseRebirthSummaryHtml()}${combinedGroupOu
 let sharedProfileSaveTimer=null;
 function scheduleSharedProfileSave(){clearTimeout(sharedProfileSaveTimer);sharedProfileSaveTimer=setTimeout(()=>saveSharedProfileNow().catch(error=>{toast(error.message);decorateSharedView()}),900)}
 async function saveSharedProfileNow(){const view=state.sharedView;if(!view||!view.canEdit)return;clearTimeout(sharedProfileSaveTimer);if(view.saving)return view.savePromise.then(()=>state.sharedView===view?saveSharedProfileNow():undefined);view.saving=true;decorateSharedView();const profileData=profileDataFromState(),savedVersion=view.changeVersion||0;view.savePromise=(async()=>{const {data,error}=await supabaseClient.rpc('save_shared_droid_archive_profile',{target_group_id:view.groupId,target_owner_id:view.ownerId,target_profile_id:view.profileId,profile_data:profileData,expected_updated_at:view.profile.updatedAt||null});if(error)throw Error(error.message);view.profile.data=profileData;view.profile.updatedAt=data.updatedAt;view.savedVersion=savedVersion;const workspaceProfile=state.groups.workspace.find(group=>group.id===view.groupId)?.profiles?.find(profile=>profile.ownerId===view.ownerId&&profile.profileId===view.profileId);if(workspaceProfile){workspaceProfile.data=cloneProfileData(profileData);workspaceProfile.updatedAt=data.updatedAt}})();try{await view.savePromise}finally{view.saving=false;view.savePromise=null;decorateSharedView()}}
-async function openGroupProfile(groupId,ownerId,profileId){if(!cloudConnected())return showAuthModal('signin');const group=state.groups.workspace.find(item=>item.id===groupId);if(!group)throw Error('That group is no longer available.');const profile=groupAvailableProfiles(group).find(item=>String(item.ownerId)===String(ownerId)&&String(item.profileId)===String(profileId));if(!profile)throw Error('That shared profile is no longer available.');if(String(profile.ownerId)===String(state.cloud.user.id)){switchCloudProfile(profile.profileId);location.hash='#/base';return}if(state.sharedView)await exitSharedProfile(false);clearTimeout(cloudSaveTimer);updateActiveCloudProfile();cacheCloudDocLocally();saveLocal();const view={groupId,groupName:group.name,ownerId:profile.ownerId,ownerName:profile.ownerName,profileId:profile.profileId,profileName:profile.profileName,profile:{...profile,data:cloneProfileData(profile.data)},canEdit:Boolean(profile.canEdit),saving:false,savePromise:null,changeVersion:0,savedVersion:0};state.sharedView=view;applyProfileData(view.profile.data);if(location.hash==='#/base')route();else location.hash='#/base';toast(`Viewing ${view.ownerName} · ${view.profileName}`)}
-async function exitSharedProfile(goToGroups=true){if(!state.sharedView)return;let saveError=null;if(state.sharedView.canEdit)try{await saveSharedProfileNow()}catch(error){saveError=error}state.sharedView=null;const own=activeCloudProfile();if(own)applyProfileData(own.data);cacheCloudDocLocally();saveLocal();scheduleCloudSave();if(saveError)toast(`Shared changes were not saved: ${saveError.message}`);if(goToGroups){location.hash='#/groups';route()}}
+async function openGroupProfile(groupId,ownerId,profileId){slotLogSession.clear();if(!cloudConnected())return showAuthModal('signin');const group=state.groups.workspace.find(item=>item.id===groupId);if(!group)throw Error('That group is no longer available.');const profile=groupAvailableProfiles(group).find(item=>String(item.ownerId)===String(ownerId)&&String(item.profileId)===String(profileId));if(!profile)throw Error('That shared profile is no longer available.');if(String(profile.ownerId)===String(state.cloud.user.id)){switchCloudProfile(profile.profileId);location.hash='#/base';return}if(state.sharedView)await exitSharedProfile(false);clearTimeout(cloudSaveTimer);updateActiveCloudProfile();cacheCloudDocLocally();saveLocal();const view={groupId,groupName:group.name,ownerId:profile.ownerId,ownerName:profile.ownerName,profileId:profile.profileId,profileName:profile.profileName,profile:{...profile,data:cloneProfileData(profile.data)},canEdit:Boolean(profile.canEdit),saving:false,savePromise:null,changeVersion:0,savedVersion:0};state.sharedView=view;applyProfileData(view.profile.data);if(location.hash==='#/base')route();else location.hash='#/base';toast(`Viewing ${view.ownerName} · ${view.profileName}`)}
+async function exitSharedProfile(goToGroups=true){slotLogSession.clear();if(!state.sharedView)return;let saveError=null;if(state.sharedView.canEdit)try{await saveSharedProfileNow()}catch(error){saveError=error}state.sharedView=null;const own=activeCloudProfile();if(own)applyProfileData(own.data);cacheCloudDocLocally();saveLocal();scheduleCloudSave();if(saveError)toast(`Shared changes were not saved: ${saveError.message}`);if(goToGroups){location.hash='#/groups';route()}}
 function decorateSharedView(){const view=state.sharedView;if(!view)return;let banner=app.querySelector('.shared-profile-banner');if(!banner){app.insertAdjacentHTML('afterbegin',`<section class="shared-profile-banner ${view.canEdit?'editable':'readonly'}"><div><small>${view.canEdit?'Shared editing enabled':'Read-only shared profile'}</small><strong>${escapeAttr(view.ownerName)} · ${escapeAttr(view.profileName)}</strong><span>${view.canEdit?'Changes sync to the owner’s profile.':'The owner has not allowed changes.'}</span></div><button class="btn secondary" data-shared-exit>Return to my profiles</button></section>`);banner=app.querySelector('.shared-profile-banner')}const status=banner.querySelector('small'),statusText=view.saving?'Saving shared profile…':view.canEdit?'Shared editing enabled':'Read-only shared profile';if(status&&status.textContent!==statusText)status.textContent=statusText;banner.querySelector('[data-shared-exit]').onclick=()=>exitSharedProfile().catch(error=>toast(error.message));if(!view.canEdit){app.querySelectorAll('button:not([data-shared-exit]),input,select,textarea').forEach(control=>control.disabled=true);document.querySelectorAll('#baseSidebarControls input,#baseSidebarControls select,#baseSidebarControls button:not([data-shared-exit])').forEach(control=>control.disabled=true)}}
 function connectCloud(){showAuthModal('signin')}
 async function signOutCloud(){if(state.sharedView)await exitSharedProfile(false);if(supabaseClient)await supabaseClient.auth.signOut();state.cloud.session=null;state.cloud.user=null;state.cloud.doc=null;state.groups={workspace:[],loading:false,loaded:false,error:'',loadPromise:null};state.sharedView=null;state.cloud.enabled=false;state.cloud.reconnecting=false;state.cloud.status='Local save';localStorage.setItem('droid-archive-sync-provider','local');toast('Signed out');route();renderCloudHeader()}
@@ -1598,7 +1598,7 @@ function optimisePage(){
     button.textContent=slotLogTracking()?'Tracking slots · on':'Track slot choices';
     button.classList.toggle('active',slotLogTracking());
     trackHost.querySelector('small').textContent=`${slotLogAll().length} landings recorded`;
-    button.onclick=()=>{slotLogSetTracking(!slotLogTracking());rerender()};
+    button.onclick=()=>{slotLogSetTracking(!slotLogTracking());optimisePage()};
   }
 
   document.querySelectorAll('[data-log-step]').forEach(picker=>{
@@ -1611,7 +1611,7 @@ function optimisePage(){
         free:step.freeSlots,landed,droid:step.unit?.name||''});
       slotLogSession.set(step.text,landed);
       toast(`Recorded · ${stationSlotLabel(step.to,landed)}`);
-      rerender();
+      optimisePage();
     };
   });
   document.querySelectorAll('[data-step-tick]').forEach(box=>box.onclick=e=>{e.stopPropagation();toggleTickedStep(box.dataset.stepTick);box.closest('li')?.classList.toggle('step-done',box.checked)});
@@ -2044,10 +2044,15 @@ function slotLogAdd(row){
   if(!row.free.includes(row.landed))return false;
   const rows=slotLogAll();
   // Which save this came from. Profiles differ in rebirth and unlocked slots, so
-  // a row is only interpretable next to the profile that produced it.
-  const profile=activeProfile();
-  rows.push({...row,at:new Date().toISOString(),rebirth:state.rebirth,
-    profileId:profile?.id||'local',profile:profile?.name||'Local save'});
+  // a row is only interpretable next to the profile that produced it. While a
+  // group profile is open the Base on screen is theirs, not yours, so the row has
+  // to be attributed to them - tagging it with your own profile would be worse
+  // than not recording it at all.
+  const view=state.sharedView,profile=activeProfile();
+  const source=view
+    ?{profileId:view.profileId||'shared',profile:`${view.ownerName} · ${view.profileName}`,ownerId:view.ownerId,shared:true}
+    :{profileId:profile?.id||'local',profile:profile?.name||'Local save',shared:false};
+  rows.push({...row,...source,at:new Date().toISOString(),rebirth:state.rebirth});
   slotLogWrite(rows);
   return true;
 }
