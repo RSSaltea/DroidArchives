@@ -551,3 +551,25 @@ html[data-theme="dark"] .sidebar a.active{background:#202633;color:#fff}
 .needed-card.upgrade em{color:#e0a75c}
 .future-item.upgrade{border-left:4px solid #d88421;background:rgba(216,132,33,.08)}
 .future-item small{display:block;margin-top:2px;font-size:10px;color:var(--muted)}
+
+/* Slot Lab — the guided run for measuring how the game picks a slot. */
+.lab-actions{display:flex;gap:8px;align-items:flex-start}
+.lab-phase{margin:18px 0;padding:14px 16px;background:var(--panel);border:1px solid var(--line);border-radius:6px}
+.lab-phase h2{margin:0 0 6px;font-size:15px}
+.lab-why{margin:0 0 10px;color:var(--muted);font-size:12px;line-height:1.5}
+.lab-steps{margin:0;padding-left:20px;display:grid;gap:2px}
+.lab-step{padding:7px 0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:auto minmax(0,1fr);gap:9px;align-items:start}
+.lab-step:last-child{border-bottom:0}
+.lab-step p{margin:0;font-size:13px;line-height:1.5}
+.lab-step.is-done>div{opacity:.45;text-decoration:line-through}
+.lab-step.is-done .lab-answer{text-decoration:none}
+.lab-verb{font-weight:800;letter-spacing:.02em}
+.lab-verb.setup{color:#7fb2e8}
+.lab-verb.run{color:#7fd1a0}
+.lab-verb.undo{color:#e0a75c}
+.lab-undo{display:block;margin-top:3px;color:var(--muted);font-size:11px;line-height:1.45}
+.lab-answer{display:flex;align-items:center;gap:8px;margin-top:6px}
+.lab-answer small{color:var(--muted);font-size:11px}
+.lab-answer input{width:110px;min-height:30px;padding:4px 8px;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:4px;font:inherit;font-size:12px}
+.lab-output{width:100%;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;white-space:pre}
+@media(max-width:760px){.lab-answer{flex-direction:column;align-items:flex-start;gap:3px}.lab-answer input{width:100%}}
