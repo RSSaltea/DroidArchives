@@ -1040,7 +1040,7 @@ const unitName=x=>`${x.name} ${variantText(x.variant)}`;
 // Selling and moving read alike at a glance, and mistaking one for the other
 // costs you a droid, so the opening verb is colour-coded: red to sell, amber to
 // shuffle into storage, green to put to work. Covers both planners' wording.
-const STEP_VERB_TONE={Sell:'sell',Send:'stage',Move:'stage',Swap:'stage',Tell:'place',Make:'place',Put:'place'};
+const STEP_VERB_TONE={Sell:'sell',Send:'stage',Move:'stage',Swap:'stage',Carry:'stage',Tell:'place',Make:'place',Put:'place'};
 const stepTicked=text=>optimiseTickedSteps().includes(text);
 function stepHtml(step,index){
   const d=state.droids.find(x=>x.name===step.unit?.name);
@@ -1156,7 +1156,7 @@ function optimiseRoutePlan(baseP,rawProjected){
   };
   // Commands you can issue right now, standing at `here`. Roster droids are not
   // in the base, so they are reachable from anywhere.
-  const actionsFor=(i,st,here,counts)=>{
+  const actionsFor=(i,st,here,counts,allowPlace)=>{
     if(satisfied(i,st))return[];
     const pos=st[i];
     if(pos!==here&&pos!==ROSTER)return[];
@@ -1174,9 +1174,16 @@ function optimiseRoutePlan(baseP,rawProjected){
     // someone else is waiting on that slot — but then it is essential, because two
     // droids swapping through the Companion and Upgrade Chip slots each hold what
     // the other one wants, and without this neither may move and the plan gives up.
-    if(pos===ROSTER||pos===SOLD)return[];
-    if(!PRODUCTIVE_STATIONS.includes(pos)&&!wantedByAnother(i,pos,st))return[];
-    return STAGING_STATIONS.filter(station=>station!==pos&&station!==goal&&roomIn(station,counts,pos)).map(station=>({i,kind:'stage',to:station,assumed:false}));
+    const moves=[];
+    if(pos!==ROSTER&&pos!==SOLD&&(PRODUCTIVE_STATIONS.includes(pos)||wantedByAnother(i,pos,st)))
+      moves.push(...STAGING_STATIONS.filter(station=>station!==pos&&station!==goal&&roomIn(station,counts,pos)).map(station=>({i,kind:'stage',to:station,assumed:false})));
+    // Nothing auto-route does gets it there. Usually that is because its own type
+    // of station still has a free slot, so "go to work" would only send it back —
+    // and freeing more credit slots makes that worse, not better. Carrying it over
+    // by hand always works, so offer that rather than give up. Second pass only, so
+    // any plan that needs no hand-placing is still found first.
+    if(allowPlace&&roomIn(goal,counts,pos))moves.push({i,kind:'place',to:goal,assumed:false});
+    return moves;
   };
   const stationsWithWork=(st,here)=>{const set=new Set();for(let i=0;i<st.length;i++){if(satisfied(i,st))continue;const pos=st[i];if(pos===ROSTER||pos===SOLD||pos===here)continue;set.add(pos)}return set};
 
@@ -1186,7 +1193,7 @@ function optimiseRoutePlan(baseP,rawProjected){
   // so the first complete plan found uses the fewest possible trips. Plans that
   // lean on the NEAREST_ORDER guess are held back behind clean ones at the same
   // cost. Big shuffles can outrun the budget, in which case greedy() takes over.
-  const search=()=>{
+  const search=allowPlace=>{
     const clean=[],dirty=[],seen=new Map(),started=Date.now();
     const push=node=>{const f=node.g+stationsWithWork(node.st,node.here).size,into=node.assumed?dirty:clean;(into[f]||(into[f]=[])).push(node)};
     push({st:startState,here:null,g:0,assumed:0,parent:null,action:null});
@@ -1201,7 +1208,7 @@ function optimiseRoutePlan(baseP,rawProjected){
       if(seen.get(node.st.join('|')+'@'+node.here)<node.g)continue;
       if(allDone(node.st))return node;
       const counts=countsFor(node.st);
-      for(let i=0;i<node.st.length;i++)for(const action of actionsFor(i,node.st,node.here,counts)){
+      for(let i=0;i<node.st.length;i++)for(const action of actionsFor(i,node.st,node.here,counts,allowPlace)){
         const st=node.st.slice();st[action.i]=action.to;
         const childKey=st.join('|')+'@'+node.here;
         if(seen.has(childKey)&&seen.get(childKey)<=node.g)continue;
@@ -1220,13 +1227,13 @@ function optimiseRoutePlan(baseP,rawProjected){
   // Used when the search outruns its budget on a big shuffle. Same rules, but it
   // just clears whichever station has the most to do, finishing droids off in
   // preference to staging more of them so the Lounge cannot silt up.
-  const rank={sell:0,work:1,lounge:2,companion:2,stage:3};
-  const greedy=()=>{
+  const rank={sell:0,work:1,lounge:2,companion:2,stage:3,place:4};
+  const greedy=allowPlace=>{
     // Stepping the same droid aside twice never gets it closer to its goal, and
     // with storage slots able to stage into each other it would let a droid
     // shuttle between the Lounge and the Companion slot forever. One each.
     let st=startState.slice(),here=null;const trail=[],staged=new Set();
-    const movesFor=(i,st,at,counts)=>actionsFor(i,st,at,counts).filter(a=>a.kind!=='stage'||!staged.has(a.i));
+    const movesFor=(i,st,at,counts)=>actionsFor(i,st,at,counts,allowPlace).filter(a=>a.kind!=='stage'||!staged.has(a.i));
     for(let guard=0;guard<800&&!allDone(st);guard++){
       for(let acted=true;acted;){
         acted=false;
@@ -1245,15 +1252,21 @@ function optimiseRoutePlan(baseP,rawProjected){
     return{trail,complete:allDone(st)};
   };
 
-  const found=tracked.length<=ROUTE_SEARCH_MAX_DROIDS?search():null;
-  let trail,complete;
-  if(found){trail=[];for(let node=found;node&&node.action;node=node.parent)trail.unshift(node.action);complete=true}
-  else({trail,complete}=greedy());
+  const trailOf=node=>{const out=[];for(;node&&node.action;node=node.parent)out.unshift(node.action);return out};
+  const plan=allowPlace=>{
+    const node=tracked.length<=ROUTE_SEARCH_MAX_DROIDS?search(allowPlace):null;
+    return node?{trail:trailOf(node),complete:true}:greedy(allowPlace);
+  };
+  // A plan made only of commands the game itself would carry out is the good one,
+  // so that is tried first. Only if no such plan exists is hand-placing allowed.
+  let{trail,complete}=plan(false);
+  if(!complete){const retry=plan(true);if(retry.complete)({trail,complete}=retry)}
 
   const describe=(action,unit,from)=>{
     const name=unitName(unit);
     if(action.kind==='sell')return{type:'sell',text:from===ROSTER?`Sell ${name}.`:`Sell ${name} from ${placeName(from)}.`};
     if(action.kind==='work')return{type:'move',text:`Tell ${name} to go to work — it will take a ${placeName(action.to)} slot.`};
+    if(action.kind==='place')return{type:'move',text:`Carry ${name} to a ${placeName(action.to)} slot yourself — telling it to go to work would send it somewhere else.`};
     if(action.kind==='lounge')return{type:'move',text:`Send ${name} to the Lounge.`};
     if(action.kind==='companion')return{type:'move',text:`Make ${name} your companion.`};
     if(action.to==='COMPANION')return{type:'move',text:`Make ${name} your companion to free its ${placeName(from)} slot — you will put it to work from there.`};
@@ -1269,7 +1282,7 @@ function optimiseRoutePlan(baseP,rawProjected){
   if(!complete){
     const stuck=tracked.filter((key,i)=>!satisfied(i,st)).map(key=>unitName(units.get(key)));
     steps.push({type:'note',unit:null,at:here??ROSTER,visit,assumed:false,
-      text:`Could not route ${stuck.slice(0,4).join(', ')}${stuck.length>4?` and ${stuck.length-4} more`:''} automatically — free a Lounge or credit slot and reopen Optimise.`});
+      text:`Could not route ${stuck.slice(0,4).join(', ')}${stuck.length>4?` and ${stuck.length-4} more`:''} automatically — move them by hand and reopen Optimise.`});
   }
   return steps;
 }

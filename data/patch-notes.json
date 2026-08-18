@@ -2,6 +2,18 @@
   "version": 1,
   "notes": [
     {
+      "id": "2026-08-18-optimise-always-routes",
+      "date": "2026-08-18",
+      "title": "Optimise always gives you a route now",
+      "summary": "The \"could not route\" message is gone, and the account button no longer overlaps the menu.",
+      "changes": [
+        "Fixed Optimise refusing to route droids on a full Base. It would only ever tell you things the game does for you, so if a droid needed to end up somewhere \"go to work\" would not send it, there was nothing it could say and it gave up. Sell Priority made no difference because that was never the problem.",
+        "This happens most often when a droid needs to move to a station that is not its own type. Sending it to work would just put it back in its own station, so Optimise now tells you to carry it across yourself, the same as the classic plan does.",
+        "The old message also suggested freeing a credit slot, which made it worse rather than better. A free slot in a droid's own station is exactly what pulls it back there.",
+        "Fixed the account button in the legacy interface spilling your profile name over the top menu."
+      ]
+    },
+    {
       "id": "2026-08-18-map-slot-unlocks",
       "date": "2026-08-18",
       "title": "Map slots now unlock in the right order",

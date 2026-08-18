@@ -534,3 +534,11 @@ html[data-theme="dark"] .sidebar a.active{background:#202633;color:#fff}
 .crit-switch b{font:800 13px Inter;letter-spacing:0;text-transform:none;color:var(--ink)}
 .crit-toggle input:checked~b{color:#9ae6bb}
 .crit-toggle:has(input:checked) .crit-switch{border-color:#4f9d73;background:#152a1f}
+/* The account button holds an avatar, the profile name and a "needs attention"
+   badge. The modern header sizes all three; legacy never did, so an unsized SVG
+   and the name spilled out of the 36px button and over the nav. Legacy's header
+   is a row of icon buttons, so the name stays in the tooltip. */
+.cloud-menu-button{position:relative;display:grid;place-items:center;padding:0;line-height:0}
+.cloud-menu-button svg{width:19px;height:19px;fill:currentColor}
+.cloud-menu-button>strong{display:none}
+.cloud-menu-button>i{position:absolute;top:-5px;right:-5px;display:grid;width:15px;height:15px;place-items:center;border-radius:50%;background:#d84d58;color:#fff;font-size:9px;font-style:normal;font-weight:900;line-height:1}
