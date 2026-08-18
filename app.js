@@ -1150,7 +1150,12 @@ function stepHtml(step,index){
   // unitName() returns markup, so it cannot go in an attribute — its quotes end
   // the attribute early and the rest spills onto the page as text.
   const skip=step.type==='sell'&&step.unit?`<button class="step-skip" data-skip-sell="${step.unit.source}:${step.unit.unit}" title="${escapeAttr(`Keep ${plainUnitName(step.unit)} and work out the plan again`)}">Keep</button>`:'';
-  return `${tick}<span class="step-thumb">${d?picture(d,step.unit.variant):''}</span><span class="step-text">${text}${assumed}</span>${skip}`;
+  // Following a plan is the cheapest way to gather slot-choice data, so each
+  // send-to-work step can record where the droid actually ended up.
+  const logged=step.logged?`<b class="step-logged">landed in ${step.to==='LOUNGE'?'Lounge':stationName(step.to)} ${step.logged}</b>`:'';
+  const record=step.kind==='work'&&slotLogTracking()&&slotLabAllowed()&&Number.isInteger(step.fromSlot)
+    ?`<label class="step-record">${logged?'':`<small>Landed in?</small><input type="text" inputmode="numeric" placeholder="slot" data-log-step="${escapeAttr(step.text)}">`}${logged}</label>`:'';
+  return `${tick}<span class="step-thumb">${d?picture(d,step.unit.variant):''}</span><span class="step-text">${text}${assumed}</span>${record}${skip}`;
 }
 function normaliseProjectedForSteps(baseP,projected){const keyOf=x=>`${x.source}:${x.unit}`,groupOf=x=>`${x.name}:${x.variant}`,cloneRows=rows=>rows.map(x=>({...x})),placed=cloneRows(projected.placed),sell=cloneRows(projected.sell),overflow=cloneRows(projected.overflow);for(const group of [...new Set([...placed,...sell].map(groupOf))]){const current=baseP.placed.filter(x=>groupOf(x)===group),targets=placed.filter(x=>groupOf(x)===group),sells=sell.filter(x=>groupOf(x)===group);if(current.length<2||!sells.length)continue;const used=new Set(),take=picker=>{const row=current.find(x=>!used.has(keyOf(x))&&picker(x));if(row)used.add(keyOf(row));return row};for(const target of targets){const exact=take(x=>x.station===target.station&&x.slot===target.slot),sameStation=exact||take(x=>x.station===target.station),any=sameStation||take(()=>true);if(any){target.source=any.source;target.unit=any.unit}}for(const sold of sells){const any=take(()=>true);if(any){sold.source=any.source;sold.unit=any.unit}}}return{...projected,placed,sell,overflow}}
 
@@ -1398,7 +1403,10 @@ function optimiseRoutePlan(baseP,rawProjected){
   for(const action of trail){
     if(action.kind==='travel'){here=action.to;visit++;continue}
     const from=st[action.i],unit=units.get(tracked[action.i]);
-    steps.push({...describe(action,unit,from),unit,at:here??from,visit,assumed:Boolean(action.assumed)});
+    // The log needs to know where this droid started and which station it is
+    // heading for; describe() only produces prose.
+    steps.push({...describe(action,unit,from),unit,at:here??from,visit,assumed:Boolean(action.assumed),
+      kind:action.kind,from,fromSlot:startSlotAt.get(tracked[action.i]),to:action.to});
     st[action.i]=action.to;
   }
   if(!complete){
@@ -1533,6 +1541,8 @@ function optimisePage(){
   const stepsList=classicSteps
     ?`<ol ${stepsCollapsed?'hidden':''}>${steps.map(step=>`<li class="${stepTicked(step.text)?String.fromCharCode(115,116,101,112,45,100,111,110,101):String()}">${stepHtml(step)}</li>`).join('')}</ol>`
     :`<ol class="optimise-visits" ${stepsCollapsed?'hidden':''}>${visits.map(v=>`<li class="optimise-visit"><h3>${placeName(v.at)}<small>${v.steps.length} droid${v.steps.length===1?'':'s'}</small></h3><ul>${v.steps.map(step=>`<li class="${stepTicked(step.text)?String.fromCharCode(115,116,101,112,45,100,111,110,101):String()}">${stepHtml(step)}</li>`).join('')}</ul></li>`).join('')}</ol>`;
+  // Hidden unless the account that owns the research is signed in.
+  const trackToggle=`<span class="optimise-track" id="optimiseTrack" hidden><button class="btn secondary" type="button">Track slot choices</button><small></small></span>`;
   const stepsStyleToggle=`<button class="btn secondary optimise-style-toggle" id="toggleStepStyle" title="${classicSteps?'Switch to the route-based plan that groups moves by station':'Switch to the original slot-by-slot plan'}">${classicSteps?'Use route plan':'Use classic plan'}</button>`;
   const productive=p.placed.filter(x=>PRODUCTIVE_STATIONS.includes(x.station)),baseIncome=productive.reduce((sum,x)=>{const d=state.droids.find(y=>y.name===x.name);return sum+(d?.variants[x.variant]?.income||0)},0);
   const originLabel=x=>{const origin=currentMap.get(`${x.source}:${x.unit}`);return origin?`${origin.station} ${origin.slot+1}${floorNote(origin.station,origin.slot)}`:'Roster'};
@@ -1546,11 +1556,40 @@ function optimisePage(){
   const station=type=>{const total=SLOT_RULES[type].initial+SLOT_RULES[type].unlocks.length,active=capacity(type),eligible=Array.from({length:total},(_,i)=>i).filter(i=>isSlotEligible(type,i)).length,toPurchase=eligible-active,future=total-eligible,used=p.placed.filter(x=>x.station===type).length,slots=Array.from({length:total},(_,i)=>`${slotDivider(type,i)}${slot(type,i)}`).join('');return `<section class="station station-${type.toLowerCase().replaceAll('_','-')}"><header><span>${stationIcon(type)}<strong>${stationName(type)}</strong></span><small>${used}/${active} slots${toPurchase?` · ${toPurchase} not purchased`:''}${future?` · ${future} locked`:''}</small></header><div class="slot-grid">${slots}</div></section>`};
   const overflow=p.overflow.map(x=>{const d=state.droids.find(y=>y.name===x.name);return `<div class="roster-card"><a href="#/droid/${slug(d.name)}">${picture(d,x.variant)}<span><strong>${d.name}</strong><small>${variantText(x.variant)} &middot; not placed</small></span></a></div>`}).join('');
   const sell=p.sell.map(x=>{const d=state.droids.find(y=>y.name===x.name);return `<div class="sell-card cycle-unused"><a href="#/droid/${slug(d.name)}"><div>${picture(d,x.variant)}</div><span><strong>${d.name}</strong><small>${variantText(x.variant)} · From: ${originLabel(x)}</small><em>${x.sellReason||'No rebirth use'}</em></span></a></div>`}).join('');
-  app.innerHTML=`<div class="breadcrumbs"><a href="#/">Homepage</a> / Optimise</div><div class="base-heading"><div><p class="eyebrow">Credit optimiser</p><h1>Optimise</h1><p class="lead">A preview of your Base rearranged for the best estimated credits per hour.</p></div>${nothingToDo?'<p class="optimise-settled">Already optimal.</p>':'<button class="btn" id="applyOptimised">Apply optimised layout</button>'}</div><div class="base-top optimise-stats"><div class="stat"><small>Current / hour</small><strong>${fmt(currentIncome*3600)}</strong></div><div class="stat"><small>Optimised / hour</small><strong>${fmt(income*3600)}</strong></div><div class="stat"><small>Estimated gain / hour</small><strong>${gain?`+${fmt(gain*3600)}`:'—'}</strong></div><div class="stat scrap-stat"><small>Optimised scrap / hit</small><strong>${optimisedScrap.hit?fmt(optimisedScrap.hit):'—'}</strong><em>${scrapGain.hit?`+${fmt(scrapGain.hit)} per hit`:'No change'}</em></div><div class="stat scrap-stat"><small>Optimised scrap / break</small><strong>${optimisedScrap.break?fmt(optimisedScrap.break):'—'}</strong><em>${scrapGain.break?`+${fmt(scrapGain.break)} per break`:'No change'}</em></div><div class="stat"><small>Droids owned</small><strong>${state.owned.reduce((s,x)=>s+x.qty,0)}</strong></div></div>${nothingToDo?'':'<div class="notice">This page does not change your Base until you click <strong>Apply optimised layout</strong>. Droids in Sell are excluded from the applied layout.</div>'}${missingPreferredCompanions().length?`<div class="notice companion-wanted"><strong>Buy for a Companion slot:</strong> ${missingPreferredCompanions().map(name=>`<a href="#/droid/${slug(name)}">${name}</a>`).join(', ')} — you picked ${missingPreferredCompanions().length===1?'this':'these'} as a preferred companion but ${missingPreferredCompanions().length===1?'do not':'do not'} own ${missingPreferredCompanions().length===1?'it':'them'} yet.</div>`:''}${steps.length?`<section class="optimise-steps ${stepsCollapsed?'collapsed':''}"><header><div><p class="eyebrow">${stepsEyebrow}</p><h2>Step-by-step moves</h2></div><div class="optimise-steps-actions">${stepsStyleToggle}<button class="icon-btn optimise-steps-toggle" id="toggleOptimiseSteps" title="${stepsCollapsed?'Show':'Minimise'} steps">${stepsCollapsed?'+' :'−'}</button></div></header>${stepsList}</section>`:''}<div class="base-layout-v2 optimise-layout"><div class="typed-stations">${['WORKER','ASTROMECH','BATTLE'].map(station).join('')}</div><div class="build-side">${station('BUILD')}</div>${overflow?`<section class="roster-wide"><header><div><strong>Unplaced</strong><span>${p.overflow.length} over capacity</span></div></header><div id="rosterCards">${overflow}</div></section>`:''}${sell?`<section class="sell-wide"><header><div><strong>Sell</strong><span>${p.sell.length} unused or duplicate rebirth droid${p.sell.length===1?'':'s'}</span></div></header><div class="sell-grid">${sell}</div></section>`:''}</div>`;
+  app.innerHTML=`<div class="breadcrumbs"><a href="#/">Homepage</a> / Optimise</div><div class="base-heading"><div><p class="eyebrow">Credit optimiser</p><h1>Optimise</h1><p class="lead">A preview of your Base rearranged for the best estimated credits per hour.</p></div>${nothingToDo?'<p class="optimise-settled">Already optimal.</p>':'<button class="btn" id="applyOptimised">Apply optimised layout</button>'}</div><div class="base-top optimise-stats"><div class="stat"><small>Current / hour</small><strong>${fmt(currentIncome*3600)}</strong></div><div class="stat"><small>Optimised / hour</small><strong>${fmt(income*3600)}</strong></div><div class="stat"><small>Estimated gain / hour</small><strong>${gain?`+${fmt(gain*3600)}`:'—'}</strong></div><div class="stat scrap-stat"><small>Optimised scrap / hit</small><strong>${optimisedScrap.hit?fmt(optimisedScrap.hit):'—'}</strong><em>${scrapGain.hit?`+${fmt(scrapGain.hit)} per hit`:'No change'}</em></div><div class="stat scrap-stat"><small>Optimised scrap / break</small><strong>${optimisedScrap.break?fmt(optimisedScrap.break):'—'}</strong><em>${scrapGain.break?`+${fmt(scrapGain.break)} per break`:'No change'}</em></div><div class="stat"><small>Droids owned</small><strong>${state.owned.reduce((s,x)=>s+x.qty,0)}</strong></div></div>${nothingToDo?'':'<div class="notice">This page does not change your Base until you click <strong>Apply optimised layout</strong>. Droids in Sell are excluded from the applied layout.</div>'}${missingPreferredCompanions().length?`<div class="notice companion-wanted"><strong>Buy for a Companion slot:</strong> ${missingPreferredCompanions().map(name=>`<a href="#/droid/${slug(name)}">${name}</a>`).join(', ')} — you picked ${missingPreferredCompanions().length===1?'this':'these'} as a preferred companion but ${missingPreferredCompanions().length===1?'do not':'do not'} own ${missingPreferredCompanions().length===1?'it':'them'} yet.</div>`:''}${steps.length?`<section class="optimise-steps ${stepsCollapsed?'collapsed':''}"><header><div><p class="eyebrow">${stepsEyebrow}</p><h2>Step-by-step moves</h2></div><div class="optimise-steps-actions">${trackToggle}${stepsStyleToggle}<button class="icon-btn optimise-steps-toggle" id="toggleOptimiseSteps" title="${stepsCollapsed?'Show':'Minimise'} steps">${stepsCollapsed?'+' :'−'}</button></div></header>${stepsList}</section>`:''}<div class="base-layout-v2 optimise-layout"><div class="typed-stations">${['WORKER','ASTROMECH','BATTLE'].map(station).join('')}</div><div class="build-side">${station('BUILD')}</div>${overflow?`<section class="roster-wide"><header><div><strong>Unplaced</strong><span>${p.overflow.length} over capacity</span></div></header><div id="rosterCards">${overflow}</div></section>`:''}${sell?`<section class="sell-wide"><header><div><strong>Sell</strong><span>${p.sell.length} unused or duplicate rebirth droid${p.sell.length===1?'':'s'}</span></div></header><div class="sell-grid">${sell}</div></section>`:''}</div>`;
   document.querySelector('.build-side').insertAdjacentHTML('afterend',`<div class="special-stations">${station('LOUNGE')}${station('COMPANION')}${station('UPGRADE_CHIP')}</div>`);
   document.querySelector('#toggleOptimiseSteps')?.addEventListener('click',()=>{localStorage.setItem('droid-archive-optimise-steps-collapsed',stepsCollapsed?'0':'1');optimisePage()});
   document.querySelector('#toggleStepStyle')?.addEventListener('click',()=>{localStorage.setItem('droid-archive-optimise-step-style',classicSteps?'route':'classic');optimisePage();toast(classicSteps?'Using the route plan':'Using the classic slot-by-slot plan')});
   document.querySelector('#applyOptimised')?.addEventListener('click',async event=>{const button=event.currentTarget,label=button.textContent;button.disabled=true;button.textContent='Applying…';try{await applyOptimisedLayout(plan)}finally{if(button.isConnected){button.disabled=false;button.textContent=label}}});
+  // Owner only: arm tracking, then every send-to-work step offers a box.
+  const trackHost=document.querySelector('#optimiseTrack');
+  if(trackHost&&slotLabAllowed()){
+    trackHost.hidden=false;
+    const button=trackHost.querySelector('button');
+    button.textContent=slotLogTracking()?'Tracking slots · on':'Track slot choices';
+    button.classList.toggle('active',slotLogTracking());
+    trackHost.querySelector('small').textContent=`${slotLogAll().length} landings recorded`;
+    button.onclick=()=>{slotLogSetTracking(!slotLogTracking());rerender()};
+  }
+  // Slots this plan has already filled are no longer free for the next droid.
+  const takenThisPlan={};
+  document.querySelectorAll('[data-log-step]').forEach(input=>{
+    input.onchange=()=>{
+      const step=steps.find(x=>x.text===input.dataset.logStep);
+      const landed=Number(input.value.trim())-1;
+      if(!step||!Number.isInteger(landed)||landed<0)return;
+      const taken=takenThisPlan[step.to]||(takenThisPlan[step.to]=[]);
+      const free=slotLogFree(step.to,taken);
+      if(!slotLogAdd({station:step.to,fromStation:step.from,fromSlot:step.fromSlot,free,landed,droid:step.unit?.name||''})){
+        toast(`${stationName(step.to)} ${landed+1} was not free — update your Base first`);
+        input.value='';return;
+      }
+      taken.push(landed);
+      step.logged=landed+1;
+      toast('Landing recorded');
+      rerender();
+    };
+  });
   document.querySelectorAll('[data-step-tick]').forEach(box=>box.onclick=e=>{e.stopPropagation();toggleTickedStep(box.dataset.stepTick);box.closest('li')?.classList.toggle('step-done',box.checked)});
   document.querySelectorAll('[data-skip-sell]').forEach(button=>button.onclick=()=>{spareFromSelling(button.dataset.skipSell);optimisePage()});
   if(companionMode){
@@ -1940,6 +1979,94 @@ todoPage=patchNotesPage;
 
 let lastRoutePath='';
 function donatePage(){app.innerHTML=`<div class="breadcrumbs"><a href="#/">Homepage</a> / Donate</div><section class="donate-hero"><div class="donate-hero-copy"><p class="eyebrow">Support the archives</p><h1>Buy me a coffee</h1><p>Droid Archives is a free community project. If it has helped you plan your base, track your collection, or prepare for rebirths, you can optionally support its continued development.</p><a class="donate-button" href="https://buymeacoffee.com/droidarchives" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">☕</span> Support Droid Archives</a></div><div class="donate-coffee" aria-hidden="true"><span>☕</span></div></section><section class="donate-content"><div class="donate-message"><p class="eyebrow">Thank you</p><h2>Your support helps keep this project going</h2><p>Donations help with the time and costs involved in maintaining droid data, images, calculators, profiles, and new features for the community.</p><div class="donate-disclaimer"><strong>Support only — no rewards or benefits</strong><p>Donating is completely voluntary. You will not receive in-game items, site features, account benefits, priority support, or anything else in return. Your donation only supports the continued upkeep and development of Droid Archives.</p></div><p class="donate-free"><strong>Droid Archives remains free for everyone.</strong></p></div><a class="donate-qr-card" href="https://buymeacoffee.com/droidarchives" target="_blank" rel="noopener noreferrer" aria-label="Open the Droid Archives Buy Me a Coffee page"><span>Scan to support</span><img src="assets/other/bmc_qr.png" alt="QR code for the Droid Archives Buy Me a Coffee page"><small>buymeacoffee.com/droidarchives</small></a></section>`}
+// ─── Slot choice log ────────────────────────────────────────────────────────
+// One row per observed placement: where the droid started, which slots were free
+// at that moment, and which one the game gave it. Kept in its own localStorage
+// key rather than in the profile — it is research data, it can get long, and
+// putting it in the profile would mean touching export, import, validate and the
+// cloud schema, any of which could lose a Base. Export from the Slot Lab instead.
+const SLOT_LOG_KEY='droid-archive-slot-log';
+const slotLogAll=()=>{try{const rows=JSON.parse(localStorage.getItem(SLOT_LOG_KEY)||'[]');return Array.isArray(rows)?rows:[]}catch(e){return[]}};
+const slotLogWrite=rows=>{try{localStorage.setItem(SLOT_LOG_KEY,JSON.stringify(rows.slice(-4000)))}catch(e){}};
+const slotLogClear=()=>slotLogWrite([]);
+const slotLogTracking=()=>{try{return localStorage.getItem('droid-archive-slot-track')==='1'}catch(e){return false}};
+const slotLogSetTracking=on=>{try{localStorage.setItem('droid-archive-slot-track',on?'1':'0')}catch(e){}};
+// Which slots of a station are free right now, ignoring any this plan has already
+// filled — those are gone by the time the next droid is sent.
+function slotLogFree(station,taken){
+  const occupied=new Set(placements().placed.filter(x=>x.station===station).map(x=>x.slot));
+  for(const slot of taken||[])occupied.add(slot);
+  return stationSlotIndices(station).filter(slot=>!occupied.has(slot));
+}
+function slotLogAdd(row){
+  if(!Number.isInteger(row.landed)||!row.station)return false;
+  // A landing outside the free set means the Base is out of date, and a wrong row
+  // is worse than no row.
+  if(!row.free.includes(row.landed))return false;
+  const rows=slotLogAll();
+  rows.push({...row,at:new Date().toISOString(),rebirth:state.rebirth});
+  slotLogWrite(rows);
+  return true;
+}
+
+// ─── Scoring the rules against the log ──────────────────────────────────────
+// Each rule guesses the landing from the origin and the free set. Whichever
+// predicts the log best is the one Optimise should be using.
+const SLOT_RULES_UNDER_TEST=[
+  {id:'nearest',name:'Nearest free slot to where it started',
+   pick:row=>slotLogNearest(row.station,row.free,row.fromStation,row.fromSlot)},
+  {id:'mission',name:'Mission slots first, then nearest',
+   pick:row=>{
+     if(row.station==='ASTROMECH'){
+       const mission=row.free.filter(slot=>ASTROMECH_MISSION_SLOTS.includes(slot));
+       if(mission.length)return slotLogNearest(row.station,mission,row.fromStation,row.fromSlot);
+     }
+     return slotLogNearest(row.station,row.free,row.fromStation,row.fromSlot);
+   }},
+  {id:'fixed',name:'The fixed order the app ships with',
+   pick:row=>slotFillOrder(row.station).find(slot=>row.free.includes(slot))},
+  {id:'lowest',name:'Lowest free slot number',pick:row=>Math.min(...row.free)},
+];
+// Distance between two slots on the map. Both floors are drawn on one image, so
+// changing floor gets a flat penalty rather than real geometry.
+const SLOT_FLOOR_PENALTY=12;
+function slotLogPoint(station,slot){
+  for(const floor of MAP_FLOORS){
+    const spots=MAP_SPOTS[floor]||{};
+    const lists=station==='LOUNGE'?[spots.LOUNGE,spots.LOUNGE_REBIRTH,spots.LOUNGE_NOVA]:[spots[station]];
+    let base=0;
+    for(const list of lists){
+      if(list&&slot-base<list.length&&slot-base>=0)return{x:list[slot-base][0],y:list[slot-base][1],upstairs:floor==='upstairs'};
+      base+=(list||[]).length;
+    }
+  }
+  return null;
+}
+function slotLogNearest(station,free,fromStation,fromSlot){
+  const start=slotLogPoint(fromStation,fromSlot);
+  if(!start||!free.length)return free[0];
+  let best=null;
+  for(const slot of free){
+    const point=slotLogPoint(station,slot);
+    if(!point)continue;
+    const gap=Math.hypot(point.x-start.x,point.y-start.y)+(point.upstairs!==start.upstairs?SLOT_FLOOR_PENALTY:0);
+    if(!best||gap<best.gap)best={slot,gap};
+  }
+  return best?best.slot:free[0];
+}
+function slotLogScores(rows){
+  return SLOT_RULES_UNDER_TEST.map(rule=>{
+    const per={};let hit=0;
+    for(const row of rows){
+      const right=rule.pick(row)===row.landed;
+      if(right)hit++;
+      const bucket=per[row.station]||(per[row.station]={hit:0,n:0});
+      bucket.n++;if(right)bucket.hit++;
+    }
+    return{...rule,hit,n:rows.length,per};
+  }).sort((a,b)=>b.hit-a.hit);
+}
+
 // ─── Slot Lab ───────────────────────────────────────────────────────────────
 // A guided run-through for measuring how the game itself chooses a slot. The map
 // positions are placed by hand and only ever approximate, so the fill order has
@@ -2092,6 +2219,22 @@ function slotLabReport(phases,values){
   return lines.length?lines.join('\n').trim():'Nothing recorded yet.';
 }
 
+// The point of the log: which rule actually predicts what the game does. Shown on
+// the Slot Lab so the measured runs and the passive data sit together.
+function slotLogFindingsHtml(){
+  const rows=slotLogAll();
+  if(!rows.length)return `<section class="lab-phase"><h2>Passive findings</h2><p class="lab-why">Nothing logged yet. Turn on <strong>Track slot choices</strong> on Optimise, then each step that sends a droid to work gets a box for where it landed. Following your normal plans is enough — no test runs needed.</p></section>`;
+  const scores=slotLogScores(rows),stations=[...new Set(rows.map(r=>r.station))];
+  const pct=(hit,n)=>n?Math.round(hit/n*100):0;
+  const head=stations.map(st=>`<th>${stationName(st)}</th>`).join('');
+  const body=scores.map(rule=>`<tr><td>${rule.name}</td><td><strong>${pct(rule.hit,rule.n)}%</strong><small>${rule.hit} of ${rule.n}</small></td>${stations.map(st=>{const b=rule.per[st];return `<td>${b?pct(b.hit,b.n)+'%':'—'}<small>${b?b.n+' seen':''}</small></td>`}).join('')}</tr>`).join('');
+  const best=scores[0];
+  return `<section class="lab-phase"><h2>Passive findings</h2>
+    <p class="lab-why"><strong>${rows.length}</strong> landings recorded during normal play. Each rule guesses the slot from where the droid started and which slots were free; the best one is what Optimise should be using.</p>
+    <div class="lab-scores"><table><thead><tr><th>Rule</th><th>Overall</th>${head}</tr></thead><tbody>${body}</tbody></table></div>
+    <p class="lab-why">Leading: <strong>${best.name}</strong> at ${pct(best.hit,best.n)}%. Treat anything under about 200 landings as provisional. Note that <em>the fixed order</em> was worked out from the original sweeps, so it is scoring against its own source data here and will look better than it is until fresh landings come in — that is exactly what this log is for.</p>
+    <div class="lab-actions"><button class="btn" id="labLogCopy">Copy the log</button><button class="btn ghost" id="labLogClear">Clear the log</button></div></section>`;
+}
 function slotLabPage(){
   if(!slotLabAllowed()){notFound();return}
   const phases=slotLabProtocol();
@@ -2118,6 +2261,7 @@ function slotLabPage(){
     '<div class="lab-actions"><button class="btn" id="labCopy">Copy results</button><button class="btn ghost" id="labReset">Start over</button></div></section>'+
     '<div class="notice">Built from the slots this Base actually has, so nothing here asks for a slot you have not unlocked. <strong>'+answered+' of '+recordSteps.length+'</strong> landings recorded.</div>'+
     phases.map(phaseHtml).join('')+
+    slotLogFindingsHtml()+
     '<section class="lab-phase"><h2>Results so far</h2><p class="lab-why">Paste this back to me. Phases you have not started are left out.</p>'+
     '<textarea class="form-control lab-output" id="labOutput" readonly rows="10">'+escapeAttr(slotLabReport(phases,values))+'</textarea></section>';
 
@@ -2128,6 +2272,11 @@ function slotLabPage(){
   app.querySelectorAll('[data-lab-tick]').forEach(box=>{
     box.onchange=()=>{if(box.checked)done.add(box.dataset.labTick);else done.delete(box.dataset.labTick);persist();box.closest('.lab-step').classList.toggle('is-done',box.checked)};
   });
+  const logCopy=document.querySelector('#labLogCopy');
+  if(logCopy)logCopy.onclick=async()=>{const text=JSON.stringify(slotLogAll(),null,1);
+    try{await navigator.clipboard.writeText(text);toast('Log copied')}catch(e){toast('Could not reach the clipboard')}};
+  const logClear=document.querySelector('#labLogClear');
+  if(logClear)logClear.onclick=()=>{if(!confirm('Delete every recorded landing?'))return;slotLogClear();toast('Log cleared');slotLabPage()};
   document.querySelector('#labCopy').onclick=async()=>{
     try{await navigator.clipboard.writeText(slotLabReport(phases,values));toast('Results copied')}
     catch(e){document.querySelector('#labOutput').select();toast('Copy the box at the bottom')}
