@@ -542,3 +542,12 @@ html[data-theme="dark"] .sidebar a.active{background:#202633;color:#fff}
 .cloud-menu-button svg{width:19px;height:19px;fill:currentColor}
 .cloud-menu-button>strong{display:none}
 .cloud-menu-button>i{position:absolute;top:-5px;right:-5px;display:grid;width:15px;height:15px;place-items:center;border-radius:50%;background:#d84d58;color:#fff;font-size:9px;font-style:normal;font-weight:900;line-height:1}
+
+/* "Needed later in this cycle" now says what an upgrade costs and where the copy
+   is, so it needs the same third state the Rebirth outlook uses: amber for "you
+   own it, it just is not upgraded far enough yet". */
+.needed-card.upgrade{border-left-color:#d88421;background:rgba(216,132,33,.08)}
+.needed-card em{display:block;margin-top:3px;font-size:10px;font-style:normal;color:#9aa6b9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.needed-card.upgrade em{color:#e0a75c}
+.future-item.upgrade{border-left:4px solid #d88421;background:rgba(216,132,33,.08)}
+.future-item small{display:block;margin-top:2px;font-size:10px;color:var(--muted)}

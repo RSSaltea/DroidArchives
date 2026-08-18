@@ -2,6 +2,19 @@
   "version": 1,
   "notes": [
     {
+      "id": "2026-08-18-mission-slots",
+      "date": "2026-08-18",
+      "title": "Astromech mission slots, and clearer cycle requirements",
+      "summary": "Optimise now stocks the mission slots on purpose, and the needed list tells you the cost and where the droid is.",
+      "changes": [
+        "Optimise now treats Astromech slots 1, 3, 5, 7 and 9 as the mission slots they are. R2-D2 takes one first because it comes back with two rewards, then CB-23 because it opens a mission nothing else reaches, then the other Astromech Iconics for their mission times, then simply the best Astromechs you own.",
+        "Droids holding a mission slot are never sold or moved to the Lounge to make room, and the preview says which slot they are holding and why.",
+        "Locked droids and your own Companion and Upgrade Chip picks still come first, so nothing you chose yourself gets taken for a mission slot.",
+        "\"Needed later in this cycle\" now works like the Rebirth outlook. If you own the droid but not at the right quality it turns amber instead of red, tells you how many chips the upgrade costs, and says which slot the copy is sitting in.",
+        "Both of these work in the legacy interface as well as the modern one."
+      ]
+    },
+    {
       "id": "2026-08-18-optimise-always-routes",
       "date": "2026-08-18",
       "title": "Optimise always gives you a route now",
