@@ -78,8 +78,8 @@ ok('Optimise preview "From:" line',/originLabel=x=>[\s\S]{0,180}floorNote\(origi
 ok('route plan "go to work" step',/go to work[\s\S]{0,60}\$\{toFloor\(action\)\} slot/.test(src));
 // You can never pick a slot outright; swapping your companion with whoever is in
 // it is the only targeted placement the game allows.
-ok('route plan swap step names the floor too',/Swap \$\{name\} into a \$\{placeName\(action\.to\)\}\$\{toFloor\(action\)\}/.test(src));
-ok('and tells you to do it through the companion',/make it your companion, then swap it with whoever is in the slot/.test(src));
+ok('route plan swap step names the slot as well as the floor',/Swap \$\{name\} into \$\{placeName\(action\.to\)\}\$\{toSlot\(action\)\}\$\{toFloor\(action\)\}/.test(src));
+ok('and tells you to do it through the companion',/make it your companion, then swap it with whoever is in that slot/.test(src));
 ok('route plan sell step names the floor it came from',/Sell \$\{name\} from \$\{placeName\(from\)\}\$\{fromFloor\(action,from\)\}/.test(src));
 ok('Rebirth outlook and Base needed list, via requirementLocations',
   /requirementLocations[\s\S]{0,320}stationSlotLabel\(unit\.station,unit\.slot\)/.test(src));
