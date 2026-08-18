@@ -1,0 +1,195 @@
+// The slot-choice log, scored against the landings actually measured in game.
+const fs=require('fs'),vm=require('vm');
+const ROOT='c:/Users/admin/OneDrive/Desktop/Droid Tycoon Helper/';
+const src=fs.readFileSync(ROOT+'app.js','utf8'),css=fs.readFileSync(ROOT+'styles.css','utf8');
+let fails=0;const ok=(l,c,x='')=>{if(!c)fails++;console.log(`  ${c?'ok  ':'FAIL'} ${l}${c?'':'  '+x}`)};
+const grab=k=>{const i=src.indexOf(k);let d=0,j=i;for(;j<src.length;j++){if(src[j]==='{')d++;else if(src[j]==='}'){d--;if(d===0){j++;break}}}return src.slice(i,j)};
+const line=k=>src.split(/\r?\n/).find(l=>l.trimStart().startsWith(k));
+const block=k=>{const i=src.indexOf(k);return src.slice(i,src.indexOf('\n];',i)+3)};
+
+const CAP={WORKER:11,ASTROMECH:9,BATTLE:11,LOUNGE:10};
+const store={};
+const sandbox={console,Math,Number,Array,Set,JSON,Date,
+  WORK_STATIONS:["WORKER","ASTROMECH","BATTLE","UPGRADE_CHIP"],NEAREST_ORDER:["WORKER","BATTLE","ASTROMECH"],
+  MAP_FLOORS:['downstairs','upstairs'],
+  stationSlotIndices:t=>Array.from({length:CAP[t]},(_,i)=>i),
+  state:{rebirth:34,sharedView:null},activeProfile:()=>({id:'p1',name:'Main'}),
+  localStorage:{getItem:k=>store[k]??null,setItem:(k,v)=>{store[k]=String(v)}}};
+vm.createContext(sandbox);
+vm.runInContext(/const MAP_SPOTS=\{[\s\S]*?\n\};/.exec(src)[0],sandbox);
+vm.runInContext(line('const MEASURED_FILL_ORDER='),sandbox);
+vm.runInContext(/const slotFillOrder=\(station,origin\)=>\{[\s\S]*?\n\};/.exec(src)[0],sandbox);
+for(const k of ['const ASTROMECH_MISSION_SLOTS=','const SLOT_LOG_KEY=','const slotLogAll=','const slotLogWrite=',
+  'const slotLogClear=','const slotLogTracking=','const slotLogSetTracking=','const SLOT_FLOOR_PENALTY=','const SLOT_GAP_UNREACHABLE='])
+  vm.runInContext(line(k),sandbox);
+for(const k of ['function slotLogPoint','function slotWalkGap','function slotLogNearest','function slotLogScores','function slotLogAdd'])
+  vm.runInContext(grab(k),sandbox);
+vm.runInContext(line('const slotLogSame='),sandbox);
+vm.runInContext(block('const SLOT_RULES_UNDER_TEST='),sandbox);
+const run=e=>vm.runInContext(e,sandbox);
+
+// Every landing measured in game, replayed as log rows: the free set shrinks as
+// the sweep fills the station.
+const rows=[];
+// During each sweep the other stations were full, so the candidates really were
+// just that station's free slots — expressed now as (station, slot) pairs.
+const TYPE={WORKER:'WORKER',ASTROMECH:'ASTROMECH',BATTLE:'BATTLE',LOUNGE:'WORKER'};
+const sweep=(station,count,pairs)=>{
+  let free=Array.from({length:count},(_,i)=>({station,slot:i}));
+  for(const [fromStation,fromSlot,landed] of pairs){
+    rows.push({station,fromStation,fromSlot:fromSlot-1,free:free.slice(),landed:landed-1,
+      droidType:TYPE[station]});
+    free=free.filter(s=>s.slot!==landed-1);
+  }
+};
+sweep('LOUNGE',10,[['WORKER',1,1],['WORKER',2,2],['WORKER',3,3],['WORKER',4,5],['WORKER',5,4],
+  ['WORKER',6,6],['WORKER',11,10],['WORKER',9,7],['WORKER',10,9],['WORKER',8,8]]);
+sweep('LOUNGE',10,[['BATTLE',1,10],['BATTLE',2,9],['BATTLE',3,8],['BATTLE',4,7],['BATTLE',5,6],
+  ['BATTLE',11,4],['BATTLE',10,1],['BATTLE',9,5],['BATTLE',8,2]]);
+sweep('WORKER',11,[['LOUNGE',1,9],['LOUNGE',2,10],['LOUNGE',3,11],['LOUNGE',5,2],['LOUNGE',4,1],
+  ['LOUNGE',6,3],['LOUNGE',7,8],['LOUNGE',8,4],['LOUNGE',9,7],['LOUNGE',10,5]]);
+sweep('ASTROMECH',9,[['LOUNGE',1,7],['LOUNGE',2,5],['LOUNGE',3,9],['LOUNGE',4,3],
+  ['LOUNGE',6,1],['LOUNGE',7,4],['LOUNGE',8,2],['LOUNGE',9,6]]);
+sweep('BATTLE',11,[['LOUNGE',1,11],['LOUNGE',2,10],['LOUNGE',3,5],['LOUNGE',5,4],['LOUNGE',4,9],
+  ['LOUNGE',6,3],['LOUNGE',7,8],['LOUNGE',8,2],['LOUNGE',9,7],['LOUNGE',10,6]]);
+
+console.log(`=== scoring ${rows.length} measured landings ===`);
+const scores=run(`slotLogScores(${JSON.stringify(rows)})`);
+for(const s of scores)console.log(`  ${String(Math.round(s.hit/s.n*100)).padStart(3)}%  ${s.name}  (${s.hit}/${s.n})`);
+
+const by=id=>scores.find(s=>s.id===id);
+
+ok('scores are sorted best first',scores.every((s,i)=>i===0||scores[i-1].hit>=s.hit));
+ok('three rules are scored',scores.length===3);
+ok('every rule picks a station and a slot together',
+  scores.every(s=>s.n===rows.length));
+ok('the fitted rule still leads on its own training data',by('fixed').hit>=by('nearest').hit);
+ok('nearest-from-origin explains the Lounge, where a fixed order cannot',
+  by('nearest').per.LOUNGE.hit/by('nearest').per.LOUNGE.n>0.8,
+  by('nearest').per.LOUNGE.hit+'/'+by('nearest').per.LOUNGE.n);
+
+
+
+console.log('\n=== the store ===');
+ok('starts empty',run('slotLogAll()').length===0);
+ok('a landing outside the free set is refused',
+  run(`slotLogAdd({station:'WORKER',fromStation:'LOUNGE',fromSlot:0,free:[{station:'WORKER',slot:1},{station:'WORKER',slot:2}],landed:7})`)===false);
+ok('and nothing was written',run('slotLogAll()').length===0);
+ok('a real landing is accepted',
+  run(`slotLogAdd({station:'WORKER',fromStation:'LOUNGE',fromSlot:0,free:[{station:'WORKER',slot:1},{station:'WORKER',slot:2}],landed:2})`)===true);
+ok('the row keeps every slot it could have taken, not just the landing',
+  run('slotLogAll()')[0].free.length===2&&run('slotLogAll()')[0].free[0].station==='WORKER');
+ok('plus origin, rebirth and a timestamp',(()=>{const r=run('slotLogAll()')[0];
+  return r.fromStation==='LOUNGE'&&r.fromSlot===0&&r.rebirth===34&&Boolean(r.at)})());
+ok('tracking is off unless turned on',run('slotLogTracking()')===false);
+run('slotLogSetTracking(true)');
+ok('and survives a reload once on',run('slotLogTracking()')===true);
+ok('clearing empties it',(()=>{run('slotLogClear()');return run('slotLogAll()').length===0})());
+
+console.log('\n=== the recording control ===');
+ok('the landing is picked from a list, never typed',
+  src.includes('<select data-log-step=')&&!src.includes('inputmode="numeric" placeholder="slot" data-log-step'));
+ok('the list holds only slots that were free',src.includes('const options=free.map(spot=>'));
+ok('each option is named in full, floor included',src.includes('stationSlotLabel(spot.station,spot.slot)'));
+ok('and the control is hidden when nothing is free',src.includes('slotLabAllowed()&&free.length'));
+ok('free sets are worked out in plan order, allowing for what the steps above did',
+  src.includes('step.freeSlots=slotLogFree(taken,freed)'));
+ok('a recorded landing survives the rerender that follows it',
+  src.includes('slotLogSession.set(step.text,spot)')&&src.includes('slotLogSession.get(step.text)'));
+ok('and is cleared when a layout is applied, since the plan changes then',
+  /clearOptimiseMarks=\(\)=>\{slotLogSession\.clear\(\)/.test(src));
+
+console.log('\n=== wiring ===');
+ok('steps carry where the droid started',src.includes('fromSlot:startSlotAt.get(tracked[action.i])'));
+ok('the plan is annotated before it is drawn',src.includes('annotateLogSlots(steps);'));
+ok('the log lives outside the profile, so no Base can be lost to it',
+  src.includes("SLOT_LOG_KEY='droid-archive-slot-log'"));
+ok('owner only',src.includes('if(trackHost&&slotLabAllowed())'));
+ok('findings appear on the Slot Lab',src.includes('slotLogFindingsHtml()+'));
+ok('styled',css.includes('.step-record select{')&&css.includes('.lab-scores table{'));
+
+console.log('\n=== multiple profiles ===');
+// One shared pool on purpose: how the game picks a slot is a property of the
+// game, not of a save, so pooling gets to an answer sooner. But each row has to
+// name its profile, because profiles differ in rebirth and unlocked slots.
+run('slotLogClear()');
+run(`slotLogAdd({station:'WORKER',fromStation:'LOUNGE',fromSlot:0,free:[{station:'WORKER',slot:1},{station:'WORKER',slot:2}],landed:2})`);
+ok('a row records which profile produced it',(()=>{const r=run('slotLogAll()')[0];
+  return r.profileId==='p1'&&r.profile==='Main'})(),JSON.stringify(run('slotLogAll()')[0]||{}));
+ok('and the rebirth, since profiles sit at different ones',run('slotLogAll()')[0].rebirth===34);
+ok('every profile writes to one pool, not one log each',src.includes("SLOT_LOG_KEY='droid-archive-slot-log'"));
+ok('the findings say which profiles contributed',src.includes('Across ${byProfile.length} profiles'));
+ok('and warn that a stale Base drags the scores down',src.includes('its rows will drag the scores down'));
+ok('switching profile clears the plan-local recording state',
+  /function applyProfileData\(data\)\{slotLogSession\.clear\(\)/.test(src));
+run('slotLogClear()');
+
+console.log('\n=== other peoples profiles ===');
+// While a group profile is open the Base on screen is theirs. A row tagged with
+// your own profile would be actively wrong, not merely incomplete.
+run('slotLogClear()');
+sandbox.state.sharedView={ownerId:'u2',ownerName:'Alexx',profileId:'p9',profileName:'Main'};
+sandbox.state.rebirth=12;
+run(`slotLogAdd({station:'BATTLE',fromStation:'LOUNGE',fromSlot:0,free:[{station:'BATTLE',slot:0},{station:'BATTLE',slot:9}],landed:9})`);
+const shared=run('slotLogAll()')[0];
+ok('a landing on their Base is recorded',Boolean(shared));
+ok('attributed to them, not to you',shared.profile==='Alexx · Main'&&shared.profileId==='p9',shared.profile);
+ok('flagged as somebody elses',shared.shared===true);
+ok('with their owner id kept',shared.ownerId==='u2');
+ok('and their rebirth, not yours',shared.rebirth===12);
+sandbox.state.sharedView=null;sandbox.state.rebirth=34;
+run(`slotLogAdd({station:'WORKER',fromStation:'LOUNGE',fromSlot:0,free:[{station:'WORKER',slot:1},{station:'WORKER',slot:2}],landed:2})`);
+const mine=run('slotLogAll()')[1];
+ok('your own rows are unaffected',mine.profile==='Main'&&mine.shared===false&&mine.rebirth===34);
+ok('both land in the same pool, since the game behaves the same on any Base',
+  run('slotLogAll()').length===2);
+ok('opening a group profile clears the plan-local state',
+  /async function openGroupProfile\(groupId,ownerId,profileId\)\{slotLogSession\.clear\(\)/.test(src));
+ok('and so does leaving one',
+  /async function exitSharedProfile\(goToGroups=true\)\{slotLogSession\.clear\(\)/.test(src));
+run('slotLogClear()');
+
+console.log('\n=== the handlers redraw with something that exists ===');
+// optimisePage has no rerender in scope. Calling one there threw after the
+// setting had already been saved, so the toggle only took effect on refresh.
+const page=(()=>{const i=src.indexOf('function optimisePage(){');let d=0,j=i;
+  for(;j<src.length;j++){if(src[j]==='{')d++;else if(src[j]==='}'){d--;if(d===0){j++;break}}}
+  return src.slice(i,j)})();
+ok('optimisePage does not define rerender',!/const rerender=|function rerender/.test(page));
+ok('so nothing inside it may call rerender',!/\brerender\(\)/.test(page),
+  (page.match(/.{60}\brerender\(\).{20}/)||[''])[0]);
+ok('the track toggle redraws the page',/slotLogSetTracking\(!slotLogTracking\(\)\);optimisePage\(\)/.test(page));
+ok('and so does recording a landing',/slotLogSession\.set\(step\.text,spot\);[\s\S]{0,90}optimisePage\(\)/.test(page));
+
+console.log('\n=== the plan is simulated forward ===');
+// Steps above a given one have already emptied their slots by the time you reach
+// it — a sell for good, a move until it lands.
+const CAP2={WORKER:5,ASTROMECH:2,BATTLE:1,UPGRADE_CHIP:1};
+const sb2={console,Math,Number,Array,Set,Map,ROSTER:'ROSTER',
+  WORK_STATIONS:['WORKER','ASTROMECH','BATTLE','UPGRADE_CHIP'],
+  stationSlotIndices:x=>Array.from({length:CAP2[x]||0},(_,i)=>i),
+  slotLabAllowed:()=>true,slotLogTracking:()=>true,slotLogSession:new Map(),
+  placements:()=>({placed:[...[0,1,2,3].map(slot=>({station:'WORKER',slot})),
+    {station:'ASTROMECH',slot:0},{station:'ASTROMECH',slot:1},
+    {station:'BATTLE',slot:0},{station:'UPGRADE_CHIP',slot:0}]})};
+vm.createContext(sb2);
+for(const k of ['function slotLogFree','function annotateLogSlots'])vm.runInContext(grab(k),sb2);
+const plan=[{kind:'sell',from:'WORKER',fromSlot:1,text:'sell a'},
+  {kind:'work',from:'BUILD',fromSlot:0,to:'WORKER',text:'send a'},
+  {kind:'work',from:'BUILD',fromSlot:1,to:'WORKER',text:'send b'}];
+const done=vm.runInContext(`(()=>{const s=${JSON.stringify(plan)};annotateLogSlots(s);return s})()`,sb2);
+const offer=i=>done[i].freeSlots.map(f=>`${f.station} ${f.slot+1}`).join(', ');
+ok('a sell above frees its slot for the steps below',
+  done[1].freeSlots.some(f=>f.station==='WORKER'&&f.slot===1),offer(1));
+ok('the Base free slot is still offered too',
+  done[1].freeSlots.some(f=>f.station==='WORKER'&&f.slot===4),offer(1));
+ok('and slots in other stations',done[1].freeSlots.length===2,offer(1));
+sb2.slotLogSession.set('send a',{station:'WORKER',slot:1});
+const done2=vm.runInContext(`(()=>{const s=${JSON.stringify(plan)};annotateLogSlots(s);return s})()`,sb2);
+ok('once a landing is recorded, later steps stop offering that slot',
+  !done2[2].freeSlots.some(f=>f.station==='WORKER'&&f.slot===1),
+  done2[2].freeSlots.map(f=>`${f.station} ${f.slot+1}`).join(', '));
+ok('sells are not offered a dropdown of their own',!done[0].freeSlots);
+
+console.log(fails?`\n${fails} FAILURE(S)`:'\nPASS: true');
+process.exit(fails?1:0);

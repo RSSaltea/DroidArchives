@@ -72,3 +72,9 @@ desktop/renderer/icon.png
 
 # User-created Base exports
 droid-archives-base-*.json
+
+# Test-session working files: full app.js snapshots and map screenshots are kept
+# on disk for reference but are too bulky for the repo. The scripts beside them
+# are tracked.
+tests/**/app-*.js
+tests/**/*.png

@@ -188,49 +188,55 @@ const SLOT_RULES={WORKER:{initial:4,unlocks:[1,4,7,10,12,14,16]},ASTROMECH:{init
 // Astromech slots 1, 3, 5, 7 and 9 send droids on missions; the rest just earn.
 // Mission slots are numbered as the Base shows them, so these are the indices.
 const ASTROMECH_MISSION_SLOTS=[0,2,4,6,8];
-// The order the game fills a station's slots when it places a droid for you.
-// Measured, not guessed: each station was emptied and refilled one droid at a
-// time, so every landing named the best slot still free. Listed here as slot
-// indices; the Base numbers them from 1.
+// How the game picks a slot for you. It takes the free slot closest to where the
+// droid was standing, so a station has no fill order of its own: refill the same
+// station from two directions and you get near-opposite answers. The Lounge was
+// swept twice to check. From Worker slots it filled 1,2,3,5,4,6,10,7,9,8; from
+// Battle slots 10,9,8,7,6,4,1,5,2,3 — because Worker sits south of the Lounge and
+// Battle north of it. Distance from the origin reproduces both, down to which half
+// of the Lounge goes first. No single list can say that.
 //
-//   Worker     9, 10, 11, 2, 1, 3, 8, 4, 7, 5, 6
-//   Astromech  7, 5, 9, 3, 1, then 4, 2, 6, 8
-//   Battle     11, 10, 5, 4, 9, 3, 8, 2, 7, 6, 1
-//   Lounge     10, 9, 8, 7, 6, then 4, 1, 5, 2, 3
+// Two things distance does not decide.
 //
-// CAUTION on the Lounge order. Every send in that sweep started from a Battle
-// slot, and the five downstairs origins all landed in the upper circle while the
-// four upstairs origins all landed in base slots — so the split may be about
-// where the droid came from rather than about the Lounge having an order at all.
-// Sending Worker droids instead could well give something different. It is kept
-// because it matches an observed run and plain slot order matched none, but it
-// is the least trustworthy line here and costs little if wrong, since a droid in
-// the Lounge earns nothing wherever it sits.
+// Astromech puts its five mission slots — 1, 3, 5, 7 and 9 — ahead of every
+// earning-only slot, from any origin. Mission slots were taken from both halves of
+// the Lounge and every even slot came later regardless, so the first five
+// Astromechs you send to work are the ones that go on missions.
 //
-// The Astromech result does not have that problem: mission slots were taken from
-// both halves of the Lounge, and every even slot came later regardless of origin.
+// Battle is the one station distance cannot model. Both of its floors are drawn on
+// the one map image, so the upstairs dots are hand-placed onto ground-floor
+// coordinates and a flat gap cannot price the stairs. Scored against the slot log,
+// nearest-from-origin gets 30 of 38 on the four single-floor sweeps and 3 of 10 on
+// Battle. So Battle keeps the order a sweep actually produced — emptied and
+// refilled a droid at a time, every landing naming the best slot still free — which
+// beats a distance already known to be wrong. Plain slot order is not the fallback:
+// it matches nothing that was observed. Give upstairs real coordinates and this
+// entry can go.
 //
-// Two of these carry real meaning. Astromech fills all five mission slots — 1,
-// 3, 5, 7 and 9 — before it touches a single even one, so the first five
-// Astromechs you send to work are the ones that go on missions. And the Lounge
-// clears its upper circle first, counting down, before any of the base slots.
+//   Battle  11, 10, 5, 4, 9, 3, 8, 2, 7, 6, 1
 //
-// Battle flatly contradicts what the earlier two-slot tests implied. Upstairs 11
-// and 10 are taken before anything downstairs, where the old rule put every
-// downstairs slot first. The earlier tests only ever offered Battle 6, which is
-// second from last, so it lost every time and looked like proof that downstairs
-// always wins.
-const SLOT_FILL_ORDER={
-  WORKER:[8,9,10,1,0,2,7,3,6,4,5],
-  ASTROMECH:[6,4,8,2,0,3,1,5,7],
-  BATTLE:[10,9,4,3,8,2,7,1,6,5,0],
-  LOUNGE:[9,8,7,6,5,3,0,4,1,2]
-};
-const slotFillOrder=station=>{
-  const available=stationSlotIndices(station),preferred=SLOT_FILL_ORDER[station];
-  if(!preferred)return available;
-  const measured=preferred.filter(index=>available.includes(index));
-  return[...measured,...available.filter(index=>!preferred.includes(index))];
+// It does contradict an earlier pair test where Battle 1 and 6 were free and the
+// droid took 1. No single list can explain both, and the origin is why — that pair
+// test started somewhere else. Left standing rather than papered over.
+//
+// Companion needs no entry despite having no dots: nothing on the map is a distance
+// from a slot that sits on you, so every gap comes back the same and the stable
+// sort leaves slot order alone.
+const MEASURED_FILL_ORDER={BATTLE:[10,9,4,3,8,2,7,1,6,5,0]};
+// A station's slots in the order the game would take them for a droid arriving
+// from `origin` ({station,slot}). No origin means nothing to measure from — a
+// droid still in the roster has not stood anywhere yet — so slot order stands.
+// The sort is stable, so equal gaps stay in slot order too.
+const slotFillOrder=(station,origin)=>{
+  const available=stationSlotIndices(station),measured=MEASURED_FILL_ORDER[station];
+  const ordered=measured
+    ?[...measured.filter(slot=>available.includes(slot)),...available.filter(slot=>!measured.includes(slot))]
+    :origin
+      ?available.map(slot=>({slot,gap:slotWalkGap(origin,{station,slot})})).sort((a,b)=>a.gap-b.gap).map(x=>x.slot)
+      :available;
+  if(station!=='ASTROMECH')return ordered;
+  const mission=ordered.filter(slot=>ASTROMECH_MISSION_SLOTS.includes(slot));
+  return[...mission,...ordered.filter(slot=>!ASTROMECH_MISSION_SLOTS.includes(slot))];
 };
 const TYPE_IMAGES={WORKER:'assets/types/Worker_Droid_-_Droid_-_Droid_Tycoon.png',ASTROMECH:'assets/types/Astromech_Droid_-_Droid_-_Droid_Tycoon.png',BATTLE:'assets/types/Battle_Droid_-_Droid_-_Droid_Tycoon.png'};
 const novaLevelFor=id=>Math.max(0,Number(state.novaUpgrades?.[id]||0));
@@ -262,7 +268,7 @@ function eligibleRebirthSlots(rebirth=state.rebirth){return Object.keys(SLOT_RUL
 function autoPurchaseEligibleSlots(){if(!state.autoPurchaseSlots)return false;const bought=new Set(state.purchasedSlots),before=bought.size;eligibleRebirthSlots().forEach(x=>bought.add(slotPurchaseKey(x.type,x.index)));state.purchasedSlots=[...bought];return bought.size!==before}
 function purchaseRebirthSlot(type,index,onDone){const unlock=slotUnlockRebirth(type,index);if(unlock===null||state.rebirth<unlock)return;const key=slotPurchaseKey(type,index);if(!state.purchasedSlots.includes(key))state.purchasedSlots.push(key);save();toast(`${type[0]+type.slice(1).toLowerCase()} slot purchased`);onDone?.()}
 function expandedOwned(){return state.owned.flatMap((x,i)=>Array.from({length:x.qty},(_,unit)=>({...x,source:i,unit}))) }
-function placements(){const occupied=Object.fromEntries(Object.keys(SLOT_RULES).map(type=>[type,new Set()])),placed=[],overflow=[],pending=[];const claim=(x,station,slot)=>{occupied[station].add(slot);placed.push({...x,station,slot})},firstFree=station=>slotFillOrder(station).find(i=>!occupied[station].has(i))??-1;for(const x of expandedOwned()){const station=x.preferred,slot=Number(x.preferredSlot);if(station&&SLOT_RULES[station]&&Number.isInteger(slot)&&isSlotUnlocked(station,slot)&&!occupied[station].has(slot))claim(x,station,slot);else pending.push(x)}for(const x of pending){const d=state.droids.find(y=>y.name===x.name);let station,slot=-1;if(x.preferred&&SLOT_RULES[x.preferred]&&(slot=firstFree(x.preferred))>=0)station=x.preferred;else if((slot=firstFree(d.type))>=0)station=d.type;else if((slot=firstFree('BUILD'))>=0)station='BUILD';station?claim(x,station,slot):overflow.push(x)}return{placed,overflow}}
+function placements(){const occupied=Object.fromEntries(Object.keys(SLOT_RULES).map(type=>[type,new Set()])),placed=[],overflow=[],pending=[];const claim=(x,station,slot)=>{occupied[station].add(slot);placed.push({...x,station,slot})},firstFree=(station,origin)=>slotFillOrder(station,origin).find(i=>!occupied[station].has(i))??-1,standingAt=x=>{const slot=Number(x.preferredSlot);return SLOT_RULES[x.preferred]&&Number.isInteger(slot)?{station:x.preferred,slot}:null};for(const x of expandedOwned()){const station=x.preferred,slot=Number(x.preferredSlot);if(station&&SLOT_RULES[station]&&Number.isInteger(slot)&&isSlotUnlocked(station,slot)&&!occupied[station].has(slot))claim(x,station,slot);else pending.push(x)}for(const x of pending){const d=state.droids.find(y=>y.name===x.name),from=standingAt(x);let station,slot=-1;if(x.preferred&&SLOT_RULES[x.preferred]&&(slot=firstFree(x.preferred,from))>=0)station=x.preferred;else if((slot=firstFree(d.type,from))>=0)station=d.type;else if((slot=firstFree('BUILD',from))>=0)station='BUILD';station?claim(x,station,slot):overflow.push(x)}return{placed,overflow}}
 function materializePlacements(p){const rows=[],indices=new Map();for(const x of [...p.placed,...p.overflow]){const index=rows.length,placed=Boolean(x.station);rows.push({name:x.name,variant:x.variant,qty:1,...(placed?{preferred:x.station,preferredSlot:x.slot}:x.preferred?{preferred:x.preferred}:{}),...(x.lockedSlot||x.lockedCompanion?{lockedSlot:true}:{}),...(x.built?{built:true}:{})});indices.set(`${x.source}:${x.unit}`,index)}state.owned=rows;return indices}
 function movePlacedDroid(p,source,targetStation,targetSlot,target){const indices=materializePlacements(p),sourceRow=state.owned[indices.get(`${source.source}:${source.unit}`)];if(!sourceRow)return;const oldStation=source.station,oldSlot=source.slot;sourceRow.preferred=targetStation;sourceRow.preferredSlot=targetSlot;if(target){const targetRow=state.owned[indices.get(`${target.source}:${target.unit}`)];if(targetRow){targetRow.preferred=oldStation;targetRow.preferredSlot=oldSlot}}save()}
 function toggleSlotLock(source,unit){const p=placements(),indices=materializePlacements(p),index=indices.get(`${source}:${unit}`),row=state.owned[index];if(!row)return;row.lockedSlot=!row.lockedSlot;save();toast(row.lockedSlot?'Droid slot locked for Optimise':'Droid slot unlocked')}
@@ -687,7 +693,7 @@ function commitOwned(name,variant,qty=1,preferred,preferredSlot){const slot=Numb
   const logged=building?false:recordDroidex(name,variant);
   save();toast(`${name} added to your base${building?' · still building':logged?' and Droidex':''}`)}
 function addBlueprint(name,variant,slot){const used=new Set(state.blueprints.map(x=>Number(x.slot))),target=Number.isInteger(Number(slot))?Number(slot):Array.from({length:capacity('BLUEPRINT_STORAGE')},(_,i)=>i).find(i=>!used.has(i));if(target===undefined||target<0||target>=capacity('BLUEPRINT_STORAGE')){toast('No Blueprint Storage slot available');return}state.blueprints.push({name,variant,slot:target});save();toast(`${name} blueprint stored`)}
-function craftBlueprint(index,onDone){const blueprint=state.blueprints[index];if(!blueprint)return;const occupied=new Set(placements().placed.filter(x=>x.station==='BUILD').map(x=>x.slot)),slot=stationSlotIndices('BUILD').find(i=>!occupied.has(i));if(slot===undefined){toast('No free Build slot');return}state.blueprints.splice(index,1);const done=autoCompleteBuilds();state.owned.push({name:blueprint.name,variant:blueprint.variant,qty:1,preferred:'BUILD',preferredSlot:slot,...(done?{built:true}:{})});if(done)recordDroidex(blueprint.name,blueprint.variant);save();toast(`${blueprint.name} moved to Build${done?' and completed':' · press ✓ when it finishes building'}`);onDone?.()}
+function craftBlueprint(index,onDone){const blueprint=state.blueprints[index];if(!blueprint)return;const occupied=new Set(placements().placed.filter(x=>x.station==='BUILD').map(x=>x.slot)),slot=slotFillOrder('BUILD',{station:'BLUEPRINT_STORAGE',slot:Number(blueprint.slot)||0}).find(i=>!occupied.has(i));if(slot===undefined){toast('No free Build slot');return}state.blueprints.splice(index,1);const done=autoCompleteBuilds();state.owned.push({name:blueprint.name,variant:blueprint.variant,qty:1,preferred:'BUILD',preferredSlot:slot,...(done?{built:true}:{})});if(done)recordDroidex(blueprint.name,blueprint.variant);save();toast(`${blueprint.name} moved to Build${done?' and completed':' · press ✓ when it finishes building'}`);onDone?.()}
 // Finishing a build unlocks the droid: it can be moved, Optimise can use it, and
 // it finally counts towards the Droidex.
 function completeBuild(source,unit){const p=placements(),indices=materializePlacements(p),row=state.owned[indices.get(`${source}:${unit}`)];if(!row||row.built)return;row.built=true;const logged=recordDroidex(row.name,row.variant);save();toast(`${row.name} finished building${logged?' · added to Droidex':''}`)}
@@ -932,7 +938,7 @@ function droidWhereabouts(name,placed){
   for(const x of placed)if(x.name===name)counts.set(stationName(x.station),(counts.get(stationName(x.station))||0)+1);
   return [...counts].map(([label,n])=>n>1?`${label} ×${n}`:label).join(' · ');
 }
-const nextFreeSlot=station=>{const used=new Set(placements().placed.filter(x=>x.station===station).map(x=>x.slot));return stationSlotIndices(station).find(i=>!used.has(i))??-1};
+const nextFreeSlot=station=>{const used=new Set(placements().placed.filter(x=>x.station===station).map(x=>x.slot));return slotFillOrder(station).find(i=>!used.has(i))??-1};
 // Filling a station is usually several droids in a row, so the picker reopens on
 // the next free slot instead of making you click back in each time. Escape or a
 // full station ends it.
@@ -996,7 +1002,7 @@ function optimiseBase(p,currentIncome){
     if(income>best.income+1e-6||Math.abs(income-best.income)<=1e-6&&stability>(best.stability||0))best={income,stability,assignments}
   }
   best.assignments=stabiliseAssignments(best.assignments,p);
-  const current=new Map(p.placed.map(x=>[`${x.source}:${x.unit}`,x])),wanted=new Map(best.assignments.map(x=>[x.key,x])),firstOpen=station=>stationSlotIndices(station).find(i=>!p.placed.some(x=>x.station===station&&x.slot===i))??-1,moves=best.assignments.filter(x=>current.get(x.key)?.station!==x.station).map(x=>{const old=current.get(x.key),sourceLabel=old?old.station:'Roster',displaced=p.placed.find(y=>y.station===x.station&&`${y.source}:${y.unit}`!==x.key&&wanted.get(`${y.source}:${y.unit}`)?.station!==x.station),open=firstOpen(x.station),targetSlot=displaced?displaced.slot:open>=0?open:x.slot,targetLabel=displaced?`${x.station} slot holding ${displaced.name} ${variantText(displaced.variant)}`:`empty ${x.station} slot`;return{unit:{...x,slot:targetSlot},current:sourceLabel,targetStation:x.station,targetSlot,targetLabel,displaced:displaced?{key:`${displaced.source}:${displaced.unit}`,name:displaced.name,variant:displaced.variant,target:sourceLabel}:null}});
+  const current=new Map(p.placed.map(x=>[`${x.source}:${x.unit}`,x])),wanted=new Map(best.assignments.map(x=>[x.key,x])),firstOpen=(station,origin)=>slotFillOrder(station,origin).find(i=>!p.placed.some(x=>x.station===station&&x.slot===i))??-1,moves=best.assignments.filter(x=>current.get(x.key)?.station!==x.station).map(x=>{const old=current.get(x.key),sourceLabel=old?old.station:'Roster',displaced=p.placed.find(y=>y.station===x.station&&`${y.source}:${y.unit}`!==x.key&&wanted.get(`${y.source}:${y.unit}`)?.station!==x.station),open=firstOpen(x.station,old),targetSlot=displaced?displaced.slot:open>=0?open:x.slot,targetLabel=displaced?`${x.station} slot holding ${displaced.name} ${variantText(displaced.variant)}`:`empty ${x.station} slot`;return{unit:{...x,slot:targetSlot},current:sourceLabel,targetStation:x.station,targetSlot,targetLabel,displaced:displaced?{key:`${displaced.source}:${displaced.unit}`,name:displaced.name,variant:displaced.variant,target:sourceLabel}:null}});
   const gain=Math.max(0,best.income-currentIncome),actionable=gain>1&&moves.length;
   return{income:best.income,gain:actionable?gain:0,moves:actionable?moves:[],assignments:best.assignments}
 }
@@ -1014,10 +1020,20 @@ function basePageV2(){
   document.querySelectorAll('[data-purchase-station]').forEach(button=>button.onclick=()=>purchaseRebirthSlot(button.dataset.purchaseStation,Number(button.dataset.purchaseSlot),render));
   requestAnimationFrame(()=>decorateCommandDeck('/base'));
  };render()}
-function stabiliseProjectedPlacements(baseP,placed){const current=new Map(baseP.placed.map(x=>[`${x.source}:${x.unit}`,x])),stations=[...new Set(placed.map(x=>x.station))],stable=[];for(const station of stations){const list=placed.filter(x=>x.station===station),slots=stationSlotIndices(station),used=new Set(),floating=[];for(const item of list){const old=current.get(`${item.source}:${item.unit}`);if(old?.station===station&&slots.includes(old.slot)&&!used.has(old.slot)){used.add(old.slot);stable.push({...item,slot:old.slot})}else floating.push(item)}const open=slots.filter(slot=>!used.has(slot));floating.forEach((item,index)=>stable.push({...item,slot:open[index]??item.slot}))}return stable}
+function stabiliseProjectedPlacements(baseP,placed){const current=new Map(baseP.placed.map(x=>[`${x.source}:${x.unit}`,x])),stations=[...new Set(placed.map(x=>x.station))],stable=[];for(const station of stations){const list=placed.filter(x=>x.station===station),slots=stationSlotIndices(station),used=new Set(),floating=[];for(const item of list){const old=current.get(`${item.source}:${item.unit}`);if(old?.station===station&&slots.includes(old.slot)&&!used.has(old.slot)){used.add(old.slot);stable.push({...item,slot:old.slot})}else floating.push(item)}const spare=new Set(slots.filter(slot=>!used.has(slot))),colliding=[];
+    for(const item of floating){if(spare.has(item.slot)){spare.delete(item.slot);stable.push(item)}else colliding.push(item)}
+    for(const item of colliding){
+      const old=current.get(`${item.source}:${item.unit}`);
+      const slot=slotFillOrder(station,old||null).find(i=>spare.has(i));
+      if(slot===undefined){stable.push(item);continue}
+      spare.delete(slot);stable.push({...item,slot});
+    }
+  }
+  return stable;
+}
 function optimisedPlacements(baseP,plan){
   const assigned=new Map((plan.assignments||[]).map(x=>[x.key,x])),current=new Map(baseP.placed.map(x=>[`${x.source}:${x.unit}`,x])),occupied=Object.fromEntries(Object.keys(SLOT_RULES).map(type=>[type,new Set()])),placed=[],overflow=[],sell=[],units=expandedOwned();
-  const claim=(unit,station,slot)=>{occupied[station].add(slot);placed.push({...unit,station,slot})},free=station=>slotFillOrder(station).find(i=>!occupied[station].has(i))??-1,canKeep=(station,slot)=>station&&stationSlotIndices(station).includes(slot)&&!occupied[station].has(slot);
+  const claim=(unit,station,slot)=>{occupied[station].add(slot);placed.push({...unit,station,slot})},free=(station,origin)=>slotFillOrder(station,origin).find(i=>!occupied[station].has(i))??-1,canKeep=(station,slot)=>station&&stationSlotIndices(station).includes(slot)&&!occupied[station].has(slot);
   const lockedKeys=new Set(baseP.placed.filter(x=>x.lockedSlot||isBuilding(x)).map(x=>`${x.source}:${x.unit}`));
   for(const locked of baseP.placed.filter(x=>lockedKeys.has(`${x.source}:${x.unit}`)))if(canKeep(locked.station,locked.slot))claim(locked,locked.station,locked.slot);
   for(const unit of units){const key=`${unit.source}:${unit.unit}`,target=assigned.get(key);if(target)claim(unit,target.station,target.slot)}
@@ -1118,7 +1134,7 @@ function optimisedPlacements(baseP,plan){
     if(item.kept)continue;
     const {unit,fallbacks,old}=item;
     let station='',slot=-1;
-    for(const fallback of fallbacks){if(fallback==='BUILD'&&old?.station!=='BUILD')continue;slot=free(fallback);if(slot>=0){claim(unit,fallback,slot);station=fallback;break}}
+    for(const fallback of fallbacks){if(fallback==='BUILD'&&old?.station!=='BUILD')continue;slot=free(fallback,old);if(slot>=0){claim(unit,fallback,slot);station=fallback;break}}
     if(!station){const d=state.droids.find(x=>x.name===unit.name);if(strictKeepBuild&&!isIconic(d))sell.push({...unit,sellReason:`Sold to keep Build slots open · ${optimiseFreeBuildModeLabel(optimiseFreeBuildMode()).toLowerCase()} priority`});else overflow.push(unit)}
   }
   const stablePlaced=stabiliseProjectedPlacements(baseP,placed),rebirthPick=stablePlaced.reduce((map,x)=>{const previous=map.get(x.name),key=`${x.source}:${x.unit}`;if(!previous||VARIANTS.indexOf(x.variant)>VARIANTS.indexOf(previous.variant))map.set(x.name,{variant:x.variant,key});return map},new Map()),finalPlaced=[],finalSell=[...sell];
@@ -2089,14 +2105,14 @@ const SLOT_RULES_UNDER_TEST=[
      const mission=pool.filter(spot=>spot.station==='ASTROMECH'&&ASTROMECH_MISSION_SLOTS.includes(spot.slot));
      return slotLogNearest(mission.length?mission:pool,row.fromStation,row.fromSlot);
    }},
-  {id:'fixed',name:'The station and slot orders the app ships with',
+  {id:'fixed',name:'The station order the app ships with, nearest slot inside it',
    pick:row=>{
      const home=row.free.filter(spot=>spot.station===row.droidType);
      const pool=home.length?home:row.free;
      for(const station of[...NEAREST_ORDER,'UPGRADE_CHIP']){
        const here=pool.filter(spot=>spot.station===station);
        if(!here.length)continue;
-       const order=slotFillOrder(station);
+       const order=slotFillOrder(station,{station:row.fromStation,slot:row.fromSlot});
        return here.slice().sort((a,b)=>order.indexOf(a.slot)-order.indexOf(b.slot))[0];
      }
      return pool[0];
@@ -2105,10 +2121,20 @@ const SLOT_RULES_UNDER_TEST=[
 // Distance between two slots on the map. Both floors are drawn on one image, so
 // changing floor gets a flat penalty rather than real geometry.
 const SLOT_FLOOR_PENALTY=12;
+// A slot with no dot on the map cannot be compared with one that has, so it sorts
+// last rather than poisoning the comparison with Infinity.
+const SLOT_GAP_UNREACHABLE=1e6;
+// The walk the game seems to measure: a straight line across the floor, plus a
+// flat charge for changing floor.
+function slotWalkGap(from,to){
+  const a=slotLogPoint(from.station,from.slot),b=slotLogPoint(to.station,to.slot);
+  if(!a||!b)return SLOT_GAP_UNREACHABLE;
+  return Math.hypot(b.x-a.x,b.y-a.y)+(a.upstairs!==b.upstairs?SLOT_FLOOR_PENALTY:0);
+}
 function slotLogPoint(station,slot){
   for(const floor of MAP_FLOORS){
     const spots=MAP_SPOTS[floor]||{};
-    const lists=station==='LOUNGE'?[spots.LOUNGE,spots.LOUNGE_REBIRTH,spots.LOUNGE_NOVA]:[spots[station]];
+    const lists=station==='LOUNGE'?[spots.LOUNGE,spots.LOUNGE_REBIRTH,spots.LOUNGE_NOVA]:station==='BLUEPRINT_STORAGE'?[spots.BLUEPRINT]:[spots[station]];
     let base=0;
     for(const list of lists){
       if(list&&slot-base<list.length&&slot-base>=0)return{x:list[slot-base][0],y:list[slot-base][1],upstairs:floor==='upstairs'};
@@ -2120,11 +2146,11 @@ function slotLogPoint(station,slot){
 function slotLogNearest(free,fromStation,fromSlot){
   const start=slotLogPoint(fromStation,fromSlot);
   if(!start||!free.length)return free[0];
+  const from={station:fromStation,slot:fromSlot};
   let best=null;
   for(const spot of free){
-    const point=slotLogPoint(spot.station,spot.slot);
-    if(!point)continue;
-    const gap=Math.hypot(point.x-start.x,point.y-start.y)+(point.upstairs!==start.upstairs?SLOT_FLOOR_PENALTY:0);
+    const gap=slotWalkGap(from,spot);
+    if(gap>=SLOT_GAP_UNREACHABLE)continue;
     if(!best||gap<best.gap)best={spot,gap};
   }
   return best?best.spot:free[0];
