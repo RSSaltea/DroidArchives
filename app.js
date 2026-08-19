@@ -1687,6 +1687,7 @@ function optimisePage(){
   const baseP=placements(),currentIncome=incomeForPlaced(baseP.placed),plan=optimiseBase(baseP,currentIncome),p=optimisedPlacements(baseP,plan),steps=safeOptimiseStepPlan(baseP,p),stepsCollapsed=localStorage.getItem('droid-archive-optimise-steps-collapsed')==='1',income=plan.income||currentIncome,gain=Math.max(0,income-currentIncome),currentScrap=scrapPayoutsForIncome(currentIncome),optimisedScrap=scrapPayoutsForIncome(income),scrapGain={hit:Math.max(0,(optimisedScrap.hit||0)-(currentScrap.hit||0)),break:Math.max(0,(optimisedScrap.break||0)-(currentScrap.break||0))},rebirthPick=p.placed.reduce((map,x)=>{const previous=map.get(x.name);if(!previous||VARIANTS.indexOf(x.variant)>VARIANTS.indexOf(previous.variant))map.set(x.name,{variant:x.variant,key:`${x.source}:${x.unit}`});return map},new Map()),currentMap=new Map(baseP.placed.map(x=>[`${x.source}:${x.unit}`,x]));
   const nothingToDo=!steps.filter(x=>x.type!=='note').length&&!p.sell.length&&gain<=1;
   annotateLogSlots(steps);
+  applyLoggedLandings(p,steps);
   const classicSteps=optimiseStepStyle()==='classic',visits=classicSteps?[]:optimiseVisits(steps);
   const stepsEyebrow=classicSteps?'Slot-by-slot order':`One walk round the base · ${visits.length} stop${visits.length===1?'':'s'}`;
   const stepsList=classicSteps
@@ -2196,6 +2197,31 @@ const slotLogSame=(a,b)=>Boolean(a)&&Boolean(b)&&a.station===b.station&&a.slot==
 // Each send-to-work step offers the slots free when its droid is sent, which
 // means minus anything an earlier step in the same plan has already been
 // recorded as taking.
+// Move droids to the slots you actually recorded landing in.
+//
+// annotateLogSlots only marks a recorded slot as taken so the NEXT step offers
+// the right choices; it never moved the droid, so the preview and the map went
+// on showing wherever the fill-order rule had guessed. Recording that a droid
+// went to Astromech 7 and then being shown it in Astromech 3 makes the
+// recording look ignored, and the map is the thing you check the plan against.
+//
+// A recorded landing is ground truth about where the droid is, so it wins over
+// the prediction. Whoever the plan had in that slot swaps into the one being
+// vacated, which keeps every droid placed and the slot count unchanged.
+function applyLoggedLandings(projected,steps){
+  const keyOf=x=>`${x.source}:${x.unit}`;
+  for(const step of steps){
+    if(!step.logged||!step.unit)continue;
+    const key=keyOf(step.unit),moving=projected.placed.find(x=>keyOf(x)===key);
+    if(!moving)continue;                                    // sold or unplaced: nothing to move
+    const {station,slot}=step.logged;
+    if(moving.station===station&&moving.slot===slot)continue; // the guess was right
+    const occupant=projected.placed.find(x=>x.station===station&&x.slot===slot&&keyOf(x)!==key);
+    const from={station:moving.station,slot:moving.slot};
+    moving.station=station;moving.slot=slot;
+    if(occupant){occupant.station=from.station;occupant.slot=from.slot}
+  }
+}
 function annotateLogSlots(steps){
   if(state.sharedView||!slotLabAllowed()||!slotLogTracking())return;
   // Walk the plan in order. Every step empties the slot its droid was in — a
