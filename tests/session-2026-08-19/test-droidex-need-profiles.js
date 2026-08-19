@@ -21,23 +21,24 @@ sandbox.state={droids:[
     {name:'PIT',rarity:'COMMON'}],
   droidex:[],owned:[],cycle:0,rebirth:0,rebirths:{}};
 vm.createContext(sandbox);
-for(const k of ['const REBIRTH_NEED_KEY=','function rebirthNeedSelection(','function setRebirthNeedSelection(',
-                'const selectedRebirthNeedProfiles=','function droidexEntry('])
+for(const k of ['function droidexEntry('])
   vm.runInContext(k.startsWith('function')?grabFn(k):line(k),sandbox);
 vm.runInContext(grabFn('function rebirthNeedProfiles('),sandbox);
+vm.runInContext(grabFn('function chosenNeedProfiles('),sandbox);
 vm.runInContext(grabFn('function withProfileData('),sandbox);
-vm.runInContext(grabFn('window.__companionDroidexNeed=(quality,rarity)=>{'),sandbox);
+vm.runInContext(grabFn('window.__companionDroidexNeed=(quality,rarity,keys)=>{'),sandbox);
 
 const profile=(id,name,droidex)=>({id,name,data:{owned:[],droidex,cycle:0,rebirth:0}});
 sandbox.activeProfileDoc=()=>({profiles:[
   profile('a','Main',[{name:'LEP',variant:'GALACTIC'}]),   // has LEP galactic already
   profile('b','Alt',[])]});                                 // has nothing
 sandbox.availableGroupOutlookProfiles=()=>[];
-const run=e=>vm.runInContext(e,sandbox);
+let KEYS=[];
+const run=e=>{sandbox.KEYS=KEYS;return vm.runInContext(e,sandbox)};
 const names=o=>o.map(x=>x.droidName).sort().join(',');
 
 console.log('=== exact variant, not "good enough" ===');
-let out=run(`window.__companionDroidexNeed('GALACTIC','MYTHIC')`);
+let out=run(`window.__companionDroidexNeed('GALACTIC','MYTHIC',KEYS)`);
 ok('a droid already collected at that variant is still needed by the other profile',
    out.find(x=>x.droidName==='LEP')?.profiles.map(p=>p.name).join()==='Alt',JSON.stringify(out.find(x=>x.droidName==='LEP')));
 ok('a droid missing everywhere lists both profiles',
@@ -46,17 +47,16 @@ ok('iconic droids are not wanted at a non-default variant',!out.some(x=>x.droidN
 ok('other rarities are left alone',!out.some(x=>x.droidName==='PIT'));
 
 console.log('=== iconic at DEFAULT ===');
-out=run(`window.__companionDroidexNeed('DEFAULT','MYTHIC')`);
+out=run(`window.__companionDroidexNeed('DEFAULT','MYTHIC',KEYS)`);
 ok('iconic droids do have a DEFAULT square',out.some(x=>x.droidName==='CB-23'),names(out));
 
 console.log('=== the loaded profile is not disturbed ===');
 ok('droidex is put back',JSON.stringify(sandbox.state.droidex)==='[]');
 
 console.log('=== selection is shared with the rebirth hint ===');
-run(`setRebirthNeedSelection(new Set(['own:a']))`);
-out=run(`window.__companionDroidexNeed('GALACTIC','MYTHIC')`);
+KEYS=['own:a'];
+out=run(`window.__companionDroidexNeed('GALACTIC','MYTHIC',KEYS)`);
 ok('deselecting a profile drops its needs',!out.some(x=>x.droidName==='LEP'),names(out));
-run(`setRebirthNeedSelection(null)`);
-
+KEYS=[];
 console.log(fails?`\n${fails} FAILED`:'\nall passed');
 process.exit(fails?1:0);

@@ -688,19 +688,16 @@ function showDroidComparisonModal(){const root=document.querySelector('#modalRoo
 function attachCollapsiblePanels(){
   const actions=document.querySelector('.base-actions');
   const hasGroupOutlook=Boolean(document.querySelector('.group-outlook-panel'));
-  const hasNeedHints=Boolean(document.querySelector('.rebirth-need-panel'));
   // The modern UI adds the icon itself from the button's text, via
   // modernButtonIcon, so this must not carry one of its own or it gets two.
-  if(actions)actions.innerHTML=`<button class="btn secondary base-panel-toggle ${baseViewIsMap()?'active':''}" id="toggleBaseMap">${baseViewIsMap()?'Hide Map':'Show Map'}</button><button class="btn secondary base-panel-toggle" id="toggleHealthPanel">Hide Health</button><button class="btn secondary base-panel-toggle" id="toggleScrapPanel">Hide Scrap</button><button class="btn secondary base-panel-toggle" id="toggleChipSellPanel">Hide Chips</button><button class="btn secondary base-panel-toggle" id="toggleReplacementPanel">Hide Droid Calc</button><button class="btn secondary base-panel-toggle" id="toggleOutlookPanel">Hide Outlook</button>${hasGroupOutlook?'<button class="btn secondary base-panel-toggle" id="toggleGroupOutlookPanel">Hide Group Outlook</button>':''}${hasNeedHints?'<button class="btn secondary base-panel-toggle" id="toggleNeedHintsPanel">Hide Need-hints</button>':''}<button class="btn secondary base-panel-toggle" id="toggleBaseDetail">Hide Detail</button><button class="btn secondary" id="transferBase" title="Import or export Base">Import / Export</button>`;
+  if(actions)actions.innerHTML=`<button class="btn secondary base-panel-toggle ${baseViewIsMap()?'active':''}" id="toggleBaseMap">${baseViewIsMap()?'Hide Map':'Show Map'}</button><button class="btn secondary base-panel-toggle" id="toggleHealthPanel">Hide Health</button><button class="btn secondary base-panel-toggle" id="toggleScrapPanel">Hide Scrap</button><button class="btn secondary base-panel-toggle" id="toggleChipSellPanel">Hide Chips</button><button class="btn secondary base-panel-toggle" id="toggleReplacementPanel">Hide Droid Calc</button><button class="btn secondary base-panel-toggle" id="toggleOutlookPanel">Hide Outlook</button>${hasGroupOutlook?'<button class="btn secondary base-panel-toggle" id="toggleGroupOutlookPanel">Hide Group Outlook</button>':''}<button class="btn secondary base-panel-toggle" id="toggleBaseDetail">Hide Detail</button><button class="btn secondary" id="transferBase" title="Import or export Base">Import / Export</button>`;
   document.querySelectorAll('.slot-replacement-target').forEach(button=>button.remove());
   const outlook=document.querySelector('.rebirth-summary-box'),next=outlook?.querySelector('.outlook-next'),viewRebirths=outlook?.querySelector(':scope > a.btn');
   if(next&&viewRebirths){const label=next.querySelector(':scope > .outlook-label'),row=document.createElement('div');row.className='outlook-next-title';label?.before(row);if(label)row.append(label);row.append(viewRebirths)}
-  [{selector:'.rebirth-need-panel',button:'#toggleNeedHintsPanel',key:'droid-archive-need-hints-collapsed',label:'Need-hints'},
-   {selector:'.base-health',button:'#toggleHealthPanel',key:'droid-archive-health-collapsed',label:'Health'},{selector:'.scrap-calculator:not(.chip-sell-calculator)',button:'#toggleScrapPanel',key:'droid-archive-scrap-collapsed',label:'Scrap'},{selector:'.chip-sell-calculator',button:'#toggleChipSellPanel',key:'droid-archive-chip-sell-collapsed',label:'Chips'},{selector:'.replacement-calculator',button:'#toggleReplacementPanel',key:'droid-archive-replacement-collapsed',label:'Droid Calc',defaultCollapsed:true},{selector:'.rebirth-summary-box',button:'#toggleOutlookPanel',key:'droid-archive-rebirth-outlook-collapsed',label:'Outlook'},{selector:'.group-outlook-panel',button:'#toggleGroupOutlookPanel',key:`droid-archive-group-outlook-collapsed:${state.cloud.user?.id||'local'}`,label:'Group Outlook'}].forEach(item=>{const panel=document.querySelector(item.selector),button=document.querySelector(item.button);if(!panel||!button)return;const update=collapsed=>{panel.classList.toggle('collapsed',collapsed);button.classList.toggle('active',!collapsed);button.textContent=`${collapsed?'Show':'Hide'} ${item.label}`;button.title=`${collapsed?'Show':'Hide'} ${item.label}`;button.setAttribute('aria-expanded',String(!collapsed));if(document.documentElement.dataset.uiStyle==='modern')requestAnimationFrame(()=>decorateCommandDeck('/base'))},stored=localStorage.getItem(item.key);update(stored===null?Boolean(item.defaultCollapsed):stored==='1');button.onclick=()=>{const collapsed=!panel.classList.contains('collapsed');localStorage.setItem(item.key,collapsed?'1':'0');update(collapsed)}});
+  [{selector:'.base-health',button:'#toggleHealthPanel',key:'droid-archive-health-collapsed',label:'Health'},{selector:'.scrap-calculator:not(.chip-sell-calculator)',button:'#toggleScrapPanel',key:'droid-archive-scrap-collapsed',label:'Scrap'},{selector:'.chip-sell-calculator',button:'#toggleChipSellPanel',key:'droid-archive-chip-sell-collapsed',label:'Chips'},{selector:'.replacement-calculator',button:'#toggleReplacementPanel',key:'droid-archive-replacement-collapsed',label:'Droid Calc',defaultCollapsed:true},{selector:'.rebirth-summary-box',button:'#toggleOutlookPanel',key:'droid-archive-rebirth-outlook-collapsed',label:'Outlook'},{selector:'.group-outlook-panel',button:'#toggleGroupOutlookPanel',key:`droid-archive-group-outlook-collapsed:${state.cloud.user?.id||'local'}`,label:'Group Outlook'}].forEach(item=>{const panel=document.querySelector(item.selector),button=document.querySelector(item.button);if(!panel||!button)return;const update=collapsed=>{panel.classList.toggle('collapsed',collapsed);button.classList.toggle('active',!collapsed);button.textContent=`${collapsed?'Show':'Hide'} ${item.label}`;button.title=`${collapsed?'Show':'Hide'} ${item.label}`;button.setAttribute('aria-expanded',String(!collapsed));if(document.documentElement.dataset.uiStyle==='modern')requestAnimationFrame(()=>decorateCommandDeck('/base'))},stored=localStorage.getItem(item.key);update(stored===null?Boolean(item.defaultCollapsed):stored==='1');button.onclick=()=>{const collapsed=!panel.classList.contains('collapsed');localStorage.setItem(item.key,collapsed?'1':'0');update(collapsed)}});
   const detailButton=document.querySelector('#toggleBaseDetail'),layout=document.querySelector('.base-layout-v2'),detailKey='droid-archive-base-detail-hidden';
   if(detailButton&&layout){const update=hidden=>{layout.classList.toggle('base-details-hidden',hidden);detailButton.classList.toggle('active',!hidden);detailButton.textContent=hidden?'Show Detail':'Hide Detail';detailButton.title=hidden?'Show full droid card details':'Use compact droid cards';detailButton.setAttribute('aria-pressed',String(hidden));if(document.documentElement.dataset.uiStyle==='modern')requestAnimationFrame(()=>decorateCommandDeck('/base'))};update(localStorage.getItem(detailKey)==='1');detailButton.onclick=()=>{const hidden=!layout.classList.contains('base-details-hidden');localStorage.setItem(detailKey,hidden?'1':'0');update(hidden)}}
   document.querySelector('#chooseBaseGroupProfiles')?.addEventListener('click',showBaseGroupProfilePicker);
-  document.querySelector('#chooseRebirthNeedProfiles')?.addEventListener('click',showRebirthNeedProfilePicker);
   attachOutlookVariantControls()
 }
 function setNovaLevel(id,level,notify=true){const upgrade=novaUpgrade(id);if(!upgrade||upgrade.comingSoon)return;const max=upgrade.uncapped?Infinity:upgrade.levels.length,min=minimumNovaLevel(id);state.novaUpgrades[id]=Math.max(min,Math.min(max,Number(level)||0));if(id==='lounge-slot')state.loungePurchased=state.novaUpgrades[id];save();if(notify)toast(`${upgrade.name} set to level ${state.novaUpgrades[id]}`)}
@@ -876,9 +873,6 @@ function groupOutlookCardsHtml(){const profiles=selectedGroupProfiles();if(!prof
 // ---- Rebirth need-hints: which profiles to check ---------------------------
 // null means every profile, which is the useful default: a new profile starts
 // being checked without anyone having to opt it in.
-const REBIRTH_NEED_KEY='droid-archive-rebirth-need-profiles';
-function rebirthNeedSelection(){try{const raw=localStorage.getItem(REBIRTH_NEED_KEY);return raw===null?null:new Set(JSON.parse(raw))}catch{return null}}
-function setRebirthNeedSelection(keys){if(keys===null)localStorage.removeItem(REBIRTH_NEED_KEY);else localStorage.setItem(REBIRTH_NEED_KEY,JSON.stringify([...keys]))}
 // Your own profiles plus any shared with you through a group. groupAvailableProfiles
 // lists your own back to you as well, so those are skipped here rather than
 // counted twice under two different keys.
@@ -889,7 +883,16 @@ function rebirthNeedProfiles(){
   for(const profile of availableGroupOutlookProfiles())if(!profile.isOwn)add(`grp:${profile.ownerId}:${profile.profileId}`,profile.profileName||'Profile',profile.data,profile.ownerName||'');
   return out;
 }
-const selectedRebirthNeedProfiles=()=>{const selection=rebirthNeedSelection();return rebirthNeedProfiles().filter(profile=>selection===null||selection.has(profile.key))};
+// The companion passes its own selection in. It cannot use the one this page
+// keeps: a browser and the companion's embedded view are separate Chromium
+// profiles, so a choice made in one was never visible to the other — which
+// meant the picker on Base never actually applied to the companion at all.
+// An absent or empty list means every profile.
+function chosenNeedProfiles(keys){
+  if(!Array.isArray(keys)||!keys.length)return rebirthNeedProfiles();
+  const wanted=new Set(keys);
+  return rebirthNeedProfiles().filter(profile=>wanted.has(profile.key));
+}
 // Stand state in for another profile's save just long enough to ask a question
 // of it. Everything the requirement test reads is swapped and put back, so the
 // loaded profile is untouched even if the body throws.
@@ -903,40 +906,15 @@ function withProfileData(data,fn){
     return fn();
   }finally{state.owned=saved.owned;state.cycle=saved.cycle;state.rebirth=saved.rebirth;state.droidex=saved.droidex}
 }
-window.__companionRebirthNeedProfiles=()=>{const selection=rebirthNeedSelection();return rebirthNeedProfiles().map(profile=>({key:profile.key,name:profile.name,owner:profile.owner,selected:selection===null||selection.has(profile.key)}))};
+// The companion holds the selection now; this only has to say what exists.
+window.__companionRebirthNeedProfiles=()=>rebirthNeedProfiles().map(profile=>({key:profile.key,name:profile.name,owner:profile.owner}));
 
 function showBaseGroupProfilePicker(){const root=document.querySelector('#modalRoot'),available=availableGroupOutlookProfiles(),stored=groupOutlookSelection(),picked=new Set(stored===null?available.map(profile=>profile.key):stored);const draw=()=>{root.innerHTML=`<div class="modal-backdrop"><section class="modal group-profile-picker" role="dialog" aria-modal="true"><p class="eyebrow">Group Rebirth Outlook</p><h2>Choose profiles</h2><p class="picker-hint">Choose exactly what appears on your Base page. This selection is private to your signed-in account on this browser and does not change what anyone else sees.</p><div class="group-profile-picker-actions"><button class="btn secondary" id="groupProfilesAll" type="button">Select all</button><button class="btn secondary" id="groupProfilesNone" type="button">Select none</button></div><div class="group-profile-picker-list">${available.map(profile=>`<label><input type="checkbox" data-base-group-profile="${escapeAttr(profile.key)}" ${picked.has(profile.key)?'checked':''}><span><strong>${escapeAttr(profile.profileName)}</strong><small>${escapeAttr(profile.ownerName)} · ${escapeAttr(profile.groupNames.join(', '))}</small></span></label>`).join('')||'<div class="empty">No connected profiles are available.</div>'}</div><div class="modal-actions"><button class="btn" id="applyGroupProfiles" type="button">Apply to Base</button><button class="btn ghost" id="cancelGroupProfiles" type="button">Cancel</button></div></section></div>`;root.querySelectorAll('[data-base-group-profile]').forEach(input=>input.onchange=()=>input.checked?picked.add(input.dataset.baseGroupProfile):picked.delete(input.dataset.baseGroupProfile));root.querySelector('#groupProfilesAll').onclick=()=>{available.forEach(profile=>picked.add(profile.key));draw()};root.querySelector('#groupProfilesNone').onclick=()=>{picked.clear();draw()};root.querySelector('#applyGroupProfiles').onclick=()=>{localStorage.setItem(groupOutlookStorageKey(),JSON.stringify([...picked]));root.innerHTML='';basePageV2()};root.querySelector('#cancelGroupProfiles').onclick=()=>root.innerHTML=''};draw()}
 function combinedGroupOutlookHtml(){if(!cloudConnected()||!state.groups.workspace.length)return'';return`<section class="group-outlook-panel"><header><div><p class="eyebrow">Connected accounts</p><h2>Group Rebirth Outlook</h2><p>Selected profiles from your groups, together on one page.</p></div><button class="btn secondary" id="chooseBaseGroupProfiles" type="button">Choose profiles</button></header>${groupOutlookCardsHtml()}</section>`}
 async function refreshConnectedGroupOutlooks(){const path=location.hash.slice(1).split('?')[0]||'/';if(!cloudConnected()||state.sharedView||!['/base','/groups'].includes(path)||document.hidden)return;try{await loadGroupWorkspace();document.querySelectorAll('.group-outlook-panel').forEach(panel=>{const current=panel.querySelector(':scope > .group-outlook-grid, :scope > .empty'),next=groupOutlookCardsHtml();if(current)current.outerHTML=next;else panel.insertAdjacentHTML('beforeend',next)})}catch{}}
 setInterval(refreshConnectedGroupOutlooks,30000);
-// Which profiles the companion's spawn hints check — both the rebirth one and
-// the Droidex one, which share a selection because they answer for the same set
-// of saves. It lives here rather than in the companion's own settings because
-// this is where the profiles are; the companion reads the answer out of this page.
-function rebirthNeedPanelHtml(){
-  const profiles=rebirthNeedProfiles();
-  if(!profiles.length)return'';
-  const chosen=selectedRebirthNeedProfiles(),all=chosen.length===profiles.length;
-  const names=chosen.map(profile=>escapeAttr(profile.owner?`${profile.name} (${profile.owner})`:profile.name)).join(', ');
-  return `<section class="rebirth-need-panel"><header><div><p class="eyebrow">Companion app</p><h2>Spawn need-hints</h2><p>When a spawn alerts, the companion notes whether that quality and rarity could still fill a droid one of your profiles needs for a future rebirth, or a square it is still missing from the Droidex.</p></div><button class="btn secondary" id="chooseRebirthNeedProfiles" type="button">Choose profiles</button></header><p class="rebirth-need-current">${chosen.length?`Checking <strong>${all?'every profile':`${chosen.length} of ${profiles.length}`}</strong>: ${names}`:'<strong>No profiles selected</strong> &mdash; the hint will stay quiet.'}</p></section>`;
-}
-function showRebirthNeedProfilePicker(){
-  const root=document.querySelector('#modalRoot'),available=rebirthNeedProfiles(),stored=rebirthNeedSelection();
-  const picked=new Set(stored===null?available.map(profile=>profile.key):stored);
-  const draw=()=>{
-    root.innerHTML=`<div class="modal-backdrop"><section class="modal group-profile-picker" role="dialog" aria-modal="true"><p class="eyebrow">Companion app</p><h2>Spawn need-hints</h2><p class="picker-hint">Choose which profiles a spawn is checked against, for both the rebirth and the Droidex hint. Deselect one and its needs stop being mentioned. This is stored in this browser only.</p><div class="group-profile-picker-actions"><button class="btn secondary" id="rebirthNeedAll" type="button">Select all</button><button class="btn secondary" id="rebirthNeedNone" type="button">Select none</button></div><div class="group-profile-picker-list">${available.map(profile=>`<label><input type="checkbox" data-rebirth-need-profile="${escapeAttr(profile.key)}" ${picked.has(profile.key)?'checked':''}><span><strong>${escapeAttr(profile.name)}</strong><small>${escapeAttr(profile.owner||'This account')}</small></span></label>`).join('')}</div><div class="modal-actions"><button class="btn" id="applyRebirthNeed" type="button">Save</button><button class="btn ghost" id="cancelRebirthNeed" type="button">Cancel</button></div></section></div>`;
-    root.querySelectorAll('[data-rebirth-need-profile]').forEach(input=>input.onchange=()=>input.checked?picked.add(input.dataset.rebirthNeedProfile):picked.delete(input.dataset.rebirthNeedProfile));
-    root.querySelector('#rebirthNeedAll').onclick=()=>{available.forEach(profile=>picked.add(profile.key));draw()};
-    root.querySelector('#rebirthNeedNone').onclick=()=>{picked.clear();draw()};
-    // Everything selected is stored as "no selection", so a profile added later
-    // is checked too rather than silently sitting outside a stale list.
-    root.querySelector('#applyRebirthNeed').onclick=()=>{setRebirthNeedSelection(picked.size===available.length?null:picked);root.innerHTML='';basePageV2()};
-    root.querySelector('#cancelRebirthNeed').onclick=()=>root.innerHTML='';
-  };
-  draw();
-}
 const personalBaseRebirthSummaryHtml=baseRebirthSummaryHtml;
-baseRebirthSummaryHtml=()=>`${personalBaseRebirthSummaryHtml()}${combinedGroupOutlookHtml()}${rebirthNeedPanelHtml()}`;
+baseRebirthSummaryHtml=()=>`${personalBaseRebirthSummaryHtml()}${combinedGroupOutlookHtml()}`;
 let sharedProfileSaveTimer=null;
 function scheduleSharedProfileSave(){clearTimeout(sharedProfileSaveTimer);sharedProfileSaveTimer=setTimeout(()=>saveSharedProfileNow().catch(error=>{toast(error.message);decorateSharedView()}),900)}
 async function saveSharedProfileNow(){const view=state.sharedView;if(!view||!view.canEdit)return;clearTimeout(sharedProfileSaveTimer);if(view.saving)return view.savePromise.then(()=>state.sharedView===view?saveSharedProfileNow():undefined);view.saving=true;decorateSharedView();const profileData=profileDataFromState(),savedVersion=view.changeVersion||0;view.savePromise=(async()=>{const {data,error}=await supabaseClient.rpc('save_shared_droid_archive_profile',{target_group_id:view.groupId,target_owner_id:view.ownerId,target_profile_id:view.profileId,profile_data:profileData,expected_updated_at:view.profile.updatedAt||null});if(error)throw Error(error.message);view.profile.data=profileData;view.profile.updatedAt=data.updatedAt;view.savedVersion=savedVersion;const workspaceProfile=state.groups.workspace.find(group=>group.id===view.groupId)?.profiles?.find(profile=>profile.ownerId===view.ownerId&&profile.profileId===view.profileId);if(workspaceProfile){workspaceProfile.data=cloneProfileData(profileData);workspaceProfile.updatedAt=data.updatedAt}})();try{await view.savePromise}finally{view.saving=false;view.savePromise=null;decorateSharedView()}}
@@ -2596,14 +2574,14 @@ if(companionMode){
   // Unlike a rebirth requirement, a Droidex slot is exact: a Galactic spawn does
   // nothing for an empty Gold square. And Iconic droids have only a DEFAULT
   // square, which is why the Droidex page hides the other tabs for them.
-  window.__companionDroidexNeed=(quality,rarity)=>{
+  window.__companionDroidexNeed=(quality,rarity,keys)=>{
     try{
       const q=String(quality||'').toUpperCase(),r=String(rarity||'').toUpperCase();
       if(!VARIANTS.includes(q))return[];
       const missing=()=>state.droids.filter(d=>String(d.rarity).toUpperCase()===r
         &&(q==='DEFAULT'||!isIconic(d))
         &&!droidexEntry(d.name,q)).map(d=>({droidName:d.name,variant:q}));
-      const profiles=selectedRebirthNeedProfiles(),out=new Map();
+      const profiles=chosenNeedProfiles(keys),out=new Map();
       const passes=profiles.length?profiles:[{key:'',name:'',owner:'',data:null}];
       for(const profile of passes){
         for(const hit of profile.data?withProfileData(profile.data,missing):missing()){
@@ -2620,7 +2598,7 @@ if(companionMode){
   // Checked across profiles, not just the one loaded: a spawn is worth grabbing
   // if ANY of your saves still needs it, and the alert has to say which — being
   // told you need a droid without being told where is not actionable.
-  window.__companionRebirthNeed=(quality,rarity)=>{
+  window.__companionRebirthNeed=(quality,rarity,keys)=>{
     try{
       const q=String(quality||'').toUpperCase(),r=String(rarity||'').toUpperCase(),qi=VARIANTS.indexOf(q);
       if(qi<0)return[];
@@ -2638,7 +2616,7 @@ if(companionMode){
         }
         return [...found.values()];
       };
-      const profiles=selectedRebirthNeedProfiles(),out=new Map();
+      const profiles=chosenNeedProfiles(keys),out=new Map();
       // No profile document at all (a shared view, say): fall back to whatever
       // is loaded, so the hint degrades to its old single-save behaviour.
       const passes=profiles.length?profiles:[{key:'',name:'',owner:'',data:null}];

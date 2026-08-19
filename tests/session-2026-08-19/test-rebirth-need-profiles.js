@@ -21,12 +21,12 @@ sandbox.state={droids:[
                {to:12,requiredDroids:[{droidName:'MONO-WALKER',variant:'GOLD'}]}]},
   cycle:0,rebirth:0,owned:[]};
 vm.createContext(sandbox);
-for(const k of ['const REBIRTH_NEED_KEY=','function rebirthNeedSelection(','function setRebirthNeedSelection(',
-                'const selectedRebirthNeedProfiles=','function bestOwnedVariant(','function hasRequirement('])
+for(const k of ['function bestOwnedVariant(','function hasRequirement('])
   vm.runInContext(k.startsWith('function')?grabFn(k):line(k),sandbox);
 vm.runInContext(grabFn('function rebirthNeedProfiles('),sandbox);
+vm.runInContext(grabFn('function chosenNeedProfiles('),sandbox);
 vm.runInContext(grabFn('function withProfileData('),sandbox);
-vm.runInContext(grabFn('window.__companionRebirthNeed=(quality,rarity)=>{'),sandbox);
+vm.runInContext(grabFn('window.__companionRebirthNeed=(quality,rarity,keys)=>{'),sandbox);
 
 const profile=(id,name,owned,rebirth)=>({id,name,data:{owned,cycle:0,rebirth}});
 sandbox.activeProfileDoc=()=>({profiles:[
@@ -35,10 +35,11 @@ sandbox.activeProfileDoc=()=>({profiles:[
 sandbox.availableGroupOutlookProfiles=()=>[
   {isOwn:false,ownerId:'u2',ownerName:'Casey',profileId:'p9',profileName:'Casey main',data:{owned:[],cycle:0,rebirth:0}},
   {isOwn:true,ownerId:'me',ownerName:'You',profileId:'a',profileName:'Main',data:{owned:[],cycle:0,rebirth:0}}];
-const run=e=>vm.runInContext(e,sandbox);
+let KEYS=[];
+const run=e=>{sandbox.KEYS=KEYS;return vm.runInContext(e,sandbox)};
 
 console.log('=== across profiles ===');
-let out=run(`window.__companionRebirthNeed('GOLD','LEGENDARY')`);
+let out=run(`window.__companionRebirthNeed('GOLD','LEGENDARY',KEYS)`);
 ok('the spawn is reported once, not once per profile',out.length===1,JSON.stringify(out));
 ok('it names the droid',out[0]?.droidName==='MONO-WALKER');
 ok('the profile that already owns a better one is left out',
@@ -54,18 +55,18 @@ ok('owned is put back',JSON.stringify(sandbox.state.owned)==='[]');
 ok('rebirth is put back',sandbox.state.rebirth===0);
 
 console.log('=== selection ===');
-run(`setRebirthNeedSelection(new Set(['own:b']))`);
-out=run(`window.__companionRebirthNeed('GOLD','LEGENDARY')`);
+KEYS=['own:b'];
+out=run(`window.__companionRebirthNeed('GOLD','LEGENDARY',KEYS)`);
 ok('deselecting every needing profile silences the hint',out.length===0,JSON.stringify(out));
-run(`setRebirthNeedSelection(null)`);
+KEYS=[];
 ok('clearing the selection checks everything again',
-   run(`window.__companionRebirthNeed('GOLD','LEGENDARY')`).length===1);
+   run(`window.__companionRebirthNeed('GOLD','LEGENDARY',KEYS)`).length===1);
 
 console.log('=== unchanged behaviour ===');
 ok('a rarity that does not match returns nothing',
-   run(`window.__companionRebirthNeed('GOLD','COMMON')`).length===0);
+   run(`window.__companionRebirthNeed('GOLD','COMMON',KEYS)`).length===0);
 ok('a quality too low to satisfy returns nothing',
-   run(`window.__companionRebirthNeed('DEFAULT','LEGENDARY')`).every(x=>x.variant==='DEFAULT'));
+   run(`window.__companionRebirthNeed('DEFAULT','LEGENDARY',KEYS)`).every(x=>x.variant==='DEFAULT'));
 
 console.log(fails?`\n${fails} FAILED`:'\nall passed');
 process.exit(fails?1:0);
