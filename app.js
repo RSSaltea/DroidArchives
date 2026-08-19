@@ -1121,6 +1121,10 @@ function stabiliseProjectedPlacements(baseP,placed){const current=new Map(baseP.
   }
   return stable;
 }
+// The saved shape of a layout. Pulled out of optimisedPlacements because
+// applying recorded landings moves droids after the fact, and the rows written
+// to the save have to be rebuilt from where they ended up.
+const optimisedRows=(placed,overflow)=>[...placed,...overflow].map(x=>({name:x.name,variant:x.variant,qty:1,...(x.station?{preferred:x.station,preferredSlot:x.slot}:{}),...(x.lockedSlot?{lockedSlot:true}:{}),...(x.built?{built:true}:{})}));
 function optimisedPlacements(baseP,plan){
   const assigned=new Map((plan.assignments||[]).map(x=>[x.key,x])),current=new Map(baseP.placed.map(x=>[`${x.source}:${x.unit}`,x])),occupied=Object.fromEntries(Object.keys(SLOT_RULES).map(type=>[type,new Set()])),placed=[],overflow=[],sell=[],units=expandedOwned();
   const claim=(unit,station,slot)=>{occupied[station].add(slot);placed.push({...unit,station,slot})},free=(station,origin)=>slotFillOrder(station,origin).find(i=>!occupied[station].has(i))??-1,canKeep=(station,slot)=>station&&stationSlotIndices(station).includes(slot)&&!occupied[station].has(slot);
@@ -1240,12 +1244,17 @@ function optimisedPlacements(baseP,plan){
     if(!producing&&status.kind==='unused'&&!isIconic(d)&&!x.lockedSlot&&!keepDetail&&!companionDetail&&!handDetail&&!isBuilding(x))finalSell.push({...x,sellReason:status.label});else finalPlaced.push(keep);
   }
   if(keepBuildOpen&&optimiseFreeBuildMode()==='unused-income')finalSell.sort((a,b)=>{const ad=state.droids.find(d=>d.name===a.name),bd=state.droids.find(d=>d.name===b.name);return(ad?.variants[a.variant]?.income||0)-(bd?.variants[b.variant]?.income||0)});
-  const rows=[...finalPlaced,...overflow].map(x=>({name:x.name,variant:x.variant,qty:1,...(x.station?{preferred:x.station,preferredSlot:x.slot}:{}),...(x.lockedSlot?{lockedSlot:true}:{}),...(x.built?{built:true}:{})}));
+  const rows=optimisedRows(finalPlaced,overflow);
   return{placed:finalPlaced,overflow,sell:finalSell,rows}
 }
 async function applyOptimisedLayout(plan){
   if(state.sharedView&&!state.sharedView.canEdit)return toast('This shared profile is read only');
-  const projected=optimisedPlacements(placements(),plan);
+  const baseP=placements(),projected=optimisedPlacements(baseP,plan);
+  // The same correction the preview makes. Without it, Apply wrote the guessed
+  // slots and quietly undid what the map had just been showing.
+  const steps=safeOptimiseStepPlan(baseP,projected);
+  annotateLogSlots(steps);
+  if(applyLoggedLandings(projected,steps))projected.rows=optimisedRows(projected.placed,projected.overflow);
   if(projected.sell.length&&!confirm(`Apply this layout and remove ${projected.sell.length} droid${projected.sell.length===1?'':'s'} from Sell?`))return;
   const previousOwned=state.owned;
   state.owned=projected.rows;
@@ -2210,6 +2219,7 @@ const slotLogSame=(a,b)=>Boolean(a)&&Boolean(b)&&a.station===b.station&&a.slot==
 // vacated, which keeps every droid placed and the slot count unchanged.
 function applyLoggedLandings(projected,steps){
   const keyOf=x=>`${x.source}:${x.unit}`;
+  let moved=false;
   for(const step of steps){
     if(!step.logged||!step.unit)continue;
     const key=keyOf(step.unit),moving=projected.placed.find(x=>keyOf(x)===key);
@@ -2220,7 +2230,9 @@ function applyLoggedLandings(projected,steps){
     const from={station:moving.station,slot:moving.slot};
     moving.station=station;moving.slot=slot;
     if(occupant){occupant.station=from.station;occupant.slot=from.slot}
+    moved=true;
   }
+  return moved;
 }
 function annotateLogSlots(steps){
   if(state.sharedView||!slotLabAllowed()||!slotLogTracking())return;
