@@ -84,10 +84,11 @@ const activeSpawnTimers=()=>SPAWN_TIMERS.filter(timer=>timer.enabled!==false);
 const padTime=n=>String(n).padStart(2,'0');
 function durationParts(ms){const total=Math.max(0,Math.ceil(ms/1000)),days=Math.floor(total/86400),hours=Math.floor(total%86400/3600),minutes=Math.floor(total%3600/60),seconds=total%60;return{days,hours,minutes,seconds}}
 function shortDuration(ms){const p=durationParts(ms),parts=[];if(p.days)parts.push(`${p.days}d`);if(p.hours||p.days)parts.push(`${p.hours}h`);parts.push(`${p.minutes}m`,`${p.seconds}s`);return parts.join(' ')}
-// A window timer can be most of a week away, and folding days into the hours
-// field gives "140:27:54" — a number nobody reads as five and a bit days. Its
-// own format keeps the days visible.
-function windowClock(ms){const p=durationParts(ms);return `${padTime(p.days)}:${padTime(p.hours)}:${padTime(p.minutes)}:${padTime(p.seconds)}`}
+// Days, hours, minutes. A window timer can be most of a week away, so folding
+// days into the hours field gives "140:27:54" — a number nobody reads as five
+// and a bit days. Seconds are dropped: at this range they are noise, and three
+// fields keep the card the same width as the spawn timers beside it.
+function windowClock(ms){const p=durationParts(ms);return `${padTime(p.days)}:${padTime(p.hours)}:${padTime(p.minutes)}`}
 function clockDuration(ms){const p=durationParts(ms),hours=p.hours+p.days*24;return `${padTime(hours)}:${padTime(p.minutes)}:${padTime(p.seconds)}`}
 function nextSpawn(timer,now=new Date()){const interval=timer.intervalMinutes*60000,offset=timer.offsetMinutes*60000,elapsed=now.getTime()-offset,next=Math.ceil(elapsed/interval)*interval+offset;return next<=now.getTime()?next+interval:next}
 const eventRetentionMs=event=>Math.max(0,Number(event?.endedRetentionHours??2))*3600000;
