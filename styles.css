@@ -578,6 +578,10 @@ html[data-theme="dark"] .sidebar a.active{background:#202633;color:#fff}
 
 /* Slot-choice logging — the box on each send-to-work step, and the findings. */
 .optimise-track{display:inline-flex;align-items:center;gap:8px}
+/* The owner check renders this with the hidden attribute and JS clears it. An
+   author display rule beats the UA [hidden] rule whatever its specificity, so
+   without this the gate above had no effect and everyone saw the button. */
+.optimise-track[hidden]{display:none}
 .optimise-track .btn.active{border-color:#5ca97a;color:#7df0a1}
 .optimise-track small{color:var(--muted);font-size:10px;white-space:nowrap}
 .step-record{display:inline-flex;align-items:center;gap:6px;margin-left:8px}
