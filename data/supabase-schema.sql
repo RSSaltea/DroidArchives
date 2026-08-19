@@ -736,3 +736,19 @@ grant execute on function public.save_shared_droid_archive_profile(uuid, uuid, t
 grant execute on function public.leave_droid_archive_group(uuid) to authenticated;
 grant execute on function public.remove_droid_archive_group_member(uuid, uuid) to authenticated;
 grant execute on function public.review_droid_archive_group_member(uuid, uuid, boolean) to authenticated;
+
+-- Live sync between a browser tab and the companion's embedded view.
+--
+-- They are separate Chromium profiles with separate localStorage, so the
+-- account's row here is the only thing they share. Each already writes to it;
+-- this is what lets the other one hear about it. Row-level security still
+-- applies to realtime, so an account only ever receives its own row.
+--
+-- Idempotent: adding a table that is already in the publication raises 42710.
+do $$
+begin
+  alter publication supabase_realtime add table public.droid_archive_profiles;
+exception
+  when duplicate_object then null;
+  when undefined_object then null;   -- publication absent on self-hosted setups
+end $$;
