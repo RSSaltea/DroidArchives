@@ -72,7 +72,7 @@ h2{font-size:22px;border-bottom:1px solid var(--line);padding-bottom:9px;margin-
 .spawn-timers{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:12px}
 .spawn-timer{display:flex;align-items:center;gap:13px;min-width:0;background:#101624;border:1px solid #30364b;border-radius:8px;padding:12px 14px;box-shadow:var(--shadow);overflow:hidden}
 .spawn-timer img{width:54px;height:54px;object-fit:contain;flex:0 0 auto;filter:drop-shadow(0 4px 10px #0008)}
-.spawn-timer div{min-width:0;flex:1}
+.spawn-timer div{min-width:0;flex:1;text-align:center}
 .spawn-timer span,.spawn-timer small{display:block;text-transform:uppercase;font-weight:900;letter-spacing:.08em}
 .spawn-timer span{color:#b9c2d3;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .spawn-timer strong{display:block;margin:2px 0 3px;font:800 clamp(23px,4.5cqw,38px)/1 Inter;color:#eef3ff;white-space:nowrap}
@@ -609,3 +609,28 @@ html[data-theme="dark"] .sidebar a.active{background:#202633;color:#fff}
 .lab-scores th{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.06em}
 .lab-scores tbody tr:first-child{background:#15231b}
 .lab-scores small{display:block;color:var(--muted);font-size:10px}
+
+/* ---- Timer strip on a phone ------------------------------------------------
+   Four timers across a phone leaves each about ninety pixels, which truncated
+   both the name and the countdown ("S..." over "0C"). Two by two with a much
+   smaller icon fits all of every card.
+
+   Compacting on scroll is already handled in modern.css, which drops the
+   artwork and tightens the row; it lays the timers out in one line, which is
+   the same ninety pixels again, so the two-by-two is kept for that state and
+   the fixed row height it sets has to give way to two rows. */
+@media(max-width:650px){
+  .archive-timers .spawn-timers{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px}
+  .archive-timers .spawn-timer{gap:8px;padding:8px 9px;min-height:0}
+  .archive-timers .spawn-timer img{width:26px;height:26px}
+  .archive-timers .spawn-timer span{font-size:9px}
+  .archive-timers .spawn-timer strong{font-size:clamp(15px,4.6vw,20px);margin:1px 0}
+  .archive-timers .spawn-timer small{font-size:7px}
+  .archive-timers.timers-scrolled .spawn-timers{height:auto!important}
+  .archive-timers.timers-scrolled .spawn-timer{padding:4px 6px;gap:4px}
+  .archive-timers.timers-scrolled .spawn-timer strong{font-size:15px}
+  /* Legacy style never had the compact rules, so the artwork is dropped here
+     rather than only under html[data-ui-style="modern"]. */
+  .archive-timers.timers-scrolled .spawn-timer img{display:none}
+  .archive-timers.timers-scrolled .spawn-timer small{display:none}
+}
