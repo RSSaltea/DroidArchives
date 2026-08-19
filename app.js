@@ -63,10 +63,22 @@ const fmt=n=>{if(!n)return '—';const u=[['T',1e12],['B',1e9],['M',1e6],['K',1e
 // whole hour ahead of UTC. Stellar lands on the hour, read off a 15:07 countdown
 // at 01:44:53 BST, which agrees with Mythic (10:07 to :55) and Galactic (00:07
 // to :45) from the same screenshot.
+// The DJ Event runs two fixed windows a week. It is anchored to UTC because it
+// starts at the same instant for everyone regardless of their timezone, so the
+// countdown is the whole story and no dates or day names need showing.
+// Two windows 12 hours apart and then 156 is not one repeating interval, so
+// this cannot use intervalMinutes/offsetMinutes like the spawn timers can.
+const DJ_EVENT_WINDOWS=[{day:2,hour:12},{day:3,hour:0}];   // Tue 12:00, Wed 00:00 UTC
+const DJ_EVENT_DURATION_MS=3*3600000;
+// Candidate starts either side of this week, so a countdown near a week
+// boundary still finds the window that is about to open.
+function windowStarts(windows,now){const midnight=Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate()),day=now.getUTCDay(),starts=[];for(const w of windows)for(let week=-1;week<=1;week+=1)starts.push(midnight+(w.day-day+week*7)*86400000+w.hour*3600000);return starts.sort((a,b)=>a-b)}
+function windowState(timer,now=new Date()){const t=now.getTime(),starts=windowStarts(timer.windows,now),open=starts.find(start=>t>=start&&t<start+DJ_EVENT_DURATION_MS);if(open!==undefined)return{active:true,ms:open+DJ_EVENT_DURATION_MS-t};return{active:false,ms:starts.find(start=>start>t)-t}}
 const SPAWN_TIMERS=[
   {id:'stellar',name:'Stellar Spawn',intervalMinutes:60,offsetMinutes:0,note:'Every 60 minutes',image:'assets/events/stellar-spawn.png'},
   {id:'mythic',name:'Mythic Spawn',intervalMinutes:60,offsetMinutes:55,note:'Every 60 minutes',image:'assets/events/mythic-spawn.png'},
-  {id:'galactic',name:'Galactic Spawn',intervalMinutes:60,offsetMinutes:45,note:'Every 60 minutes',image:'assets/events/galactic-spawn.png'}
+  {id:'galactic',name:'Galactic Spawn',intervalMinutes:60,offsetMinutes:45,note:'Every 60 minutes',image:'assets/events/galactic-spawn.png'},
+  {id:'dj',name:'DJ Event',windows:DJ_EVENT_WINDOWS,note:'Twice a week',image:'assets/events/Dance-Party-Mini-Event.png'}
 ];
 const activeSpawnTimers=()=>SPAWN_TIMERS.filter(timer=>timer.enabled!==false);
 const padTime=n=>String(n).padStart(2,'0');
@@ -79,7 +91,7 @@ function eventOccurrence(event,now=new Date()){const baseStart=Date.parse(event.
 function currentEvent(now=new Date()){const events=state.events.filter(event=>event.homepage!==false).map(event=>eventOccurrence(event,now)).sort((a,b)=>a.start-b.start),t=now.getTime(),active=events.find(event=>t>=event.start&&t<event.end),ended=events.filter(event=>t>=event.end&&t<event.end+eventRetentionMs(event)).sort((a,b)=>b.end-a.end)[0],upcoming=events.find(event=>t<event.start);return active||ended||upcoming||null}
 function eventStatus(event,now=new Date()){if(!event)return null;const t=now.getTime();if(t<event.start)return{label:'Starts in',value:shortDuration(event.start-t),state:'upcoming'};if(t<event.end)return{label:'Active for',value:shortDuration(event.end-t),state:'active'};if(t<event.end+eventRetentionMs(event))return{label:'Status',value:'Ended',state:'inactive'};return null}
 function timerShell(){const home=(location.hash.slice(1).split('?')[0]||'/')==='/',event=home?currentEvent():null,collapsed=localStorage.getItem('droid-archive-timers-collapsed')==='1',timers=activeSpawnTimers();return `<section class="archive-timers ${home?'home-timers':'compact-timers'} ${collapsed?'timers-collapsed':''} ${timerDock.docked?'timers-docked':''}" aria-label="UTC spawn timers"><button class="timer-toggle" type="button" aria-expanded="${collapsed?'false':'true'}">${collapsed?'Show timers':'Hide timers'}</button><div class="spawn-timers" style="--spawn-timer-count:${timers.length}">${timers.map(timer=>`<article class="spawn-timer spawn-${timer.id}" data-spawn-timer="${timer.id}"><img src="${timer.image}" alt=""><div><span>${timer.name}</span><strong>${timer.comingSoon?'Coming Soon':'--:--'}</strong><small>${timer.note}</small></div></article>`).join('')}</div></section>${event?`<article class="event-card" data-event-card="${event.id}"><div class="event-art">${event.image?`<img src="${event.image}" alt="${event.name}">`:''}</div><div><p class="eyebrow">${event.category||'Event'}</p><h2>${event.name}</h2><p>${event.description||''}</p><div class="event-status" data-event-status><span>Starts in</span><strong>--</strong></div></div></article>`:''}`}
-function updateArchiveTimers(){document.querySelectorAll('.archive-timers').forEach(root=>{const now=new Date();SPAWN_TIMERS.forEach(timer=>{const card=root.querySelector(`[data-spawn-timer="${timer.id}"] strong`);if(card)card.textContent=timer.comingSoon?'Coming Soon':clockDuration(nextSpawn(timer,now)-now.getTime())})});document.querySelectorAll('[data-event-card]').forEach(eventNode=>{const now=new Date(),event=currentEvent(now),status=eventStatus(event,now);if(!event||!status){eventNode.remove();return}eventNode.dataset.eventState=status.state;eventNode.querySelector('[data-event-status] span').textContent=status.label;eventNode.querySelector('[data-event-status] strong').textContent=status.value})}
+function updateArchiveTimers(){document.querySelectorAll('.archive-timers').forEach(root=>{const now=new Date();SPAWN_TIMERS.forEach(timer=>{const node=root.querySelector(`[data-spawn-timer="${timer.id}"]`),card=node?.querySelector('strong');if(!card)return;if(timer.comingSoon){card.textContent='Coming Soon';return}if(timer.windows){const s=windowState(timer,now);card.textContent=clockDuration(s.ms);node.dataset.timerActive=s.active?'1':'0';const note=node.querySelector('small');if(note)note.textContent=s.active?'Active now':timer.note;return}card.textContent=clockDuration(nextSpawn(timer,now)-now.getTime())})});document.querySelectorAll('[data-event-card]').forEach(eventNode=>{const now=new Date(),event=currentEvent(now),status=eventStatus(event,now);if(!event||!status){eventNode.remove();return}eventNode.dataset.eventState=status.state;eventNode.querySelector('[data-event-status] span').textContent=status.label;eventNode.querySelector('[data-event-status] strong').textContent=status.value})}
 // Any page render replaces app.innerHTML, which destroys the timer panel, and a
 // MutationObserver rebuilds it. Holding the docked state on the element meant
 // every click brought it back at full width until the next scroll, so it lives
