@@ -2568,6 +2568,47 @@ if(companionMode){
       return{added:true,name,variant:v,flawless:isDroidFlawless(name)};
     }catch(e){return{added:false,error:String(e&&e.message||e)}}
   };
+  // ---- Signing in from the companion's own settings ------------------------
+  //
+  // The companion has no Supabase client of its own; this page holds the
+  // session, so it does the work and reports back. The password arrives as an
+  // argument, goes straight to Supabase, and is never stored, logged, or put in
+  // anything returned from here.
+  window.__companionAuthState=()=>{
+    try{
+      return{ready:supabaseReady(),signedIn:Boolean(state.cloud.user),
+             email:state.cloud.user?.email||'',status:state.cloud.status||''};
+    }catch(e){return{ready:false,signedIn:false,email:'',status:String(e&&e.message||e)}}
+  };
+  window.__companionSignIn=async(email,password,createAccount)=>{
+    try{
+      if(!supabaseReady())return{ok:false,error:'Cloud sync is not configured.'};
+      const address=String(email||'').trim(),secret=String(password||'');
+      if(!address||!secret)return{ok:false,error:'Enter an email and password.'};
+      state.cloud.initializingNewAccount=Boolean(createAccount);
+      const result=createAccount
+        ? await supabaseClient.auth.signUp({email:address,password:secret,options:{emailRedirectTo:authRedirectUrl()}})
+        : await supabaseClient.auth.signInWithPassword({email:address,password:secret});
+      if(result.error)throw result.error;
+      state.cloud.session=result.data.session;state.cloud.user=result.data.user;
+      // Signing up with email confirmation on returns no session: there is
+      // nothing to load until the link in the email has been followed.
+      if(!state.cloud.session&&createAccount){
+        state.cloud.initializingNewAccount=false;
+        return{ok:true,confirmEmail:true,email:address};
+      }
+      await loadSupabaseProfiles(true,{initializeIfMissing:Boolean(createAccount)});
+      state.cloud.initializingNewAccount=false;
+      return{ok:true,signedIn:true,email:state.cloud.user?.email||address};
+    }catch(e){
+      state.cloud.initializingNewAccount=false;
+      return{ok:false,error:String(e&&e.message||e)};
+    }
+  };
+  window.__companionSignOut=async()=>{
+    try{await signOutCloud();return{ok:true}}
+    catch(e){return{ok:false,error:String(e&&e.message||e)}}
+  };
   // Droidex slots this spawn (quality + rarity) would fill, across the same
   // profiles as the rebirth hint.
   //
