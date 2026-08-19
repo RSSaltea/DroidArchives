@@ -584,6 +584,14 @@ html[data-theme="dark"] .sidebar a.active{background:#202633;color:#fff}
 .lab-answer.wide input{width:230px}
 
 /* Slot-choice logging — the box on each send-to-work step, and the findings. */
+/* Sits under the rebirth summary on Base, alongside the group outlook panel it
+   is modelled on, so the two profile pickers look like siblings. */
+.rebirth-need-panel{margin:16px 0 18px;padding:16px 18px;background:var(--panel);border:1px solid var(--line);border-left:5px solid #5ca97a;border-radius:6px;box-shadow:var(--shadow)}
+.rebirth-need-panel header{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.rebirth-need-panel h2{margin:0 0 4px}
+.rebirth-need-panel p{margin:0;color:var(--muted);font-size:13px;line-height:1.4}
+.rebirth-need-current{margin-top:10px!important;padding-top:10px;border-top:1px solid var(--line);color:var(--ink)!important}
+.rebirth-need-current strong{color:#7df0a1}
 .optimise-track{display:inline-flex;align-items:center;gap:8px}
 /* The owner check renders this with the hidden attribute and JS clears it. An
    author display rule beats the UA [hidden] rule whatever its specificity, so

@@ -698,6 +698,7 @@ function attachCollapsiblePanels(){
   const detailButton=document.querySelector('#toggleBaseDetail'),layout=document.querySelector('.base-layout-v2'),detailKey='droid-archive-base-detail-hidden';
   if(detailButton&&layout){const update=hidden=>{layout.classList.toggle('base-details-hidden',hidden);detailButton.classList.toggle('active',!hidden);detailButton.textContent=hidden?'Show Detail':'Hide Detail';detailButton.title=hidden?'Show full droid card details':'Use compact droid cards';detailButton.setAttribute('aria-pressed',String(hidden));if(document.documentElement.dataset.uiStyle==='modern')requestAnimationFrame(()=>decorateCommandDeck('/base'))};update(localStorage.getItem(detailKey)==='1');detailButton.onclick=()=>{const hidden=!layout.classList.contains('base-details-hidden');localStorage.setItem(detailKey,hidden?'1':'0');update(hidden)}}
   document.querySelector('#chooseBaseGroupProfiles')?.addEventListener('click',showBaseGroupProfilePicker);
+  document.querySelector('#chooseRebirthNeedProfiles')?.addEventListener('click',showRebirthNeedProfilePicker);
   attachOutlookVariantControls()
 }
 function setNovaLevel(id,level,notify=true){const upgrade=novaUpgrade(id);if(!upgrade||upgrade.comingSoon)return;const max=upgrade.uncapped?Infinity:upgrade.levels.length,min=minimumNovaLevel(id);state.novaUpgrades[id]=Math.max(min,Math.min(max,Number(level)||0));if(id==='lounge-slot')state.loungePurchased=state.novaUpgrades[id];save();if(notify)toast(`${upgrade.name} set to level ${state.novaUpgrades[id]}`)}
@@ -834,12 +835,68 @@ function profileBestOwnedVariant(data,name){let best=null;for(const row of (data
 function profileRequirementReady(data,cycleIndex,rebirth,req){const tracker=normalizeRebirthTracker(data?.rebirthTracker);if(tracker.notUsingBase){const entry=tracker.entries[`${cycleIndex}:${rebirth}:${req.droidName}:${req.variant}`]||{},selected=VARIANTS.includes(entry.variant)?entry.variant:null;return Boolean(entry.complete||(selected&&VARIANTS.indexOf(selected)>=VARIANTS.indexOf(req.variant)))}const have=profileBestOwnedVariant(data,req.droidName);return Boolean(have&&VARIANTS.indexOf(have)>=VARIANTS.indexOf(req.variant))}
 function groupProfileOutlookModel(profile){const data=profile.data||{},cycleIndex=Number(data.cycle)||0,cycle=state.rebirths[cycleIndex]||[],current=Math.max(0,Number(data.rebirth)||0),goal=Math.max(12,Math.min(cycle.at(-1)?.to||30,Number(data.superRebirthGoal)||cycle.at(-1)?.to||30)),future=cycle.filter(rebirth=>rebirth.to>current&&rebirth.to<=goal),ready=future.filter(rebirth=>(rebirth.requiredDroids||[]).length&&(rebirth.requiredDroids||[]).every(req=>profileRequirementReady(data,cycleIndex,rebirth.to,req))).map(rebirth=>rebirth.to),missing=future.flatMap(rebirth=>(rebirth.requiredDroids||[]).filter(req=>!profileRequirementReady(data,cycleIndex,rebirth.to,req)).map(req=>({...req,at:rebirth.to}))),next=future[0]||null;return{cycleIndex,current,goal,ready,missing,next}}
 function groupOutlookCardsHtml(){const profiles=selectedGroupProfiles();if(!profiles.length)return'<div class="empty">Choose at least one profile to build a combined outlook.</div>';return`<div class="group-outlook-grid">${profiles.map(profile=>{const model=groupProfileOutlookModel(profile),requirements=model.next?.requiredDroids||[],readyCount=requirements.filter(req=>profileRequirementReady(profile.data,model.cycleIndex,model.next.to,req)).length;return`<article class="group-outlook-card"><header><span><small>${escapeAttr(profile.ownerName)} · ${escapeAttr(profile.groupName)}</small><strong>${escapeAttr(profile.profileName)}</strong></span><button class="btn secondary" data-group-view="${profile.groupId}|${profile.ownerId}|${escapeAttr(profile.profileId)}">View</button></header><div class="group-outlook-stats"><span>Cycle <b>${model.cycleIndex+1}</b></span><span>Current <b>R ${model.current}</b></span><span>Goal <b>R ${model.goal}</b></span></div>${model.next?`<div class="group-outlook-next"><strong>Next: R ${model.next.to}</strong><span>${readyCount}/${requirements.length} droids ready</span><div>${requirements.map(req=>`<em class="${profileRequirementReady(profile.data,model.cycleIndex,model.next.to,req)?'ready':'missing'}">${escapeAttr(req.droidName)} · ${variantText(req.variant)}</em>`).join('')}</div></div>`:'<p class="outlook-clean">No rebirths remain within this profile’s goal.</p>'}<footer>${model.ready.length?`Ready now: R ${model.ready.join(', R ')}`:'No future rebirth is fully ready'} · ${model.missing.length} missing requirement${model.missing.length===1?'':'s'}</footer></article>`}).join('')}</div>`}
+// ---- Rebirth need-hints: which profiles to check ---------------------------
+// null means every profile, which is the useful default: a new profile starts
+// being checked without anyone having to opt it in.
+const REBIRTH_NEED_KEY='droid-archive-rebirth-need-profiles';
+function rebirthNeedSelection(){try{const raw=localStorage.getItem(REBIRTH_NEED_KEY);return raw===null?null:new Set(JSON.parse(raw))}catch{return null}}
+function setRebirthNeedSelection(keys){if(keys===null)localStorage.removeItem(REBIRTH_NEED_KEY);else localStorage.setItem(REBIRTH_NEED_KEY,JSON.stringify([...keys]))}
+// Your own profiles plus any shared with you through a group. groupAvailableProfiles
+// lists your own back to you as well, so those are skipped here rather than
+// counted twice under two different keys.
+function rebirthNeedProfiles(){
+  const out=[],seen=new Set();
+  const add=(key,name,data,owner)=>{if(!data||seen.has(key))return;seen.add(key);out.push({key,name,data,owner})};
+  for(const profile of activeProfileDoc()?.profiles||[])add(`own:${profile.id}`,profile.name||'Profile',profile.data,'');
+  for(const profile of availableGroupOutlookProfiles())if(!profile.isOwn)add(`grp:${profile.ownerId}:${profile.profileId}`,profile.profileName||'Profile',profile.data,profile.ownerName||'');
+  return out;
+}
+const selectedRebirthNeedProfiles=()=>{const selection=rebirthNeedSelection();return rebirthNeedProfiles().filter(profile=>selection===null||selection.has(profile.key))};
+// Stand state in for another profile's save just long enough to ask a question
+// of it. Everything the requirement test reads is swapped and put back, so the
+// loaded profile is untouched even if the body throws.
+function withProfileData(data,fn){
+  const saved={owned:state.owned,cycle:state.cycle,rebirth:state.rebirth};
+  try{
+    state.owned=normalizeDroidRows(data?.owned||[]);
+    state.cycle=Number(data?.cycle)||0;
+    state.rebirth=Number(data?.rebirth)||0;
+    return fn();
+  }finally{state.owned=saved.owned;state.cycle=saved.cycle;state.rebirth=saved.rebirth}
+}
+window.__companionRebirthNeedProfiles=()=>{const selection=rebirthNeedSelection();return rebirthNeedProfiles().map(profile=>({key:profile.key,name:profile.name,owner:profile.owner,selected:selection===null||selection.has(profile.key)}))};
+
 function showBaseGroupProfilePicker(){const root=document.querySelector('#modalRoot'),available=availableGroupOutlookProfiles(),stored=groupOutlookSelection(),picked=new Set(stored===null?available.map(profile=>profile.key):stored);const draw=()=>{root.innerHTML=`<div class="modal-backdrop"><section class="modal group-profile-picker" role="dialog" aria-modal="true"><p class="eyebrow">Group Rebirth Outlook</p><h2>Choose profiles</h2><p class="picker-hint">Choose exactly what appears on your Base page. This selection is private to your signed-in account on this browser and does not change what anyone else sees.</p><div class="group-profile-picker-actions"><button class="btn secondary" id="groupProfilesAll" type="button">Select all</button><button class="btn secondary" id="groupProfilesNone" type="button">Select none</button></div><div class="group-profile-picker-list">${available.map(profile=>`<label><input type="checkbox" data-base-group-profile="${escapeAttr(profile.key)}" ${picked.has(profile.key)?'checked':''}><span><strong>${escapeAttr(profile.profileName)}</strong><small>${escapeAttr(profile.ownerName)} · ${escapeAttr(profile.groupNames.join(', '))}</small></span></label>`).join('')||'<div class="empty">No connected profiles are available.</div>'}</div><div class="modal-actions"><button class="btn" id="applyGroupProfiles" type="button">Apply to Base</button><button class="btn ghost" id="cancelGroupProfiles" type="button">Cancel</button></div></section></div>`;root.querySelectorAll('[data-base-group-profile]').forEach(input=>input.onchange=()=>input.checked?picked.add(input.dataset.baseGroupProfile):picked.delete(input.dataset.baseGroupProfile));root.querySelector('#groupProfilesAll').onclick=()=>{available.forEach(profile=>picked.add(profile.key));draw()};root.querySelector('#groupProfilesNone').onclick=()=>{picked.clear();draw()};root.querySelector('#applyGroupProfiles').onclick=()=>{localStorage.setItem(groupOutlookStorageKey(),JSON.stringify([...picked]));root.innerHTML='';basePageV2()};root.querySelector('#cancelGroupProfiles').onclick=()=>root.innerHTML=''};draw()}
 function combinedGroupOutlookHtml(){if(!cloudConnected()||!state.groups.workspace.length)return'';return`<section class="group-outlook-panel"><header><div><p class="eyebrow">Connected accounts</p><h2>Group Rebirth Outlook</h2><p>Selected profiles from your groups, together on one page.</p></div><button class="btn secondary" id="chooseBaseGroupProfiles" type="button">Choose profiles</button></header>${groupOutlookCardsHtml()}</section>`}
 async function refreshConnectedGroupOutlooks(){const path=location.hash.slice(1).split('?')[0]||'/';if(!cloudConnected()||state.sharedView||!['/base','/groups'].includes(path)||document.hidden)return;try{await loadGroupWorkspace();document.querySelectorAll('.group-outlook-panel').forEach(panel=>{const current=panel.querySelector(':scope > .group-outlook-grid, :scope > .empty'),next=groupOutlookCardsHtml();if(current)current.outerHTML=next;else panel.insertAdjacentHTML('beforeend',next)})}catch{}}
 setInterval(refreshConnectedGroupOutlooks,30000);
+// Which profiles the companion's rebirth-need hint checks. It lives here rather
+// than in the companion's own settings because this is where the profiles are —
+// the companion reads the answer out of this page.
+function rebirthNeedPanelHtml(){
+  const profiles=rebirthNeedProfiles();
+  if(!profiles.length)return'';
+  const chosen=selectedRebirthNeedProfiles(),all=chosen.length===profiles.length;
+  const names=chosen.map(profile=>escapeAttr(profile.owner?`${profile.name} (${profile.owner})`:profile.name)).join(', ');
+  return `<section class="rebirth-need-panel"><header><div><p class="eyebrow">Companion app</p><h2>Rebirth need-hints</h2><p>When a spawn alerts, the companion notes whether that quality and rarity could still fill a droid one of your profiles needs for a future rebirth.</p></div><button class="btn secondary" id="chooseRebirthNeedProfiles" type="button">Choose profiles</button></header><p class="rebirth-need-current">${chosen.length?`Checking <strong>${all?'every profile':`${chosen.length} of ${profiles.length}`}</strong>: ${names}`:'<strong>No profiles selected</strong> &mdash; the hint will stay quiet.'}</p></section>`;
+}
+function showRebirthNeedProfilePicker(){
+  const root=document.querySelector('#modalRoot'),available=rebirthNeedProfiles(),stored=rebirthNeedSelection();
+  const picked=new Set(stored===null?available.map(profile=>profile.key):stored);
+  const draw=()=>{
+    root.innerHTML=`<div class="modal-backdrop"><section class="modal group-profile-picker" role="dialog" aria-modal="true"><p class="eyebrow">Companion app</p><h2>Rebirth need-hints</h2><p class="picker-hint">Choose which profiles a spawn is checked against. Deselect one and its needs stop being mentioned. This is stored in this browser only.</p><div class="group-profile-picker-actions"><button class="btn secondary" id="rebirthNeedAll" type="button">Select all</button><button class="btn secondary" id="rebirthNeedNone" type="button">Select none</button></div><div class="group-profile-picker-list">${available.map(profile=>`<label><input type="checkbox" data-rebirth-need-profile="${escapeAttr(profile.key)}" ${picked.has(profile.key)?'checked':''}><span><strong>${escapeAttr(profile.name)}</strong><small>${escapeAttr(profile.owner||'This account')}</small></span></label>`).join('')}</div><div class="modal-actions"><button class="btn" id="applyRebirthNeed" type="button">Save</button><button class="btn ghost" id="cancelRebirthNeed" type="button">Cancel</button></div></section></div>`;
+    root.querySelectorAll('[data-rebirth-need-profile]').forEach(input=>input.onchange=()=>input.checked?picked.add(input.dataset.rebirthNeedProfile):picked.delete(input.dataset.rebirthNeedProfile));
+    root.querySelector('#rebirthNeedAll').onclick=()=>{available.forEach(profile=>picked.add(profile.key));draw()};
+    root.querySelector('#rebirthNeedNone').onclick=()=>{picked.clear();draw()};
+    // Everything selected is stored as "no selection", so a profile added later
+    // is checked too rather than silently sitting outside a stale list.
+    root.querySelector('#applyRebirthNeed').onclick=()=>{setRebirthNeedSelection(picked.size===available.length?null:picked);root.innerHTML='';basePageV2()};
+    root.querySelector('#cancelRebirthNeed').onclick=()=>root.innerHTML='';
+  };
+  draw();
+}
 const personalBaseRebirthSummaryHtml=baseRebirthSummaryHtml;
-baseRebirthSummaryHtml=()=>`${personalBaseRebirthSummaryHtml()}${combinedGroupOutlookHtml()}`;
+baseRebirthSummaryHtml=()=>`${personalBaseRebirthSummaryHtml()}${combinedGroupOutlookHtml()}${rebirthNeedPanelHtml()}`;
 let sharedProfileSaveTimer=null;
 function scheduleSharedProfileSave(){clearTimeout(sharedProfileSaveTimer);sharedProfileSaveTimer=setTimeout(()=>saveSharedProfileNow().catch(error=>{toast(error.message);decorateSharedView()}),900)}
 async function saveSharedProfileNow(){const view=state.sharedView;if(!view||!view.canEdit)return;clearTimeout(sharedProfileSaveTimer);if(view.saving)return view.savePromise.then(()=>state.sharedView===view?saveSharedProfileNow():undefined);view.saving=true;decorateSharedView();const profileData=profileDataFromState(),savedVersion=view.changeVersion||0;view.savePromise=(async()=>{const {data,error}=await supabaseClient.rpc('save_shared_droid_archive_profile',{target_group_id:view.groupId,target_owner_id:view.ownerId,target_profile_id:view.profileId,profile_data:profileData,expected_updated_at:view.profile.updatedAt||null});if(error)throw Error(error.message);view.profile.data=profileData;view.profile.updatedAt=data.updatedAt;view.savedVersion=savedVersion;const workspaceProfile=state.groups.workspace.find(group=>group.id===view.groupId)?.profiles?.find(profile=>profile.ownerId===view.ownerId&&profile.profileId===view.profileId);if(workspaceProfile){workspaceProfile.data=cloneProfileData(profileData);workspaceProfile.updatedAt=data.updatedAt}})();try{await view.savePromise}finally{view.saving=false;view.savePromise=null;decorateSharedView()}}
@@ -2456,20 +2513,42 @@ if(companionMode){
     }catch(e){return{added:false,error:String(e&&e.message||e)}}
   };
   // Future-rebirth droids this spawn (quality + rarity) could still fill.
+  //
+  // Checked across profiles, not just the one loaded: a spawn is worth grabbing
+  // if ANY of your saves still needs it, and the alert has to say which — being
+  // told you need a droid without being told where is not actionable.
   window.__companionRebirthNeed=(quality,rarity)=>{
     try{
       const q=String(quality||'').toUpperCase(),r=String(rarity||'').toUpperCase(),qi=VARIANTS.indexOf(q);
       if(qi<0)return[];
-      const cycle=state.rebirths?.[state.cycle]||[],seen=new Set(),out=[];
-      for(const rb of cycle.filter(x=>x.to>state.rebirth))for(const req of (rb.requiredDroids||[])){
-        const d=state.droids.find(x=>x.name===req.droidName);
-        if(!d||String(d.rarity).toUpperCase()!==r)continue;       // rarity must match the spawn
-        if(VARIANTS.indexOf(req.variant)>qi)continue;             // this quality can satisfy the requirement
-        if(hasRequirement(req))continue;                           // already owned at a good-enough quality
-        if(seen.has(req.droidName))continue;seen.add(req.droidName);
-        out.push({droidName:req.droidName,variant:req.variant,rebirth:rb.to});
+      // One pass over a profile's save. Returns the droids this spawn could
+      // still fill for it, and how soon each is wanted.
+      const wantedBy=()=>{
+        const cycle=state.rebirths?.[state.cycle]||[],found=new Map();
+        for(const rb of cycle.filter(x=>x.to>state.rebirth))for(const req of (rb.requiredDroids||[])){
+          const d=state.droids.find(x=>x.name===req.droidName);
+          if(!d||String(d.rarity).toUpperCase()!==r)continue;      // rarity must match the spawn
+          if(VARIANTS.indexOf(req.variant)>qi)continue;            // this quality can satisfy the requirement
+          if(hasRequirement(req))continue;                          // already owned at a good-enough quality
+          const previous=found.get(req.droidName);
+          if(!previous||rb.to<previous.rebirth)found.set(req.droidName,{droidName:req.droidName,variant:req.variant,rebirth:rb.to});
+        }
+        return [...found.values()];
+      };
+      const profiles=selectedRebirthNeedProfiles(),out=new Map();
+      // No profile document at all (a shared view, say): fall back to whatever
+      // is loaded, so the hint degrades to its old single-save behaviour.
+      const passes=profiles.length?profiles:[{key:'',name:'',owner:'',data:null}];
+      for(const profile of passes){
+        for(const hit of profile.data?withProfileData(profile.data,wantedBy):wantedBy()){
+          const entry=out.get(hit.droidName)||{droidName:hit.droidName,variant:hit.variant,rebirth:hit.rebirth,profiles:[]};
+          if(hit.rebirth<entry.rebirth){entry.rebirth=hit.rebirth;entry.variant=hit.variant}
+          if(profile.key&&!entry.profiles.some(x=>x.key===profile.key))entry.profiles.push({key:profile.key,name:profile.name,owner:profile.owner,rebirth:hit.rebirth});
+          out.set(hit.droidName,entry);
+        }
       }
-      return out;
+      // Soonest-wanted first: that is the one worth acting on.
+      return [...out.values()].sort((left,right)=>left.rebirth-right.rebirth);
     }catch(e){return{error:String(e&&e.message||e)}}
   };
 }
