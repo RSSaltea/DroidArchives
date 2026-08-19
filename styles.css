@@ -626,3 +626,21 @@ html[data-theme="dark"] .sidebar a.active{background:#202633;color:#fff}
   .archive-timers.timers-scrolled .spawn-timer img{display:none}
   .archive-timers.timers-scrolled .spawn-timer small{display:none}
 }
+
+/* ---- The copy the companion embeds ----------------------------------------
+   A short, wide panel rather than a browser window. The header was laid out for
+   the latter and simply ran off the edge: the last nav links, the search box
+   and the account button were all cut in half.
+
+   Signing in is not here at all — the companion has its own account settings,
+   and two places to sign in to the same account is one too many. */
+html.in-companion .header-cloud{display:none!important}
+/* Wrap rather than clip, and let the nav scroll on its own if it still cannot
+   fit. Nothing is hidden that way — it is reachable, just not all at once. */
+html.in-companion .site-header{height:auto;flex-wrap:wrap;padding:8px 14px;gap:10px 16px;position:static}
+html.in-companion .site-header .brand small{display:none}
+html.in-companion #nav{flex:1 1 100%;order:5;display:flex;gap:14px;overflow-x:auto;scrollbar-width:thin;padding-bottom:2px}
+html.in-companion #nav a{white-space:nowrap}
+html.in-companion .header-search{flex:1 1 160px;min-width:0}
+html.in-companion .site-header .patch-icon-button,
+html.in-companion .site-header .discord-button{flex:0 0 auto}

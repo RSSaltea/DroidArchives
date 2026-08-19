@@ -42,6 +42,10 @@ let patchNotesPrompted=false;
 // window.__companionOptimise instead of scraping the rendered DOM. Publishing
 // is a no-op for normal browser visitors.
 const companionMode=new URLSearchParams(location.search).get('companion')==='1';
+// The companion embeds this page in a short, wide panel. Marking the document
+// lets the stylesheet render a version that fits it, rather than squeezing the
+// full-width site into a strip until the navigation runs off the edge.
+if(companionMode)document.documentElement.classList.add('in-companion');
 function publishCompanionState(optimise){
   if(!companionMode)return;
   const prev=window.__companionOptimise||{},path=location.hash.slice(1).split('?')[0]||'/';
