@@ -856,13 +856,14 @@ const selectedRebirthNeedProfiles=()=>{const selection=rebirthNeedSelection();re
 // of it. Everything the requirement test reads is swapped and put back, so the
 // loaded profile is untouched even if the body throws.
 function withProfileData(data,fn){
-  const saved={owned:state.owned,cycle:state.cycle,rebirth:state.rebirth};
+  const saved={owned:state.owned,cycle:state.cycle,rebirth:state.rebirth,droidex:state.droidex};
   try{
     state.owned=normalizeDroidRows(data?.owned||[]);
+    state.droidex=normalizeDroidRows(data?.droidex||[]);
     state.cycle=Number(data?.cycle)||0;
     state.rebirth=Number(data?.rebirth)||0;
     return fn();
-  }finally{state.owned=saved.owned;state.cycle=saved.cycle;state.rebirth=saved.rebirth}
+  }finally{state.owned=saved.owned;state.cycle=saved.cycle;state.rebirth=saved.rebirth;state.droidex=saved.droidex}
 }
 window.__companionRebirthNeedProfiles=()=>{const selection=rebirthNeedSelection();return rebirthNeedProfiles().map(profile=>({key:profile.key,name:profile.name,owner:profile.owner,selected:selection===null||selection.has(profile.key)}))};
 
@@ -870,21 +871,22 @@ function showBaseGroupProfilePicker(){const root=document.querySelector('#modalR
 function combinedGroupOutlookHtml(){if(!cloudConnected()||!state.groups.workspace.length)return'';return`<section class="group-outlook-panel"><header><div><p class="eyebrow">Connected accounts</p><h2>Group Rebirth Outlook</h2><p>Selected profiles from your groups, together on one page.</p></div><button class="btn secondary" id="chooseBaseGroupProfiles" type="button">Choose profiles</button></header>${groupOutlookCardsHtml()}</section>`}
 async function refreshConnectedGroupOutlooks(){const path=location.hash.slice(1).split('?')[0]||'/';if(!cloudConnected()||state.sharedView||!['/base','/groups'].includes(path)||document.hidden)return;try{await loadGroupWorkspace();document.querySelectorAll('.group-outlook-panel').forEach(panel=>{const current=panel.querySelector(':scope > .group-outlook-grid, :scope > .empty'),next=groupOutlookCardsHtml();if(current)current.outerHTML=next;else panel.insertAdjacentHTML('beforeend',next)})}catch{}}
 setInterval(refreshConnectedGroupOutlooks,30000);
-// Which profiles the companion's rebirth-need hint checks. It lives here rather
-// than in the companion's own settings because this is where the profiles are —
-// the companion reads the answer out of this page.
+// Which profiles the companion's spawn hints check — both the rebirth one and
+// the Droidex one, which share a selection because they answer for the same set
+// of saves. It lives here rather than in the companion's own settings because
+// this is where the profiles are; the companion reads the answer out of this page.
 function rebirthNeedPanelHtml(){
   const profiles=rebirthNeedProfiles();
   if(!profiles.length)return'';
   const chosen=selectedRebirthNeedProfiles(),all=chosen.length===profiles.length;
   const names=chosen.map(profile=>escapeAttr(profile.owner?`${profile.name} (${profile.owner})`:profile.name)).join(', ');
-  return `<section class="rebirth-need-panel"><header><div><p class="eyebrow">Companion app</p><h2>Rebirth need-hints</h2><p>When a spawn alerts, the companion notes whether that quality and rarity could still fill a droid one of your profiles needs for a future rebirth.</p></div><button class="btn secondary" id="chooseRebirthNeedProfiles" type="button">Choose profiles</button></header><p class="rebirth-need-current">${chosen.length?`Checking <strong>${all?'every profile':`${chosen.length} of ${profiles.length}`}</strong>: ${names}`:'<strong>No profiles selected</strong> &mdash; the hint will stay quiet.'}</p></section>`;
+  return `<section class="rebirth-need-panel"><header><div><p class="eyebrow">Companion app</p><h2>Spawn need-hints</h2><p>When a spawn alerts, the companion notes whether that quality and rarity could still fill a droid one of your profiles needs for a future rebirth, or a square it is still missing from the Droidex.</p></div><button class="btn secondary" id="chooseRebirthNeedProfiles" type="button">Choose profiles</button></header><p class="rebirth-need-current">${chosen.length?`Checking <strong>${all?'every profile':`${chosen.length} of ${profiles.length}`}</strong>: ${names}`:'<strong>No profiles selected</strong> &mdash; the hint will stay quiet.'}</p></section>`;
 }
 function showRebirthNeedProfilePicker(){
   const root=document.querySelector('#modalRoot'),available=rebirthNeedProfiles(),stored=rebirthNeedSelection();
   const picked=new Set(stored===null?available.map(profile=>profile.key):stored);
   const draw=()=>{
-    root.innerHTML=`<div class="modal-backdrop"><section class="modal group-profile-picker" role="dialog" aria-modal="true"><p class="eyebrow">Companion app</p><h2>Rebirth need-hints</h2><p class="picker-hint">Choose which profiles a spawn is checked against. Deselect one and its needs stop being mentioned. This is stored in this browser only.</p><div class="group-profile-picker-actions"><button class="btn secondary" id="rebirthNeedAll" type="button">Select all</button><button class="btn secondary" id="rebirthNeedNone" type="button">Select none</button></div><div class="group-profile-picker-list">${available.map(profile=>`<label><input type="checkbox" data-rebirth-need-profile="${escapeAttr(profile.key)}" ${picked.has(profile.key)?'checked':''}><span><strong>${escapeAttr(profile.name)}</strong><small>${escapeAttr(profile.owner||'This account')}</small></span></label>`).join('')}</div><div class="modal-actions"><button class="btn" id="applyRebirthNeed" type="button">Save</button><button class="btn ghost" id="cancelRebirthNeed" type="button">Cancel</button></div></section></div>`;
+    root.innerHTML=`<div class="modal-backdrop"><section class="modal group-profile-picker" role="dialog" aria-modal="true"><p class="eyebrow">Companion app</p><h2>Spawn need-hints</h2><p class="picker-hint">Choose which profiles a spawn is checked against, for both the rebirth and the Droidex hint. Deselect one and its needs stop being mentioned. This is stored in this browser only.</p><div class="group-profile-picker-actions"><button class="btn secondary" id="rebirthNeedAll" type="button">Select all</button><button class="btn secondary" id="rebirthNeedNone" type="button">Select none</button></div><div class="group-profile-picker-list">${available.map(profile=>`<label><input type="checkbox" data-rebirth-need-profile="${escapeAttr(profile.key)}" ${picked.has(profile.key)?'checked':''}><span><strong>${escapeAttr(profile.name)}</strong><small>${escapeAttr(profile.owner||'This account')}</small></span></label>`).join('')}</div><div class="modal-actions"><button class="btn" id="applyRebirthNeed" type="button">Save</button><button class="btn ghost" id="cancelRebirthNeed" type="button">Cancel</button></div></section></div>`;
     root.querySelectorAll('[data-rebirth-need-profile]').forEach(input=>input.onchange=()=>input.checked?picked.add(input.dataset.rebirthNeedProfile):picked.delete(input.dataset.rebirthNeedProfile));
     root.querySelector('#rebirthNeedAll').onclick=()=>{available.forEach(profile=>picked.add(profile.key));draw()};
     root.querySelector('#rebirthNeedNone').onclick=()=>{picked.clear();draw()};
@@ -2511,6 +2513,31 @@ if(companionMode){
       save();
       return{added:true,name,variant:v,flawless:isDroidFlawless(name)};
     }catch(e){return{added:false,error:String(e&&e.message||e)}}
+  };
+  // Droidex slots this spawn (quality + rarity) would fill, across the same
+  // profiles as the rebirth hint.
+  //
+  // Unlike a rebirth requirement, a Droidex slot is exact: a Galactic spawn does
+  // nothing for an empty Gold square. And Iconic droids have only a DEFAULT
+  // square, which is why the Droidex page hides the other tabs for them.
+  window.__companionDroidexNeed=(quality,rarity)=>{
+    try{
+      const q=String(quality||'').toUpperCase(),r=String(rarity||'').toUpperCase();
+      if(!VARIANTS.includes(q))return[];
+      const missing=()=>state.droids.filter(d=>String(d.rarity).toUpperCase()===r
+        &&(q==='DEFAULT'||!isIconic(d))
+        &&!droidexEntry(d.name,q)).map(d=>({droidName:d.name,variant:q}));
+      const profiles=selectedRebirthNeedProfiles(),out=new Map();
+      const passes=profiles.length?profiles:[{key:'',name:'',owner:'',data:null}];
+      for(const profile of passes){
+        for(const hit of profile.data?withProfileData(profile.data,missing):missing()){
+          const entry=out.get(hit.droidName)||{droidName:hit.droidName,variant:hit.variant,profiles:[]};
+          if(profile.key&&!entry.profiles.some(x=>x.key===profile.key))entry.profiles.push({key:profile.key,name:profile.name,owner:profile.owner});
+          out.set(hit.droidName,entry);
+        }
+      }
+      return [...out.values()].sort((left,right)=>left.droidName.localeCompare(right.droidName));
+    }catch(e){return{error:String(e&&e.message||e)}}
   };
   // Future-rebirth droids this spawn (quality + rarity) could still fill.
   //
