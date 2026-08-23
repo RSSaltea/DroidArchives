@@ -2572,32 +2572,39 @@
     "fusion": true,
     "variants": {
       "DEFAULT": {
-        "cost": 227500,
-        "income": 72
+        "cost": 325000,
+        "income": 72,
+        "craftingSeconds": 156.36
       },
       "GOLD": {
-        "cost": 910000,
-        "income": 144
+        "cost": 1300000,
+        "income": 144,
+        "craftingSeconds": 625.44
       },
       "DIAMOND": {
-        "cost": 1820000,
-        "income": 288
+        "cost": 2600000,
+        "income": 288,
+        "craftingSeconds": 938.16
       },
       "RAINBOW": {
-        "cost": 3640000,
-        "income": 576
+        "cost": 3900000,
+        "income": 576,
+        "craftingSeconds": 1250.88
       },
       "BESKAR": {
-        "cost": 14560000,
-        "income": 864
+        "cost": 5200000,
+        "income": 864,
+        "craftingSeconds": 1563.6
       },
       "GALACTIC": {
-        "cost": 4550000000,
-        "income": 1730
+        "cost": 6500000,
+        "income": 1728,
+        "craftingSeconds": 2189.04
       },
       "STELLAR": {
-        "cost": 5460000000,
-        "income": 2300
+        "cost": 7800000,
+        "income": 2304,
+        "craftingSeconds": 2814.48
       }
     }
   },
@@ -2608,32 +2615,39 @@
     "fusion": true,
     "variants": {
       "DEFAULT": {
-        "cost": 227500,
-        "income": 72
+        "cost": 325000,
+        "income": 72,
+        "craftingSeconds": 156.36
       },
       "GOLD": {
-        "cost": 910000,
-        "income": 144
+        "cost": 1300000,
+        "income": 144,
+        "craftingSeconds": 625.44
       },
       "DIAMOND": {
-        "cost": 1820000,
-        "income": 288
+        "cost": 2600000,
+        "income": 288,
+        "craftingSeconds": 938.16
       },
       "RAINBOW": {
-        "cost": 3640000,
-        "income": 576
+        "cost": 3900000,
+        "income": 576,
+        "craftingSeconds": 1250.88
       },
       "BESKAR": {
-        "cost": 14560000,
-        "income": 864
+        "cost": 5200000,
+        "income": 864,
+        "craftingSeconds": 1563.6
       },
       "GALACTIC": {
-        "cost": 4550000000,
-        "income": 1730
+        "cost": 6500000,
+        "income": 1728,
+        "craftingSeconds": 2189.04
       },
       "STELLAR": {
-        "cost": 5460000000,
-        "income": 2300
+        "cost": 7800000,
+        "income": 2304,
+        "craftingSeconds": 2814.48
       }
     }
   },
@@ -2644,32 +2658,39 @@
     "fusion": true,
     "variants": {
       "DEFAULT": {
-        "cost": 227500,
-        "income": 72
+        "cost": 325000,
+        "income": 72,
+        "craftingSeconds": 156.36
       },
       "GOLD": {
-        "cost": 910000,
-        "income": 144
+        "cost": 1300000,
+        "income": 144,
+        "craftingSeconds": 625.44
       },
       "DIAMOND": {
-        "cost": 1820000,
-        "income": 288
+        "cost": 2600000,
+        "income": 288,
+        "craftingSeconds": 938.16
       },
       "RAINBOW": {
-        "cost": 3640000,
-        "income": 576
+        "cost": 3900000,
+        "income": 576,
+        "craftingSeconds": 1250.88
       },
       "BESKAR": {
-        "cost": 14560000,
-        "income": 864
+        "cost": 5200000,
+        "income": 864,
+        "craftingSeconds": 1563.6
       },
       "GALACTIC": {
-        "cost": 4550000000,
-        "income": 1730
+        "cost": 6500000,
+        "income": 1728,
+        "craftingSeconds": 2189.04
       },
       "STELLAR": {
-        "cost": 5460000000,
-        "income": 2300
+        "cost": 7800000,
+        "income": 2304,
+        "craftingSeconds": 2814.48
       }
     }
   },
@@ -2680,32 +2701,39 @@
     "fusion": true,
     "variants": {
       "DEFAULT": {
-        "cost": 9520000,
-        "income": 720
+        "cost": 13600000,
+        "income": 720,
+        "craftingSeconds": 1293.6
       },
       "GOLD": {
-        "cost": 38080000,
-        "income": 1440
+        "cost": 54400000,
+        "income": 1440,
+        "craftingSeconds": 5174.4
       },
       "DIAMOND": {
-        "cost": 76160000,
-        "income": 2880
+        "cost": 108800000,
+        "income": 2880,
+        "craftingSeconds": 7761.6
       },
       "RAINBOW": {
-        "cost": 152320000,
-        "income": 5760
+        "cost": 163200000,
+        "income": 5760,
+        "craftingSeconds": 10348.8
       },
       "BESKAR": {
-        "cost": 1190000000,
-        "income": 24480
+        "cost": 1700000000,
+        "income": 24480,
+        "craftingSeconds": 12936
       },
       "GALACTIC": {
-        "cost": 2860000000,
-        "income": 37440
+        "cost": 4080000000,
+        "income": 37440,
+        "craftingSeconds": 18110.4
       },
       "STELLAR": {
-        "cost": 7140000000,
-        "income": 57600
+        "cost": 10200000000,
+        "income": 57600,
+        "craftingSeconds": 23284.8
       }
     }
   },
@@ -2716,32 +2744,39 @@
     "fusion": true,
     "variants": {
       "DEFAULT": {
-        "cost": 9520000,
-        "income": 720
+        "cost": 13600000,
+        "income": 720,
+        "craftingSeconds": 1293.6
       },
       "GOLD": {
-        "cost": 38080000,
-        "income": 1440
+        "cost": 54400000,
+        "income": 1440,
+        "craftingSeconds": 5174.4
       },
       "DIAMOND": {
-        "cost": 76160000,
-        "income": 2880
+        "cost": 108800000,
+        "income": 2880,
+        "craftingSeconds": 7761.6
       },
       "RAINBOW": {
-        "cost": 152320000,
-        "income": 5760
+        "cost": 163200000,
+        "income": 5760,
+        "craftingSeconds": 10348.8
       },
       "BESKAR": {
-        "cost": 1190000000,
-        "income": 24480
+        "cost": 1700000000,
+        "income": 24480,
+        "craftingSeconds": 12936
       },
       "GALACTIC": {
-        "cost": 2860000000,
-        "income": 37440
+        "cost": 4080000000,
+        "income": 37440,
+        "craftingSeconds": 18110.4
       },
       "STELLAR": {
-        "cost": 7140000000,
-        "income": 57600
+        "cost": 10200000000,
+        "income": 57600,
+        "craftingSeconds": 23284.8
       }
     }
   },
@@ -2752,32 +2787,39 @@
     "fusion": true,
     "variants": {
       "DEFAULT": {
-        "cost": 9200000,
-        "income": 690
+        "cost": 13250000,
+        "income": 690,
+        "craftingSeconds": 1240.95
       },
       "GOLD": {
-        "cost": 36800000,
-        "income": 1380
+        "cost": 53000000,
+        "income": 1380,
+        "craftingSeconds": 4963.8
       },
       "DIAMOND": {
-        "cost": 73600000,
-        "income": 2760
+        "cost": 106000000,
+        "income": 2760,
+        "craftingSeconds": 7445.7
       },
       "RAINBOW": {
-        "cost": 147200000,
-        "income": 5520
+        "cost": 159000000,
+        "income": 5520,
+        "craftingSeconds": 9927.6
       },
       "BESKAR": {
-        "cost": 1150000000,
-        "income": 23460
+        "cost": 1656250000,
+        "income": 23460,
+        "craftingSeconds": 12409.5
       },
       "GALACTIC": {
-        "cost": 2760000000,
-        "income": 35880
+        "cost": 3975000000,
+        "income": 35880,
+        "craftingSeconds": 17373.3
       },
       "STELLAR": {
-        "cost": 6900000000,
-        "income": 55200
+        "cost": 9937500000,
+        "income": 55200,
+        "craftingSeconds": 22337.1
       }
     }
   },
@@ -2788,32 +2830,39 @@
     "fusion": true,
     "variants": {
       "DEFAULT": {
-        "cost": 9520000,
-        "income": 720
+        "cost": 13200000,
+        "income": 720,
+        "craftingSeconds": 1293.6
       },
       "GOLD": {
-        "cost": 38080000,
-        "income": 1440
+        "cost": 52800000,
+        "income": 1440,
+        "craftingSeconds": 5174.4
       },
       "DIAMOND": {
-        "cost": 76160000,
-        "income": 2880
+        "cost": 105600000,
+        "income": 2880,
+        "craftingSeconds": 7761.6
       },
       "RAINBOW": {
-        "cost": 152320000,
-        "income": 5760
+        "cost": 158400000,
+        "income": 5760,
+        "craftingSeconds": 10348.8
       },
       "BESKAR": {
-        "cost": 1190000000,
-        "income": 24480
+        "cost": 1650000000,
+        "income": 24480,
+        "craftingSeconds": 12936
       },
       "GALACTIC": {
-        "cost": 2860000000,
-        "income": 37440
+        "cost": 3960000000,
+        "income": 37440,
+        "craftingSeconds": 18110.4
       },
       "STELLAR": {
-        "cost": 7140000000,
-        "income": 57600
+        "cost": 9900000000,
+        "income": 57600,
+        "craftingSeconds": 23284.8
       }
     }
   },
@@ -2824,32 +2873,39 @@
     "fusion": true,
     "variants": {
       "DEFAULT": {
-        "cost": 50400000,
-        "income": 1500
+        "cost": 72000000,
+        "income": 1500,
+        "craftingSeconds": 2662.5
       },
       "GOLD": {
-        "cost": 201600000,
-        "income": 3000
+        "cost": 288000000,
+        "income": 3000,
+        "craftingSeconds": 10650
       },
       "DIAMOND": {
-        "cost": 403200000,
-        "income": 6000
+        "cost": 576000000,
+        "income": 6000,
+        "craftingSeconds": 15975
       },
       "RAINBOW": {
-        "cost": 806400000,
-        "income": 12000
+        "cost": 864000000,
+        "income": 12000,
+        "craftingSeconds": 21300
       },
       "BESKAR": {
-        "cost": 20160000000,
-        "income": 36000
+        "cost": 28800000000,
+        "income": 36000,
+        "craftingSeconds": 26625
       },
       "GALACTIC": {
-        "cost": 120960000000,
-        "income": 90000
+        "cost": 172800000000,
+        "income": 90000,
+        "craftingSeconds": 37275
       },
       "STELLAR": {
-        "cost": 730800000000,
-        "income": 225000
+        "cost": 1044000000000,
+        "income": 225000,
+        "craftingSeconds": 47925
       }
     }
   },
@@ -2860,32 +2916,39 @@
     "fusion": true,
     "variants": {
       "DEFAULT": {
-        "cost": 56000000,
-        "income": 1600
+        "cost": 80000000,
+        "income": 1600,
+        "craftingSeconds": 2838
       },
       "GOLD": {
-        "cost": 224000000,
-        "income": 3200
+        "cost": 320000000,
+        "income": 3200,
+        "craftingSeconds": 11352
       },
       "DIAMOND": {
-        "cost": 448000000,
-        "income": 6400
+        "cost": 640000000,
+        "income": 6400,
+        "craftingSeconds": 17028
       },
       "RAINBOW": {
-        "cost": 896000000,
-        "income": 12800
+        "cost": 960000000,
+        "income": 12800,
+        "craftingSeconds": 22704
       },
       "BESKAR": {
-        "cost": 22400000000,
-        "income": 38400
+        "cost": 32000000000,
+        "income": 38400,
+        "craftingSeconds": 28380
       },
       "GALACTIC": {
-        "cost": 134400000000,
-        "income": 96000
+        "cost": 192000000000,
+        "income": 96000,
+        "craftingSeconds": 39732
       },
       "STELLAR": {
-        "cost": 812000000000,
-        "income": 240000
+        "cost": 1160000000000,
+        "income": 240000,
+        "craftingSeconds": 51084
       }
     }
   },
@@ -2896,32 +2959,39 @@
     "fusion": true,
     "variants": {
       "DEFAULT": {
-        "cost": 56000000,
-        "income": 1600
+        "cost": 80000000,
+        "income": 1600,
+        "craftingSeconds": 2838
       },
       "GOLD": {
-        "cost": 224000000,
-        "income": 3200
+        "cost": 320000000,
+        "income": 3200,
+        "craftingSeconds": 11352
       },
       "DIAMOND": {
-        "cost": 448000000,
-        "income": 6400
+        "cost": 640000000,
+        "income": 6400,
+        "craftingSeconds": 17028
       },
       "RAINBOW": {
-        "cost": 896000000,
-        "income": 12800
+        "cost": 960000000,
+        "income": 12800,
+        "craftingSeconds": 22704
       },
       "BESKAR": {
-        "cost": 22400000000,
-        "income": 38400
+        "cost": 32000000000,
+        "income": 38400,
+        "craftingSeconds": 28380
       },
       "GALACTIC": {
-        "cost": 134400000000,
-        "income": 96000
+        "cost": 192000000000,
+        "income": 96000,
+        "craftingSeconds": 39732
       },
       "STELLAR": {
-        "cost": 812000000000,
-        "income": 240000
+        "cost": 1160000000000,
+        "income": 240000,
+        "craftingSeconds": 51084
       }
     }
   },
@@ -2932,32 +3002,39 @@
     "fusion": true,
     "variants": {
       "DEFAULT": {
-        "cost": 56000000,
-        "income": 1600
+        "cost": 80000000,
+        "income": 1600,
+        "craftingSeconds": 2838
       },
       "GOLD": {
-        "cost": 224000000,
-        "income": 3200
+        "cost": 320000000,
+        "income": 3200,
+        "craftingSeconds": 11352
       },
       "DIAMOND": {
-        "cost": 448000000,
-        "income": 6400
+        "cost": 640000000,
+        "income": 6400,
+        "craftingSeconds": 17028
       },
       "RAINBOW": {
-        "cost": 896000000,
-        "income": 12800
+        "cost": 960000000,
+        "income": 12800,
+        "craftingSeconds": 22704
       },
       "BESKAR": {
-        "cost": 22400000000,
-        "income": 38400
+        "cost": 32000000000,
+        "income": 38400,
+        "craftingSeconds": 28380
       },
       "GALACTIC": {
-        "cost": 134400000000,
-        "income": 96000
+        "cost": 192000000000,
+        "income": 96000,
+        "craftingSeconds": 39732
       },
       "STELLAR": {
-        "cost": 812000000000,
-        "income": 240000
+        "cost": 1160000000000,
+        "income": 240000,
+        "craftingSeconds": 51084
       }
     }
   },
@@ -2968,32 +3045,39 @@
     "fusion": true,
     "variants": {
       "DEFAULT": {
-        "cost": 252000000,
-        "income": 8400
+        "cost": 360000000,
+        "income": 8400,
+        "craftingSeconds": 8020
       },
       "GOLD": {
-        "cost": 1010000000,
-        "income": 16800
+        "cost": 1440000000,
+        "income": 16800,
+        "craftingSeconds": 32080
       },
       "DIAMOND": {
-        "cost": 2020000000,
-        "income": 33600
+        "cost": 2880000000,
+        "income": 33600,
+        "craftingSeconds": 48120
       },
       "RAINBOW": {
-        "cost": 6050000000,
-        "income": 67200
+        "cost": 8640000000,
+        "income": 67200,
+        "craftingSeconds": 64160
       },
       "BESKAR": {
-        "cost": 201600000000,
-        "income": 134400
+        "cost": 288000000000,
+        "income": 134400,
+        "craftingSeconds": 80200
       },
       "GALACTIC": {
-        "cost": 1180000000000,
-        "income": 369600
+        "cost": 1692000000000,
+        "income": 369600,
+        "craftingSeconds": 112280
       },
       "STELLAR": {
-        "cost": 7060000000000,
-        "income": 1050000
+        "cost": 10080000000000,
+        "income": 1050000,
+        "craftingSeconds": 144360
       }
     }
   },
@@ -3004,32 +3088,39 @@
     "fusion": true,
     "variants": {
       "DEFAULT": {
-        "cost": 224000000,
-        "income": 7600
+        "cost": 320000000,
+        "income": 7600,
+        "craftingSeconds": 7460
       },
       "GOLD": {
-        "cost": 896000000,
-        "income": 15200
+        "cost": 1280000000,
+        "income": 15200,
+        "craftingSeconds": 29840
       },
       "DIAMOND": {
-        "cost": 1790000000,
-        "income": 30400
+        "cost": 2560000000,
+        "income": 30400,
+        "craftingSeconds": 44760
       },
       "RAINBOW": {
-        "cost": 5380000000,
-        "income": 60800
+        "cost": 7680000000,
+        "income": 60800,
+        "craftingSeconds": 59680
       },
       "BESKAR": {
-        "cost": 179200000000,
-        "income": 121600
+        "cost": 256000000000,
+        "income": 121600,
+        "craftingSeconds": 74600
       },
       "GALACTIC": {
-        "cost": 1050000000000,
-        "income": 334400
+        "cost": 1504000000000,
+        "income": 334400,
+        "craftingSeconds": 104440
       },
       "STELLAR": {
-        "cost": 6270000000000,
-        "income": 950000
+        "cost": 8960000000000,
+        "income": 950000,
+        "craftingSeconds": 134280
       }
     }
   },
@@ -3040,32 +3131,39 @@
     "fusion": true,
     "variants": {
       "DEFAULT": {
-        "cost": 238000000,
-        "income": 7800
+        "cost": 340000000,
+        "income": 7800,
+        "craftingSeconds": 7600
       },
       "GOLD": {
-        "cost": 952000000,
-        "income": 15600
+        "cost": 1360000000,
+        "income": 15600,
+        "craftingSeconds": 30400
       },
       "DIAMOND": {
-        "cost": 1900000000,
-        "income": 31200
+        "cost": 2720000000,
+        "income": 31200,
+        "craftingSeconds": 45600
       },
       "RAINBOW": {
-        "cost": 5710000000,
-        "income": 62400
+        "cost": 8160000000,
+        "income": 62400,
+        "craftingSeconds": 60800
       },
       "BESKAR": {
-        "cost": 190400000000,
-        "income": 124800
+        "cost": 272000000000,
+        "income": 124800,
+        "craftingSeconds": 76000
       },
       "GALACTIC": {
-        "cost": 1120000000000,
-        "income": 343200
+        "cost": 1598000000000,
+        "income": 343200,
+        "craftingSeconds": 106400
       },
       "STELLAR": {
-        "cost": 6660000000000,
-        "income": 975000
+        "cost": 9520000000000,
+        "income": 975000,
+        "craftingSeconds": 136800
       }
     }
   },
@@ -3076,32 +3174,39 @@
     "fusion": true,
     "variants": {
       "DEFAULT": {
-        "cost": 252000000,
-        "income": 8000
+        "cost": 360000000,
+        "income": 8000,
+        "craftingSeconds": 7740
       },
       "GOLD": {
-        "cost": 1010000000,
-        "income": 16000
+        "cost": 1440000000,
+        "income": 16000,
+        "craftingSeconds": 30960
       },
       "DIAMOND": {
-        "cost": 2020000000,
-        "income": 32000
+        "cost": 2880000000,
+        "income": 32000,
+        "craftingSeconds": 46440
       },
       "RAINBOW": {
-        "cost": 6050000000,
-        "income": 64000
+        "cost": 8640000000,
+        "income": 64000,
+        "craftingSeconds": 61920
       },
       "BESKAR": {
-        "cost": 201600000000,
-        "income": 128000
+        "cost": 288000000000,
+        "income": 128000,
+        "craftingSeconds": 77400
       },
       "GALACTIC": {
-        "cost": 1180000000000,
-        "income": 352000
+        "cost": 1692000000000,
+        "income": 352000,
+        "craftingSeconds": 108360
       },
       "STELLAR": {
-        "cost": 7060000000000,
-        "income": 1000000
+        "cost": 10080000000000,
+        "income": 1000000,
+        "craftingSeconds": 139320
       }
     }
   },
@@ -3112,32 +3217,39 @@
     "fusion": true,
     "variants": {
       "DEFAULT": {
-        "cost": 224000000,
-        "income": 7600
+        "cost": 320000000,
+        "income": 7600,
+        "craftingSeconds": 7460
       },
       "GOLD": {
-        "cost": 896000000,
-        "income": 15200
+        "cost": 1280000000,
+        "income": 15200,
+        "craftingSeconds": 29840
       },
       "DIAMOND": {
-        "cost": 1790000000,
-        "income": 30400
+        "cost": 2560000000,
+        "income": 30400,
+        "craftingSeconds": 44760
       },
       "RAINBOW": {
-        "cost": 5380000000,
-        "income": 60800
+        "cost": 7680000000,
+        "income": 60800,
+        "craftingSeconds": 59680
       },
       "BESKAR": {
-        "cost": 179200000000,
-        "income": 121600
+        "cost": 256000000000,
+        "income": 121600,
+        "craftingSeconds": 74600
       },
       "GALACTIC": {
-        "cost": 1050000000000,
-        "income": 334400
+        "cost": 1504000000000,
+        "income": 334400,
+        "craftingSeconds": 104440
       },
       "STELLAR": {
-        "cost": 6270000000000,
-        "income": 950000
+        "cost": 8960000000000,
+        "income": 950000,
+        "craftingSeconds": 134280
       }
     }
   },
@@ -3148,32 +3260,39 @@
     "fusion": true,
     "variants": {
       "DEFAULT": {
-        "cost": 252000000,
-        "income": 8000
+        "cost": 360000000,
+        "income": 8000,
+        "craftingSeconds": 7740
       },
       "GOLD": {
-        "cost": 1010000000,
-        "income": 16000
+        "cost": 1440000000,
+        "income": 16000,
+        "craftingSeconds": 30960
       },
       "DIAMOND": {
-        "cost": 2020000000,
-        "income": 32000
+        "cost": 2880000000,
+        "income": 32000,
+        "craftingSeconds": 46440
       },
       "RAINBOW": {
-        "cost": 6050000000,
-        "income": 64000
+        "cost": 8640000000,
+        "income": 64000,
+        "craftingSeconds": 61920
       },
       "BESKAR": {
-        "cost": 201600000000,
-        "income": 128000
+        "cost": 288000000000,
+        "income": 128000,
+        "craftingSeconds": 77400
       },
       "GALACTIC": {
-        "cost": 1180000000000,
-        "income": 352000
+        "cost": 1692000000000,
+        "income": 352000,
+        "craftingSeconds": 108360
       },
       "STELLAR": {
-        "cost": 7060000000000,
-        "income": 1000000
+        "cost": 10080000000000,
+        "income": 1000000,
+        "craftingSeconds": 139320
       }
     }
   }
