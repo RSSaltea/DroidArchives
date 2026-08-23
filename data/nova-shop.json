@@ -2242,7 +2242,7 @@
       "name": "Fusion Speed",
       "category": "workshop",
       "uncapped": true,
-      "icon": "assets/nova-shop/T_Icon_FusionSpeed.png",
+      "icon": "assets/nova-shop/T_Icon_FusionEfficiency.png",
       "description": "+1/sec Droid fusion progress per level.",
       "levels": [
         {
