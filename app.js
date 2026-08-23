@@ -365,43 +365,104 @@ function addDetailDroidexControls(){if(!location.hash.startsWith('#/droid/')||do
 // rendering of data/fusion.json rather than anything hand-maintained.
 const fusionRecipes=()=>state.fusion?.recipes||[];
 const fusionDroid=name=>state.droids.find(d=>d.name===String(name||'').toUpperCase());
-function fusionCardHtml(name,role){
+// How many of a droid you hold, counting every variant: fusion consumes the
+// droid, not a particular quality of it.
+const fusionOwnedCount=name=>{const d=fusionDroid(name);return d?state.owned.filter(x=>x.name===d.name).reduce((total,x)=>total+(Number(x.qty)||1),0):0};
+// A recipe needs three droids and the same one can appear twice, so what
+// matters is whether you hold enough of each, not whether you hold any.
+function fusionNeed(recipe){
+  const wanted=new Map();
+  for(const input of recipe.inputs)wanted.set(input,(wanted.get(input)||0)+1);
+  const parts=[...wanted].map(([name,need])=>{const have=fusionOwnedCount(name);return{name,need,have,short:Math.max(0,need-have)}});
+  return{parts,ready:parts.every(part=>part.short===0),missing:parts.filter(part=>part.short>0)};
+}
+// Which results you are working towards. Drives the Fusion Outlook on Base.
+const FUSION_WANTED_KEY='droid-archive-fusion-wanted';
+function fusionWanted(){try{return new Set(JSON.parse(localStorage.getItem(FUSION_WANTED_KEY)||'[]'))}catch{return new Set()}}
+function setFusionWanted(names){localStorage.setItem(FUSION_WANTED_KEY,JSON.stringify([...names]));}
+function toggleFusionWanted(name){const wanted=fusionWanted();wanted.has(name)?wanted.delete(name):wanted.add(name);setFusionWanted(wanted);return wanted.has(name)}
+function fusionCardHtml(name,role,stock){
   const d=fusionDroid(name);
   const art=d?picture(d,'DEFAULT'):'<div class="fusion-blank" aria-hidden="true">?</div>';
   const rarity=d?`<em class="fusion-rarity rarity-${String(d.rarity).toLowerCase()}">${escapeAttr(d.rarity)}</em>`:'';
   const label=escapeAttr(d?d.name:name);
-  const inner=`${rarity}<div class="fusion-art">${art}</div><strong>${label}</strong>`;
+  // "2 of 2" reads better than a tick when a recipe wants two of the same droid.
+  const held=stock?`<em class="fusion-stock ${stock.short?'is-short':'is-held'}">${stock.have} of ${stock.need}</em>`:'';
+  const inner=`${rarity}<div class="fusion-art">${art}</div><strong>${label}</strong>${held}`;
   return d
     ? `<a class="fusion-card fusion-${role}" href="#/droid/${slug(d.name)}">${inner}</a>`
     : `<div class="fusion-card fusion-${role} is-unknown">${inner}</div>`;
 }
+// What the droids you are tracking still need. Nothing tracked means nothing to
+// say, so the panel stays out of the way until you have picked something in the
+// Fusion Lab.
+function fusionOutlookHtml(){
+  const wanted=fusionWanted();
+  const recipes=fusionRecipes().filter(recipe=>wanted.has(recipe.name));
+  if(!recipes.length)return'';
+  const rows=recipes.map(recipe=>{
+    const need=fusionNeed(recipe);
+    const parts=need.parts.map(part=>`<span class="fusion-outlook-part ${part.short?'is-short':'is-held'}">${escapeAttr(part.name)} <em>${part.have}/${part.need}</em></span>`).join('');
+    return `<li class="${need.ready?'is-ready':''}"><a href="#/fusion-lab"><strong>${escapeAttr(recipe.name)}</strong></a>
+      <span class="fusion-outlook-parts">${parts}</span>
+      <em class="fusion-outlook-state">${need.ready?'Ready to fuse':`Short ${need.missing.reduce((total,part)=>total+part.short,0)}`}</em></li>`;
+  }).join('');
+  const ready=recipes.filter(recipe=>fusionNeed(recipe).ready).length;
+  return `<section class="fusion-outlook"><header><div><p class="eyebrow">Droid Fusion</p><h2>Fusion Outlook</h2><p>What the droids you are tracking still need. Pick them in the <a href="#/fusion-lab">Fusion Lab</a>.</p></div><span class="fusion-outlook-count">${ready}/${recipes.length} ready</span></header><ul>${rows}</ul></section>`;
+}
+
 function fusionLabPage(){
   const recipes=fusionRecipes();
-  const owned=name=>{const d=fusionDroid(name);return d?state.owned.some(x=>x.name===d.name):false};
+  const wanted=fusionWanted();
   const rows=recipes.map(recipe=>{
-    const have=recipe.inputs.every(owned);
-    return `<article class="fusion-row ${have?'fusion-ready':''}" data-fusion-name="${escapeAttr(recipe.name.toLowerCase())}">
-      <div class="fusion-inputs">${recipe.inputs.map((input,index)=>`${index?'<span class="fusion-plus" aria-hidden="true">+</span>':''}${fusionCardHtml(input,'input')}`).join('')}</div>
+    const need=fusionNeed(recipe);
+    const stock=new Map(need.parts.map(part=>[part.name,part]));
+    const seen=new Map();
+    const inputs=recipe.inputs.map((input,index)=>{
+      // Two of the same droid share one entry, so the count shown is the pair's.
+      seen.set(input,(seen.get(input)||0)+1);
+      return `${index?'<span class="fusion-plus" aria-hidden="true">+</span>':''}${fusionCardHtml(input,'input',stock.get(input))}`;
+    }).join('');
+    const short=need.missing.map(part=>`${escapeAttr(part.name)} x${part.short}`).join(', ');
+    const isWanted=wanted.has(recipe.name);
+    return `<article class="fusion-row ${need.ready?'fusion-ready':''} ${isWanted?'fusion-wanted':''}" data-fusion-row="${escapeAttr(recipe.name)}">
+      <div class="fusion-inputs">${inputs}</div>
       <span class="fusion-equals" aria-hidden="true">=</span>
-      <div class="fusion-result">${fusionCardHtml(recipe.name,'result')}${have?'<em class="fusion-have">You own all three</em>':''}</div>
+      <div class="fusion-result">${fusionCardHtml(recipe.name,'result')}
+        <div class="fusion-state">${need.ready?'<em class="fusion-have">Ready to fuse</em>':`<em class="fusion-short">Need ${short}</em>`}
+        <button class="btn secondary fusion-track" type="button" data-fusion-want="${escapeAttr(recipe.name)}">${isWanted?'Tracking':'Track'}</button></div>
+      </div>
     </article>`;
   }).join('');
+  const ready=recipes.filter(recipe=>fusionNeed(recipe).ready).length;
   app.innerHTML=`<div class="breadcrumbs"><a href="#/">Homepage</a> / Fusion Lab</div>
-    <section class="dex-hero"><div><p class="eyebrow">Droid Fusion</p><h1>Fusion Lab</h1><p>Three droids go into the Fusion room and one comes out. Every combination the community has confirmed is here.</p></div>
-      <div class="dex-totals"><strong>${recipes.length}</strong><span>recipes</span></div></section>
-    <div class="dex-toolbar"><input id="fusionSearch" class="form-control" placeholder="Search a droid or a result…"><span id="fusionCount">${recipes.length} shown</span></div>
+    <section class="dex-hero"><div><p class="eyebrow">Droid Fusion</p><h1>Fusion Lab</h1><p>Three droids go into the Fusion room and one comes out. Track the ones you are working towards and they appear in the Fusion Outlook on your Base.</p></div>
+      <div class="dex-totals"><strong>${ready}/${recipes.length}</strong><span>ready to fuse</span></div></section>
+    <div class="dex-toolbar"><input id="fusionSearch" class="form-control" placeholder="Search a droid or a result…">
+      <div class="dex-filters"><label class="dex-switch"><input id="fusionReadyOnly" type="checkbox"><span class="dex-switch-track" aria-hidden="true"></span><span>Ready only</span></label>
+      <label class="dex-switch"><input id="fusionTrackedOnly" type="checkbox"><span class="dex-switch-track" aria-hidden="true"></span><span>Tracked only</span></label></div>
+      <span id="fusionCount">${recipes.length} shown</span></div>
     <div class="fusion-list" id="fusionList">${rows||'<div class="empty">No fusion recipes are loaded.</div>'}</div>`;
-  const search=document.querySelector('#fusionSearch');
-  if(search)search.oninput=()=>{
+  const search=document.querySelector('#fusionSearch'),readyOnly=document.querySelector('#fusionReadyOnly'),trackedOnly=document.querySelector('#fusionTrackedOnly');
+  const draw=()=>{
     const query=search.value.toLowerCase().trim();
     let shown=0;
     document.querySelectorAll('.fusion-row').forEach(row=>{
-      const match=!query||row.textContent.toLowerCase().includes(query);
+      const match=(!query||row.textContent.toLowerCase().includes(query))
+        &&(!readyOnly.checked||row.classList.contains('fusion-ready'))
+        &&(!trackedOnly.checked||row.classList.contains('fusion-wanted'));
       row.hidden=!match;
       if(match)shown++;
     });
     document.querySelector('#fusionCount').textContent=`${shown} shown`;
   };
+  search.oninput=draw;readyOnly.onchange=draw;trackedOnly.onchange=draw;
+  document.querySelectorAll('[data-fusion-want]').forEach(button=>button.onclick=()=>{
+    const on=toggleFusionWanted(button.dataset.fusionWant);
+    button.textContent=on?'Tracking':'Track';
+    button.closest('.fusion-row')?.classList.toggle('fusion-wanted',on);
+    draw();
+  });
 }
 function droidexPage(){let variant='DEFAULT',missingOnly=localStorage.getItem('droid-archive-dex-missing-only')==='1',nonFlawlessOnly=localStorage.getItem('droid-archive-dex-non-flawless-only')==='1';const render=()=>{const available=state.droids.filter(d=>variant==='DEFAULT'||!onlyDefaultVariant(d)),collected=state.droidex.filter(x=>x.variant===variant).length,flawless=flawlessCount();app.innerHTML=`<div class="breadcrumbs"><a href="#/">Homepage</a> / Droidex</div><section class="dex-hero"><div><p class="eyebrow">Collection tracker</p><h1>Droidex</h1><p>Collect every droid quality and mark your flawless finds.</p></div><div class="dex-totals"><strong>${state.droidex.length}/${droidexCapacity()}</strong><span>✦ ${flawless}/${flawlessCapacity()} flawless tracked</span><button class="btn secondary" id="transferDroidex">⇄ Import / Export</button></div></section><div class="variant-tabs dex-tabs">${VARIANTS.map(v=>`<button data-dex-variant="${v}" class="${v===variant?'active':''}">${variantText(v)}</button>`).join('')}</div><div class="dex-toolbar"><input id="dexSearch" class="form-control" placeholder="Search Droidex…"><div class="dex-filters"><label class="dex-switch"><input id="dexMissing" type="checkbox" ${missingOnly?'checked':''}><span class="dex-switch-track" aria-hidden="true"></span><span>Missing only</span></label><label class="dex-switch"><input id="dexNonFlawless" type="checkbox" ${nonFlawlessOnly?'checked':''}><span class="dex-switch-track" aria-hidden="true"></span><span>Non-flawless only</span></label></div><span>${collected}/${available.length} ${variantText(variant)} collected</span></div><div id="dexGrid" class="dex-grid"></div>`;const draw=()=>{const q=document.querySelector('#dexSearch').value.toLowerCase();const list=available.filter(d=>d.name.toLowerCase().includes(q)&&(!missingOnly||!droidexEntry(d.name,variant))&&(!nonFlawlessOnly||(!isIconic(d)&&!isDroidFlawless(d.name))));document.querySelector('#dexGrid').innerHTML=list.length?list.map(d=>{const entry=droidexEntry(d.name,variant),flawless=isDroidFlawless(d.name);return `<article class="dex-card ${entry?'collected':'missing'} ${flawless?'flawless':''}"><a href="#/droid/${slug(d.name)}">${picture(d,variant)}${rarityBadge(d.rarity)}<strong>${d.name}</strong></a><div><button class="dex-own" data-dex-own="${d.name}">${entry?'✓ Owned':'+ Add'}</button><button class="dex-flawless" data-dex-flawless="${d.name}" ${entry&&!isIconic(d)?'':'disabled'}>✦ ${flawless?'Flawless':'Flawless?'}</button></div></article>`}).join(''):'<p class="dex-empty">No droids match the active filters.</p>';document.querySelectorAll('[data-dex-own]').forEach(b=>b.onclick=()=>{toggleDroidex(b.dataset.dexOwn,variant);render()});document.querySelectorAll('[data-dex-flawless]').forEach(b=>b.onclick=()=>{toggleFlawless(b.dataset.dexFlawless,variant);render()})};document.querySelectorAll('[data-dex-variant]').forEach(b=>b.onclick=()=>{variant=b.dataset.dexVariant;render()});document.querySelector('#transferDroidex').onclick=()=>showDroidexTransferModal(render);document.querySelector('#dexSearch').oninput=draw;document.querySelector('#dexMissing').onchange=e=>{missingOnly=e.target.checked;localStorage.setItem('droid-archive-dex-missing-only',missingOnly?'1':'0');draw()};document.querySelector('#dexNonFlawless').onchange=e=>{nonFlawlessOnly=e.target.checked;localStorage.setItem('droid-archive-dex-non-flawless-only',nonFlawlessOnly?'1':'0');draw()};draw()};render()}
 function home(){const featured=[...state.droids].sort(()=>Math.random()-.5).slice(0,4);app.innerHTML=`<section class="hero"><p class="eyebrow">Community knowledgebase</p><h1>Droid Tycoon, decoded.</h1><p class="lead">Browse every droid and variant, compare production, then build your collection and see exactly which droids to keep for later rebirths.</p></section><div class="quick-grid"><a class="quick-card" href="#/droids"><b>Explore all ${state.droids.length} droids →</b><p>Costs, income, rarity, type, attributes and every quality.</p></a><a class="quick-card" href="#/base"><b>Build your base →</b><p>Add owned droids and calculate live, minute and hourly credits.</p></a></div><h2>Featured droids</h2><div class="droid-grid">${featured.map(card).join('')}</div><h2>About this archive</h2><p class="lead">This is an unofficial companion for the Fortnite island <strong>Droid Tycoon</strong>. Your base is saved only in this browser. The visual language takes cues from classic game wikis: compact facts, readable tables and information-first pages.</p>`}
@@ -753,13 +814,15 @@ function showDroidComparisonModal(){const root=document.querySelector('#modalRoo
 function attachCollapsiblePanels(){
   const actions=document.querySelector('.base-actions');
   const hasGroupOutlook=Boolean(document.querySelector('.group-outlook-panel'));
+  const hasFusionOutlook=Boolean(document.querySelector('.fusion-outlook'));
   // The modern UI adds the icon itself from the button's text, via
   // modernButtonIcon, so this must not carry one of its own or it gets two.
-  if(actions)actions.innerHTML=`<button class="btn secondary base-panel-toggle ${baseViewIsMap()?'active':''}" id="toggleBaseMap">${baseViewIsMap()?'Hide Map':'Show Map'}</button><button class="btn secondary base-panel-toggle" id="toggleHealthPanel">Hide Health</button><button class="btn secondary base-panel-toggle" id="toggleScrapPanel">Hide Scrap</button><button class="btn secondary base-panel-toggle" id="toggleChipSellPanel">Hide Chips</button><button class="btn secondary base-panel-toggle" id="toggleReplacementPanel">Hide Droid Calc</button><button class="btn secondary base-panel-toggle" id="toggleOutlookPanel">Hide Outlook</button>${hasGroupOutlook?'<button class="btn secondary base-panel-toggle" id="toggleGroupOutlookPanel">Hide Group Outlook</button>':''}<button class="btn secondary base-panel-toggle" id="toggleBaseDetail">Hide Detail</button><button class="btn secondary" id="transferBase" title="Import or export Base">Import / Export</button>`;
+  if(actions)actions.innerHTML=`<button class="btn secondary base-panel-toggle ${baseViewIsMap()?'active':''}" id="toggleBaseMap">${baseViewIsMap()?'Hide Map':'Show Map'}</button><button class="btn secondary base-panel-toggle" id="toggleHealthPanel">Hide Health</button><button class="btn secondary base-panel-toggle" id="toggleScrapPanel">Hide Scrap</button><button class="btn secondary base-panel-toggle" id="toggleChipSellPanel">Hide Chips</button><button class="btn secondary base-panel-toggle" id="toggleReplacementPanel">Hide Droid Calc</button><button class="btn secondary base-panel-toggle" id="toggleOutlookPanel">Hide Outlook</button>${hasGroupOutlook?'<button class="btn secondary base-panel-toggle" id="toggleGroupOutlookPanel">Hide Group Outlook</button>':''}${hasFusionOutlook?'<button class="btn secondary base-panel-toggle" id="toggleFusionOutlookPanel">Hide Fusion</button>':''}<button class="btn secondary base-panel-toggle" id="toggleBaseDetail">Hide Detail</button><button class="btn secondary" id="transferBase" title="Import or export Base">Import / Export</button>`;
   document.querySelectorAll('.slot-replacement-target').forEach(button=>button.remove());
   const outlook=document.querySelector('.rebirth-summary-box'),next=outlook?.querySelector('.outlook-next'),viewRebirths=outlook?.querySelector(':scope > a.btn');
   if(next&&viewRebirths){const label=next.querySelector(':scope > .outlook-label'),row=document.createElement('div');row.className='outlook-next-title';label?.before(row);if(label)row.append(label);row.append(viewRebirths)}
-  [{selector:'.base-health',button:'#toggleHealthPanel',key:'droid-archive-health-collapsed',label:'Health'},{selector:'.scrap-calculator:not(.chip-sell-calculator)',button:'#toggleScrapPanel',key:'droid-archive-scrap-collapsed',label:'Scrap'},{selector:'.chip-sell-calculator',button:'#toggleChipSellPanel',key:'droid-archive-chip-sell-collapsed',label:'Chips'},{selector:'.replacement-calculator',button:'#toggleReplacementPanel',key:'droid-archive-replacement-collapsed',label:'Droid Calc',defaultCollapsed:true},{selector:'.rebirth-summary-box',button:'#toggleOutlookPanel',key:'droid-archive-rebirth-outlook-collapsed',label:'Outlook'},{selector:'.group-outlook-panel',button:'#toggleGroupOutlookPanel',key:`droid-archive-group-outlook-collapsed:${state.cloud.user?.id||'local'}`,label:'Group Outlook'}].forEach(item=>{const panel=document.querySelector(item.selector),button=document.querySelector(item.button);if(!panel||!button)return;const update=collapsed=>{panel.classList.toggle('collapsed',collapsed);button.classList.toggle('active',!collapsed);button.textContent=`${collapsed?'Show':'Hide'} ${item.label}`;button.title=`${collapsed?'Show':'Hide'} ${item.label}`;button.setAttribute('aria-expanded',String(!collapsed));if(document.documentElement.dataset.uiStyle==='modern')requestAnimationFrame(()=>decorateCommandDeck('/base'))},stored=localStorage.getItem(item.key);update(stored===null?Boolean(item.defaultCollapsed):stored==='1');button.onclick=()=>{const collapsed=!panel.classList.contains('collapsed');localStorage.setItem(item.key,collapsed?'1':'0');update(collapsed)}});
+  [{selector:'.fusion-outlook',button:'#toggleFusionOutlookPanel',key:'droid-archive-fusion-outlook-collapsed',label:'Fusion'},
+   {selector:'.base-health',button:'#toggleHealthPanel',key:'droid-archive-health-collapsed',label:'Health'},{selector:'.scrap-calculator:not(.chip-sell-calculator)',button:'#toggleScrapPanel',key:'droid-archive-scrap-collapsed',label:'Scrap'},{selector:'.chip-sell-calculator',button:'#toggleChipSellPanel',key:'droid-archive-chip-sell-collapsed',label:'Chips'},{selector:'.replacement-calculator',button:'#toggleReplacementPanel',key:'droid-archive-replacement-collapsed',label:'Droid Calc',defaultCollapsed:true},{selector:'.rebirth-summary-box',button:'#toggleOutlookPanel',key:'droid-archive-rebirth-outlook-collapsed',label:'Outlook'},{selector:'.group-outlook-panel',button:'#toggleGroupOutlookPanel',key:`droid-archive-group-outlook-collapsed:${state.cloud.user?.id||'local'}`,label:'Group Outlook'}].forEach(item=>{const panel=document.querySelector(item.selector),button=document.querySelector(item.button);if(!panel||!button)return;const update=collapsed=>{panel.classList.toggle('collapsed',collapsed);button.classList.toggle('active',!collapsed);button.textContent=`${collapsed?'Show':'Hide'} ${item.label}`;button.title=`${collapsed?'Show':'Hide'} ${item.label}`;button.setAttribute('aria-expanded',String(!collapsed));if(document.documentElement.dataset.uiStyle==='modern')requestAnimationFrame(()=>decorateCommandDeck('/base'))},stored=localStorage.getItem(item.key);update(stored===null?Boolean(item.defaultCollapsed):stored==='1');button.onclick=()=>{const collapsed=!panel.classList.contains('collapsed');localStorage.setItem(item.key,collapsed?'1':'0');update(collapsed)}});
   const detailButton=document.querySelector('#toggleBaseDetail'),layout=document.querySelector('.base-layout-v2'),detailKey='droid-archive-base-detail-hidden';
   if(detailButton&&layout){const update=hidden=>{layout.classList.toggle('base-details-hidden',hidden);detailButton.classList.toggle('active',!hidden);detailButton.textContent=hidden?'Show Detail':'Hide Detail';detailButton.title=hidden?'Show full droid card details':'Use compact droid cards';detailButton.setAttribute('aria-pressed',String(hidden));if(document.documentElement.dataset.uiStyle==='modern')requestAnimationFrame(()=>decorateCommandDeck('/base'))};update(localStorage.getItem(detailKey)==='1');detailButton.onclick=()=>{const hidden=!layout.classList.contains('base-details-hidden');localStorage.setItem(detailKey,hidden?'1':'0');update(hidden)}}
   document.querySelector('#chooseBaseGroupProfiles')?.addEventListener('click',showBaseGroupProfilePicker);
@@ -979,7 +1042,7 @@ function combinedGroupOutlookHtml(){if(!cloudConnected()||!state.groups.workspac
 async function refreshConnectedGroupOutlooks(){const path=location.hash.slice(1).split('?')[0]||'/';if(!cloudConnected()||state.sharedView||!['/base','/groups'].includes(path)||document.hidden)return;try{await loadGroupWorkspace();document.querySelectorAll('.group-outlook-panel').forEach(panel=>{const current=panel.querySelector(':scope > .group-outlook-grid, :scope > .empty'),next=groupOutlookCardsHtml();if(current)current.outerHTML=next;else panel.insertAdjacentHTML('beforeend',next)})}catch{}}
 setInterval(refreshConnectedGroupOutlooks,30000);
 const personalBaseRebirthSummaryHtml=baseRebirthSummaryHtml;
-baseRebirthSummaryHtml=()=>`${personalBaseRebirthSummaryHtml()}${combinedGroupOutlookHtml()}`;
+baseRebirthSummaryHtml=()=>`${personalBaseRebirthSummaryHtml()}${combinedGroupOutlookHtml()}${fusionOutlookHtml()}`;
 let sharedProfileSaveTimer=null;
 function scheduleSharedProfileSave(){clearTimeout(sharedProfileSaveTimer);sharedProfileSaveTimer=setTimeout(()=>saveSharedProfileNow().catch(error=>{toast(error.message);decorateSharedView()}),900)}
 async function saveSharedProfileNow(){const view=state.sharedView;if(!view||!view.canEdit)return;clearTimeout(sharedProfileSaveTimer);if(view.saving)return view.savePromise.then(()=>state.sharedView===view?saveSharedProfileNow():undefined);view.saving=true;decorateSharedView();const profileData=profileDataFromState(),savedVersion=view.changeVersion||0;view.savePromise=(async()=>{const {data,error}=await supabaseClient.rpc('save_shared_droid_archive_profile',{target_group_id:view.groupId,target_owner_id:view.ownerId,target_profile_id:view.profileId,profile_data:profileData,expected_updated_at:view.profile.updatedAt||null});if(error)throw Error(error.message);view.profile.data=profileData;view.profile.updatedAt=data.updatedAt;view.savedVersion=savedVersion;const workspaceProfile=state.groups.workspace.find(group=>group.id===view.groupId)?.profiles?.find(profile=>profile.ownerId===view.ownerId&&profile.profileId===view.profileId);if(workspaceProfile){workspaceProfile.data=cloneProfileData(profileData);workspaceProfile.updatedAt=data.updatedAt}})();try{await view.savePromise}finally{view.saving=false;view.savePromise=null;decorateSharedView()}}
@@ -2540,11 +2603,11 @@ function route(){const path=location.hash.slice(1).split('?')[0]||'/',routeChang
 const routeWithoutActiveNavigation=route;
 const activeNavigationHref=path=>path.startsWith('/droid/')||path==='/droids'?'#/droids':path.startsWith('/nova-shop')?'#/nova-shop':`#${path}`;
 const commandIcon=name=>{
-  const paths={health:'M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z',scrap:'M5 8h14l-1 11H6L5 8Zm3-3h8l1 3H7l1-3Z',chips:'M5 8h14v8H5V8Zm3-3h8v3H8V5Zm1 7h6M12 9v6',calc:'M6 3h12v18H6V3Zm3 4h6M9 11h1m4 0h1m-6 4h1m4 0h1',outlook:'M4 5h16v14H4V5Zm4-2v4m8-4v4M7 10h3m2 0h5m-10 4h5',detail:'M4 6h16M4 12h16M4 18h10',map:'M9 4 3 6.5v13L9 17l6 2.5 6-2.5v-13L15 6.5 9 4Zm0 0v13m6-10.5v13',transfer:'M7 7h12m0 0-3-3m3 3-3 3M17 17H5m0 0 3 3m-3-3 3-3',add:'M12 5v14M5 12h14',credits:'M4 7h16v10H4V7Zm3 3h5m-5 4h3',clock:'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0-13v5l3 2',speed:'M5 16a8 8 0 1 1 14 0M12 12l4-4',droids:'M8 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm8 2a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3 20v-3a4 4 0 0 1 8 0v3m2 0v-3a4 4 0 0 1 8 0v3',hint:'M12 4a5 5 0 0 0-5 5v3.5L5 16h14l-2-3.5V9a5 5 0 0 0-5-5Zm-2.5 15a2.5 2.5 0 0 0 5 0',settings:'M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm0-12v2m0 13v2m8.5-8.5h-2m-13 0h-2m14.5-6-1.5 1.5m-9 9L6 18m12 0-1.5-1.5m-9-9L6 6'};
+  const paths={health:'M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z',scrap:'M5 8h14l-1 11H6L5 8Zm3-3h8l1 3H7l1-3Z',chips:'M5 8h14v8H5V8Zm3-3h8v3H8V5Zm1 7h6M12 9v6',calc:'M6 3h12v18H6V3Zm3 4h6M9 11h1m4 0h1m-6 4h1m4 0h1',outlook:'M4 5h16v14H4V5Zm4-2v4m8-4v4M7 10h3m2 0h5m-10 4h5',detail:'M4 6h16M4 12h16M4 18h10',map:'M9 4 3 6.5v13L9 17l6 2.5 6-2.5v-13L15 6.5 9 4Zm0 0v13m6-10.5v13',transfer:'M7 7h12m0 0-3-3m3 3-3 3M17 17H5m0 0 3 3m-3-3 3-3',add:'M12 5v14M5 12h14',credits:'M4 7h16v10H4V7Zm3 3h5m-5 4h3',clock:'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0-13v5l3 2',speed:'M5 16a8 8 0 1 1 14 0M12 12l4-4',droids:'M8 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm8 2a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3 20v-3a4 4 0 0 1 8 0v3m2 0v-3a4 4 0 0 1 8 0v3',hint:'M12 4a5 5 0 0 0-5 5v3.5L5 16h14l-2-3.5V9a5 5 0 0 0-5-5Zm-2.5 15a2.5 2.5 0 0 0 5 0',fusion:'M7 4v5l-3 5a4 4 0 0 0 4 6h8a4 4 0 0 0 4-6l-3-5V4M7 4h10M9 15h6',settings:'M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm0-12v2m0 13v2m8.5-8.5h-2m-13 0h-2m14.5-6-1.5 1.5m-9 9L6 18m12 0-1.5-1.5m-9-9L6 6'};
   return `<svg class="command-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="${paths[name]||paths.detail}"/></svg>`
 };
 function modernMetricIcon(label){label=label.toLowerCase();if(label.includes('minute'))return'clock';if(label.includes('hour'))return'speed';if(label.includes('droid'))return'droids';if(label.includes('rebirth'))return'outlook';return'credits'}
-function modernButtonIcon(button){const text=button.textContent.toLowerCase();if(text.includes('need'))return'hint';if(text.includes('map'))return'map';if(text.includes('health'))return'health';if(text.includes('scrap'))return'scrap';if(text.includes('chip'))return'chips';if(text.includes('droid calc')||text.includes('replacement'))return'calc';if(text.includes('group outlook')||text.includes('outlook'))return'outlook';if(text.includes('import')||text.includes('export'))return'transfer';if(text.includes('add'))return'add';return'detail'}
+function modernButtonIcon(button){const text=button.textContent.toLowerCase();if(text.includes('need'))return'hint';if(text.includes('fusion'))return'fusion';if(text.includes('map'))return'map';if(text.includes('health'))return'health';if(text.includes('scrap'))return'scrap';if(text.includes('chip'))return'chips';if(text.includes('droid calc')||text.includes('replacement'))return'calc';if(text.includes('group outlook')||text.includes('outlook'))return'outlook';if(text.includes('import')||text.includes('export'))return'transfer';if(text.includes('add'))return'add';return'detail'}
 function modernBaseSettings(){
   const heading=app.querySelector('.base-heading'),stats=app.querySelector('.base-top');
   if(!heading||!stats||app.querySelector('.modern-base-settings'))return;
@@ -2574,7 +2637,11 @@ function modernBaseStationLayout(){
   const layout=app.querySelector('.base-layout-v2');if(!layout||layout.querySelector('.modern-center-stations'))return;
   const blueprint=layout.querySelector(':scope>.blueprint-side'),special=layout.querySelector(':scope>.special-stations'),lounge=special?.querySelector('.station-lounge'),companion=special?.querySelector('.station-companion'),upgrade=special?.querySelector('.station-upgrade-chip');
   if(!blueprint||!special||!lounge||!companion||!upgrade)return;
-  const center=document.createElement('div'),support=document.createElement('div');center.className='modern-center-stations';support.className='modern-support-row';layout.classList.add('modern-station-layout');layout.insertBefore(center,blueprint);center.append(blueprint,support);support.append(companion,upgrade);special.replaceWith(lounge)
+  const center=document.createElement('div'),support=document.createElement('div');center.className='modern-center-stations';support.className='modern-support-row';layout.classList.add('modern-station-layout');layout.insertBefore(center,blueprint);center.append(blueprint,support);support.append(companion,upgrade);
+  // Whatever is left in the special row comes with the Lounge. Naming the three
+  // it knew about and dropping the container took the Fusion stations with it,
+  // and would take the next one added here too.
+  special.replaceWith(...special.children)
 }
 function modernDroidCardActions(){
   app.querySelectorAll('.base-slot.occupied').forEach(card=>{
