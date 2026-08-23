@@ -213,8 +213,10 @@ function futureUpgradeCostForUnit(unit,d){if(!d)return 0;const requirements=(sta
 function optimiseStorageKeepScore(item){const d=state.droids.find(x=>x.name===item.unit.name),income=d?.variants[item.unit.variant]?.income||0;if(optimiseFreeBuildMode()==='rarity-income')return rarityRank(d)*1e9+income;if(optimiseFreeBuildMode()==='unused-income')return income;return -futureUpgradeCostForUnit(item.unit,d)}
 function droidCycleStatus(d,ownedVariant,selected=true){const requirements=(state.rebirths[state.cycle]||[]).flatMap(r=>(r.requiredDroids||[]).filter(i=>i.droidName===d.name).map(i=>({at:r.to,variant:i.variant}))),future=requirements.filter(r=>r.at>state.rebirth&&requirementWithinGoal(r)),next=future.find(r=>r.at===state.rebirth+1),later=future.filter(r=>r.at>state.rebirth+1);if(!selected&&future.length)return{kind:'unused',label:'Duplicate · not used for rebirth'};if(next){const enough=VARIANTS.indexOf(ownedVariant)>=VARIANTS.indexOf(next.variant),chips=chipsToVariant(d,ownedVariant,next.variant);return enough?{kind:'current',label:`Next R: ${next.at} ${variantText(next.variant)}`}:{kind:'current-short',label:`Next R: ${next.at} · Upgrade to ${variantText(next.variant)} · ${fmt(chips)} chips`}}if(!later.length)return{kind:'unused',label:'No further rebirth use'};const max=later.reduce((best,item)=>VARIANTS.indexOf(item.variant)>VARIANTS.indexOf(best.variant)?item:best,later[0]),enough=VARIANTS.indexOf(ownedVariant)>=VARIANTS.indexOf(max.variant),chips=chipsToVariant(d,ownedVariant,max.variant),rebirths=[...new Set(later.map(item=>item.at))].join(', ');return enough?{kind:'ready',label:`Ready through R: ${max.at} ${variantText(max.variant)}`}:{kind:'upgrade',label:`R: ${rebirths} · Upgrade to ${variantText(max.variant)} · ${fmt(chips)} chips`}}
 const FUSION_REBIRTH=3;
-const FUSION_TANKS=2;   // Fusion Tank 1 and 2, each adding one Fusion Build slot
-const SLOT_RULES={FUSION:{initial:0,unlocks:Array(3).fill(FUSION_REBIRTH)},FUSION_BUILD:{initial:0,unlocks:[...Array(3).fill(FUSION_REBIRTH),...Array(FUSION_TANKS).fill(99)]},WORKER:{initial:4,unlocks:[1,4,7,10,12,14,16]},ASTROMECH:{initial:3,unlocks:[2,5,8,11,13,15]},BATTLE:{initial:2,unlocks:[3,6,9,17,18,19,20,21,22]},BUILD:{initial:1,unlocks:[1,2]},LOUNGE:{initial:5,unlocks:Array(8).fill(99)},COMPANION:{initial:2,unlocks:[]},UPGRADE_CHIP:{initial:1,unlocks:[]}};
+// Three Fusion Build slots, unlocked three different ways: the first comes with
+// the room, the second with Fusion Tank 1, the third with Fusion Tank 2.
+const FUSION_BUILD_SLOTS=3;
+const SLOT_RULES={FUSION:{initial:0,unlocks:Array(3).fill(FUSION_REBIRTH)},FUSION_BUILD:{initial:0,unlocks:[FUSION_REBIRTH,99,99]},WORKER:{initial:4,unlocks:[1,4,7,10,12,14,16]},ASTROMECH:{initial:3,unlocks:[2,5,8,11,13,15]},BATTLE:{initial:2,unlocks:[3,6,9,17,18,19,20,21,22]},BUILD:{initial:1,unlocks:[1,2]},LOUNGE:{initial:5,unlocks:Array(8).fill(99)},COMPANION:{initial:2,unlocks:[]},UPGRADE_CHIP:{initial:1,unlocks:[]}};
 // Astromech slots 1, 3, 5, 7 and 9 send droids on missions; the rest just earn.
 // Mission slots are numbered as the Base shows them, so these are the indices.
 const ASTROMECH_MISSION_SLOTS=[0,2,4,6,8];
@@ -276,7 +278,7 @@ const loungeNovaSlots=()=>Math.max(novaLevelFor('lounge-slot'),state.loungePurch
 const blueprintStorageSlots=()=>novaLevelFor('blueprint-storage');
 const loungeSlotMeta=index=>index<5?{kind:'base',label:'Lounge slot'}:index<9?{kind:'rebirth',rebirth:index+12,label:`Unlocks at Rebirth ${index+12}`}:{kind:'nova',level:index-8,label:`Nova Shop Lounge Slot ${index-8}`};
 const loungeSlotLabel=index=>loungeSlotMeta(index).label;
-const lockedSlotLabel=(type,index)=>type==='COMPANION'&&index===1?'Unlock Second Companion in Nova Shop':type==='UPGRADE_CHIP'?'Unlock Upgrade Chip Station in Nova Shop':type==='LOUNGE'?loungeSlotLabel(index):`Unlocks at Rebirth ${slotUnlockRebirth(type,index)}`;
+const lockedSlotLabel=(type,index)=>type==='FUSION_BUILD'&&fusionBuildTank(index)?`Unlock Fusion Tank ${index} in Nova Shop or Cantina`:type==='FUSION'||type==='FUSION_BUILD'?`Unlocks at Rebirth ${FUSION_REBIRTH}`:type==='COMPANION'&&index===1?'Unlock Second Companion in Nova Shop':type==='UPGRADE_CHIP'?'Unlock Upgrade Chip Station in Nova Shop':type==='LOUNGE'?loungeSlotLabel(index):`Unlocks at Rebirth ${slotUnlockRebirth(type,index)}`;
 const loungeDivider=index=>index===5?'<div class="upper-level-divider"><span>Upper Level</span></div>':index===9?'<div class="upper-level-divider"><span>Nova Shop</span></div>':'';
 // The Firing Range gained a second floor with the Rebirth 17-22 Battle slots.
 // Battle is the only station split over two floors, so a slot number on its own
@@ -289,14 +291,15 @@ const stationSlotLabel=(station,index)=>`${stationName(station)} ${index+1}${flo
 const slotDivider=(type,index)=>type==='LOUNGE'?loungeDivider(index):type==='BATTLE'&&index===BATTLE_UPSTAIRS_FROM?'<div class="upper-level-divider"><span>Second Floor</span></div>':'';
 const slotPurchaseKey=(type,index)=>`${type}:${index}`;
 function slotUnlockRebirth(type,index){if(type==='LOUNGE'){const meta=loungeSlotMeta(index);return meta.kind==='rebirth'?meta.rebirth:null}const rule=SLOT_RULES[type];return rule&&index>=rule.initial?rule.unlocks[index-rule.initial]??null:null}
-const fusionTankSlots=()=>Math.min(FUSION_TANKS,novaLevelFor('fusion-tank-1')+novaLevelFor('fusion-tank-2'));
+// The tank that unlocks a given Fusion Build slot, or null for the first one,
+// which comes with the room itself.
+const fusionBuildTank=index=>index===0?null:`fusion-tank-${index}`;
 function isSlotEligible(type,index,rebirth=state.rebirth){if(type==='FUSION'||type==='FUSION_BUILD'){
     // Nothing in the Fusion room exists before the room does.
     if(rebirth<FUSION_REBIRTH)return false;
-    if(index<3)return true;
-    // The extra Fusion Build slots are the tanks: bought in the Nova Shop or the
-    // Cantina, and still gated behind the room being open.
-    return type==='FUSION_BUILD'&&index-3<fusionTankSlots();
+    if(type==='FUSION')return index<3;
+    const tank=fusionBuildTank(index);
+    return index<FUSION_BUILD_SLOTS&&(!tank||novaLevelFor(tank)>=1);
   }
   if(type==='LOUNGE'){const meta=loungeSlotMeta(index);return meta.kind==='base'||meta.kind==='rebirth'&&rebirth>=meta.rebirth||meta.kind==='nova'&&loungeNovaSlots()>=meta.level}if(type==='COMPANION')return index===0||index===1&&novaLevelFor('companion-slot')>=1;if(type==='UPGRADE_CHIP')return index===0&&novaLevelFor('upgrade-chip-station')>=1;const rule=SLOT_RULES[type];if(!rule)return false;if(index<rule.initial)return true;const unlock=slotUnlockRebirth(type,index);return unlock!==null&&rebirth>=unlock}
 const isSlotPurchased=(type,index)=>slotUnlockRebirth(type,index)===null||state.purchasedSlots.includes(slotPurchaseKey(type,index));
@@ -393,13 +396,31 @@ function fusionCardHtml(name,role,stock){
     ? `<a class="fusion-card fusion-${role}" href="#/droid/${slug(d.name)}">${inner}</a>`
     : `<div class="fusion-card fusion-${role} is-unknown">${inner}</div>`;
 }
-// What the droids you are tracking still need. Nothing tracked means nothing to
-// say, so the panel stays out of the way until you have picked something in the
-// Fusion Lab.
+// What the droids you are tracking still need. It renders even with nothing
+// tracked: an empty panel that says where to pick some is findable, whereas a
+// panel that only appears once you have already found the Fusion Lab is not —
+// and its Hide button cannot exist before the panel does.
+// Every recipe a droid is an ingredient for, with the rest of that recipe's
+// ingredients and whether you hold them. Shown in the droid picker so choosing
+// what to put in a Fusion slot does not mean going and looking it up.
+function fusionUsesHtml(name){
+  const uses=fusionRecipes().filter(recipe=>recipe.inputs.includes(name));
+  if(!uses.length)return'';
+  const rows=uses.map(recipe=>{
+    const need=fusionNeed(recipe);
+    const others=need.parts.filter(part=>part.name!==name)
+      .map(part=>`<em class="${part.short?'is-short':'is-held'}">${escapeAttr(part.name)}${part.need>1?` x${part.need}`:''}</em>`).join(' + ');
+    return `<span class="fusion-use ${need.ready?'is-ready':''}"><b>${escapeAttr(recipe.name)}</b>${others?` &larr; ${others}`:''}</span>`;
+  }).join('');
+  return `<small class="fusion-uses">${rows}</small>`;
+}
+
 function fusionOutlookHtml(){
   const wanted=fusionWanted();
-  const recipes=fusionRecipes().filter(recipe=>wanted.has(recipe.name));
-  if(!recipes.length)return'';
+  const all=fusionRecipes();
+  if(!all.length)return'';
+  const recipes=all.filter(recipe=>wanted.has(recipe.name));
+  if(!recipes.length)return`<section class="fusion-outlook"><header><div><p class="eyebrow">Droid Fusion</p><h2>Fusion Outlook</h2><p>Nothing tracked yet. Pick the droids you are working towards in the <a href="#/fusion-lab">Fusion Lab</a> and what they still need shows up here.</p></div></header></section>`;
   const rows=recipes.map(recipe=>{
     const need=fusionNeed(recipe);
     const parts=need.parts.map(part=>`<span class="fusion-outlook-part ${part.short?'is-short':'is-held'}">${escapeAttr(part.name)} <em>${part.have}/${part.need}</em></span>`).join('');
@@ -1138,7 +1159,7 @@ renderBaseSidebar=rerender=>{
   if(modeLabel){const labelHelp='Choose which droids Optimise is allowed to sell while trying to free Build slots.';modeLabel.title=labelHelp;modeLabel.insertAdjacentHTML('afterbegin',`<span class="setting-label-row"><span>Sell priority</span><span class="setting-help" tabindex="0" title="${labelHelp}" aria-label="${labelHelp}">?</span></span>`);for(const node of [...modeLabel.childNodes])if(node.nodeType===Node.TEXT_NODE&&node.textContent.trim()==='Sell priority')node.remove();const note=modeLabel.querySelector('small');if(note)note.textContent=optimiseFreeBuildModeHelp(mode)}
 };
 const pickerMultiAddEnabled=()=>localStorage.getItem('droid-archive-picker-multi-add')!=='0';
-function showSlotPicker(station,onDone,slot){const root=document.querySelector('#modalRoot'),allowed=station==='UPGRADE_CHIP'?state.droids.filter(d=>UPGRADE_CHIP_RATES[d.rarity]):state.droids,productive=PRODUCTIVE_STATIONS.includes(station),hint=productive?'Any droid can use this station. Matching the droid’s type grants it +10% credits.':station==='UPGRADE_CHIP'?'The assigned droid produces Upgrade Chips instead of credits while you are online. The station stores up to one hour of chips.':'This workstation stores a droid without contributing to Base credit production.';root.innerHTML=`<div class="modal-backdrop"><section class="modal slot-picker" role="dialog" aria-modal="true"><p class="eyebrow">${station==='BUILD'?'Universal build':stationName(station)} slot</p><h2>Choose ${station==='UPGRADE_CHIP'?'a rated':'any'} droid</h2><p class="picker-hint">${hint}</p><label class="picker-mode"><input id="pickerMultiAdd" type="checkbox" ${pickerMultiAddEnabled()?'checked':''}><span><strong>Multi-add</strong><small>Keep this picker open until the station is full or you press Esc.</small></span></label><input id="slotSearch" class="form-control picker-search" placeholder="Search droids…" autofocus><div id="pickerResults" class="picker-results"></div><button class="btn ghost" id="cancelPicker">Cancel</button></section></div>`;const draw=()=>{const q=root.querySelector('#slotSearch').value.toLowerCase();root.querySelector('#pickerResults').innerHTML=allowed.filter(d=>d.name.toLowerCase().includes(q)).map(d=>`<button class="picker-droid ${d.type===station?'type-match':''}" data-name="${d.name}"><span>${picture(d)}</span><b>${d.name}</b><small>${rarityText(d.rarity)} &middot; ${d.type}${productive&&d.type===station?' &middot; +10%':''}</small></button>`).join('')||'<p class="roster-empty">No matching droids.</p>';root.querySelectorAll('.picker-droid').forEach(b=>b.onclick=()=>showVariantChoice(b.dataset.name,station,onDone,slot))};root.querySelector('#pickerMultiAdd').onchange=e=>localStorage.setItem('droid-archive-picker-multi-add',e.target.checked?'1':'0');root.querySelector('#slotSearch').oninput=draw;root.querySelector('#cancelPicker').onclick=()=>root.innerHTML='';draw()}
+function showSlotPicker(station,onDone,slot){const root=document.querySelector('#modalRoot'),allowed=station==='UPGRADE_CHIP'?state.droids.filter(d=>UPGRADE_CHIP_RATES[d.rarity]):state.droids,productive=PRODUCTIVE_STATIONS.includes(station),hint=productive?'Any droid can use this station. Matching the droid’s type grants it +10% credits.':station==='UPGRADE_CHIP'?'The assigned droid produces Upgrade Chips instead of credits while you are online. The station stores up to one hour of chips.':'This workstation stores a droid without contributing to Base credit production.';root.innerHTML=`<div class="modal-backdrop"><section class="modal slot-picker" role="dialog" aria-modal="true"><p class="eyebrow">${station==='BUILD'?'Universal build':stationName(station)} slot</p><h2>Choose ${station==='UPGRADE_CHIP'?'a rated':'any'} droid</h2><p class="picker-hint">${hint}</p><label class="picker-mode"><input id="pickerMultiAdd" type="checkbox" ${pickerMultiAddEnabled()?'checked':''}><span><strong>Multi-add</strong><small>Keep this picker open until the station is full or you press Esc.</small></span></label><input id="slotSearch" class="form-control picker-search" placeholder="Search droids…" autofocus><div id="pickerResults" class="picker-results"></div><button class="btn ghost" id="cancelPicker">Cancel</button></section></div>`;const draw=()=>{const q=root.querySelector('#slotSearch').value.toLowerCase();root.querySelector('#pickerResults').innerHTML=allowed.filter(d=>d.name.toLowerCase().includes(q)).map(d=>`<button class="picker-droid ${d.type===station?'type-match':''}" data-name="${d.name}"><span>${picture(d)}</span><b>${d.name}</b><small>${rarityText(d.rarity)} &middot; ${d.type}${productive&&d.type===station?' &middot; +10%':''}</small>${fusionUsesHtml(d.name)}</button>`).join('')||'<p class="roster-empty">No matching droids.</p>';root.querySelectorAll('.picker-droid').forEach(b=>b.onclick=()=>showVariantChoice(b.dataset.name,station,onDone,slot))};root.querySelector('#pickerMultiAdd').onchange=e=>localStorage.setItem('droid-archive-picker-multi-add',e.target.checked?'1':'0');root.querySelector('#slotSearch').oninput=draw;root.querySelector('#cancelPicker').onclick=()=>root.innerHTML='';draw()}
 // Every modal that has a search box behaves the same way: it takes focus the
 // moment it opens, Enter picks the top result, Escape closes it. Driven off a
 // mutation observer rather than each call site so new modals get it for free.
