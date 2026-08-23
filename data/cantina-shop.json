@@ -166,6 +166,37 @@
         "Each wave has a 10% chance to upgrade Blueprints it passes through to Galactic.",
         "Guarantees one upgrade per wave."
       ]
+    },
+    {
+      "id": "fusion-pack",
+      "name": "Fusion Pack",
+      "category": "packs",
+      "vbucksCost": null,
+      "icon": "assets/nova-shop/T_Icon_FusionTank.png",
+      "description": "Everything needed to get the Fusion room running.",
+      "details": [
+        "3 Fusion Rush Tokens",
+        "1 Level of Fusion Tank",
+        "3 Levels of Fusion Efficiency"
+      ],
+      "novaUnlocks": [
+        "fusion-tank-1",
+        "fusion-speed"
+      ]
+    },
+    {
+      "id": "fusion-tank-2",
+      "name": "Fusion Tank 2",
+      "category": "packs",
+      "vbucksCost": 800,
+      "icon": "assets/nova-shop/T_Icon_FusionTank.png",
+      "description": "A second Fusion Tank, which is another Fusion Build slot.",
+      "details": [
+        "1 Fusion Tank"
+      ],
+      "novaUnlocks": [
+        "fusion-tank-2"
+      ]
     }
   ]
 }
