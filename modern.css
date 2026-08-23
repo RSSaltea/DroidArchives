@@ -227,13 +227,16 @@ html[data-ui-style="modern"] .station-battle{grid-column:auto}
 html[data-ui-style="modern"] .station-battle .slot-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 html[data-ui-style="modern"] .station{border-radius:8px;background:linear-gradient(145deg,#121b28,#0e1621);box-shadow:var(--deck-inset),0 8px 24px rgba(0,0,0,.12)}
 html[data-ui-style="modern"] .station>header{min-height:44px}
+html[data-ui-style="modern"] .station-fuse{min-height:23px;height:23px;padding:0 11px;border-radius:5px;font-size:10px;line-height:1}
 html[data-ui-style="modern"] .base-slot{border-width:1px;background:linear-gradient(145deg,#171a22,#251419)}
 html[data-ui-style="modern"] .base-layout-v2.modern-station-layout{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:start;gap:10px}
 html[data-ui-style="modern"] .modern-station-layout>.typed-stations{grid-column:1/-1}
-html[data-ui-style="modern"] .modern-station-layout>.build-side{grid-column:1;min-width:0;margin:0}
-html[data-ui-style="modern"] .modern-station-layout>.build-side .station{height:auto}
-html[data-ui-style="modern"] .modern-center-stations{grid-column:2;display:grid;grid-template-columns:minmax(0,1fr);min-width:0;align-content:start;gap:10px}
+html[data-ui-style="modern"] .modern-center-stations>.build-side{grid-column:1;min-width:0;margin:0}
+html[data-ui-style="modern"] .modern-center-stations>.build-side .station{height:auto}
+html[data-ui-style="modern"] .modern-center-stations{grid-column:1;display:grid;grid-template-columns:minmax(0,1fr);min-width:0;align-content:start;gap:10px}
 html[data-ui-style="modern"] .modern-center-stations>.blueprint-side{grid-column:1;min-width:0;margin:0}
+html[data-ui-style="modern"] .modern-fuse-stations{grid-column:2;display:grid;grid-template-columns:minmax(0,1fr);min-width:0;align-content:start;gap:10px}
+html[data-ui-style="modern"] .modern-fuse-stations>.station{grid-column:1;min-width:0;min-height:0;margin:0}
 html[data-ui-style="modern"] .modern-support-row{grid-column:1;display:grid;grid-template-columns:1fr 1fr;align-items:start;gap:10px}
 html[data-ui-style="modern"] .modern-support-row>.station{min-width:0;min-height:0}
 html[data-ui-style="modern"] .modern-support-row>.station>header{min-height:58px;align-items:flex-start;flex-direction:column;justify-content:center;gap:3px;padding:8px 10px}
@@ -328,6 +331,20 @@ html[data-ui-style="modern"] .nova-upgrade-row{min-height:82px;border-radius:7px
 html[data-ui-style="modern"] .nova-detail-panel{margin:18px;border-color:#47758c;border-radius:8px;background:radial-gradient(circle at 100% 0,rgba(68,197,156,.09),transparent 34%),linear-gradient(145deg,#101a26,#090f17)}
 @media(max-width:900px){html[data-ui-style="modern"] .nova-command-grid{grid-template-columns:1fr}html[data-ui-style="modern"] .nova-category-rail{grid-template-columns:repeat(7,120px)}html[data-ui-style="modern"] .nova-catalogue{border-right:0;border-bottom:1px solid #2b3a49}}
 
+/* Measured fold: the nav folds away as soon as its links stop fitting. */
+@media(min-width:1181px){
+html[data-ui-style="modern"][data-nav-fit="collapsed"] .site-header nav{display:none}
+html[data-ui-style="modern"][data-nav-fit="collapsed"] .menu-button{display:block;margin-left:auto}
+html[data-ui-style="modern"][data-nav-fit="collapsed"] .header-cloud{margin-left:0}
+html[data-ui-style="modern"][data-nav-fit="collapsed"] .layout{display:block}
+html[data-ui-style="modern"][data-nav-fit="collapsed"] .sidebar{display:none;position:fixed;top:64px;right:12px;bottom:auto;left:auto;z-index:40;width:min(410px,calc(100vw - 24px));height:auto;max-height:calc(100vh - 82px);overflow-y:auto;box-shadow:20px 0 55px rgba(0,0,0,.4)}
+html[data-ui-style="modern"][data-nav-fit="collapsed"] .sidebar.mobile-open{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;gap:5px;padding:12px}
+html[data-ui-style="modern"][data-nav-fit="collapsed"] .sidebar.mobile-open .side-title:first-child{grid-column:1/-1;margin:1px 6px 7px;padding-bottom:9px;border-bottom:1px solid var(--line)}
+html[data-ui-style="modern"][data-nav-fit="collapsed"] .sidebar.mobile-open>a{min-height:39px;margin:0;padding:9px 11px;border:1px solid transparent;background:#0e1621}
+html[data-ui-style="modern"][data-nav-fit="collapsed"] .sidebar.mobile-open>a:hover{border-color:#3b4b61;background:#162231}
+html[data-ui-style="modern"][data-nav-fit="collapsed"] .sidebar.mobile-open>a.active{border-color:color-mix(in srgb,var(--green) 48%,var(--line));border-left:3px solid var(--green);background:linear-gradient(90deg,rgba(72,202,121,.13),#111b27)}
+html[data-ui-style="modern"][data-nav-fit="collapsed"] .sidebar.mobile-open>.side-rule,html[data-ui-style="modern"][data-nav-fit="collapsed"] .sidebar.mobile-open>.side-title:not(:first-child){display:none}
+}
 /* Responsive navigation is a compact command popover, not a full-height rail. */
 @media(max-width:1180px){
   html[data-ui-style="modern"] .sidebar.mobile-open{display:grid;position:fixed;top:70px;right:12px;bottom:auto;left:auto;width:min(410px,calc(100vw - 24px));height:auto;max-height:calc(100vh - 82px);grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;gap:5px;padding:12px;overflow-y:auto;border:1px solid #3b4b61;border-radius:10px;background:linear-gradient(145deg,#131d2a,#0b121b);box-shadow:0 24px 70px rgba(0,0,0,.62)}
@@ -338,8 +355,8 @@ html[data-ui-style="modern"] .nova-detail-panel{margin:18px;border-color:#47758c
   html[data-ui-style="modern"] .sidebar.mobile-open>.side-rule,html[data-ui-style="modern"] .sidebar.mobile-open>.side-title:not(:first-child){display:none}
 }
 @media(max-width:520px){html[data-ui-style="modern"] .sidebar.mobile-open{top:64px;right:8px;width:calc(100vw - 16px);max-height:calc(100vh - 72px);grid-template-columns:1fr}}
-@media(max-width:950px){html[data-ui-style="modern"] .base-layout-v2.modern-station-layout{grid-template-columns:1fr 1.25fr}html[data-ui-style="modern"] .modern-station-layout>.typed-stations,html[data-ui-style="modern"] .modern-station-layout>.roster-wide{grid-column:1/-1}html[data-ui-style="modern"] .modern-station-layout>.build-side{grid-column:1}html[data-ui-style="modern"] .modern-center-stations{grid-column:2}html[data-ui-style="modern"] .modern-station-layout>.station-lounge{grid-column:1/-1}html[data-ui-style="modern"] .modern-station-layout>.station-lounge .slot-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
-@media(max-width:650px){html[data-ui-style="modern"] .base-layout-v2.modern-station-layout{grid-template-columns:1fr}html[data-ui-style="modern"] .modern-station-layout>.typed-stations,html[data-ui-style="modern"] .modern-station-layout>.build-side,html[data-ui-style="modern"] .modern-center-stations,html[data-ui-style="modern"] .modern-station-layout>.station-lounge,html[data-ui-style="modern"] .modern-station-layout>.roster-wide{grid-column:1}html[data-ui-style="modern"] .modern-support-row{grid-template-columns:1fr 1fr}html[data-ui-style="modern"] .modern-station-layout>.station-lounge .slot-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:950px){html[data-ui-style="modern"] .base-layout-v2.modern-station-layout{grid-template-columns:1fr 1.25fr}html[data-ui-style="modern"] .modern-station-layout>.typed-stations,html[data-ui-style="modern"] .modern-station-layout>.roster-wide{grid-column:1/-1}html[data-ui-style="modern"] .modern-center-stations{grid-column:1}html[data-ui-style="modern"] .modern-fuse-stations{grid-column:2}html[data-ui-style="modern"] .modern-station-layout>.station-lounge{grid-column:1/-1}html[data-ui-style="modern"] .modern-station-layout>.station-lounge .slot-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:650px){html[data-ui-style="modern"] .base-layout-v2.modern-station-layout{grid-template-columns:1fr}html[data-ui-style="modern"] .modern-station-layout>.typed-stations,html[data-ui-style="modern"] .modern-center-stations,html[data-ui-style="modern"] .modern-fuse-stations,html[data-ui-style="modern"] .modern-station-layout>.station-lounge,html[data-ui-style="modern"] .modern-station-layout>.roster-wide{grid-column:1}html[data-ui-style="modern"] .modern-support-row{grid-template-columns:1fr 1fr}html[data-ui-style="modern"] .modern-station-layout>.station-lounge .slot-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
 /* Keep account/profile access visible at every phone width. This late override is
    intentional: the Command Deck fidelity rules above otherwise restore the

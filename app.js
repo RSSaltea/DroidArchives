@@ -2708,6 +2708,7 @@ function syncSlotLabNav(){
     const before=host.querySelector('[href="#/donate"]');
     if(before)before.before(link);else host.append(link);
   }
+  scheduleHeaderNav(true)
 }
 
 function route(){const path=location.hash.slice(1).split('?')[0]||'/',routeChanged=path!==lastRoutePath;lastRoutePath=path;if(path==='/todo'||path==='/donate'||path==='/groups')app.querySelector('.archive-timers')?.remove();document.querySelector('.sidebar').classList.remove('mobile-open');renderBaseSidebar(()=>route());renderCloudHeader();syncSlotLabNav();if(path==='/')home();else if(path==='/droids')droidsPage();else if(path==='/droidex')droidexPage();else if(path==='/fusion-lab')fusionLabPage();else if(path==='/nova-shop')novaShopPage();else if(path.startsWith('/nova-shop/'))novaDetailPage(path.split('/')[2]);else if(path==='/cantina-shop')cantinaShopPage();else if(path==='/groups')groupsPage();else if(path==='/galactic-reports'&&GALACTIC_REPORTS_ENABLED)galacticReportsPage();else if(path==='/todo')todoPage();else if(path==='/donate')donatePage();else if(path==='/base')basePageV2();else if(path==='/droid-calc')droidCalcPage();else if(path==='/rebirth')rebirthPage();else if(path==='/crit-calc')critCalcPage();else if(path==='/slot-lab')slotLabPage();else if(path==='/optimise')optimisePage();else if(path==='/lucky-droid')luckyDroidPageV2();else if(path.startsWith('/droid/'))detailPage(path.split('/')[2]);else notFound();decorateSharedView();if(routeChanged){try{app.focus({preventScroll:true})}catch{app.focus()}scrollTo(0,0)}setTimeout(showPatchNotesOnce,80);publishCompanionState()}
@@ -2746,9 +2747,15 @@ function modernBaseSettings(){
 }
 function modernBaseStationLayout(){
   const layout=app.querySelector('.base-layout-v2');if(!layout||layout.querySelector('.modern-center-stations'))return;
-  const blueprint=layout.querySelector(':scope>.blueprint-side'),special=layout.querySelector(':scope>.special-stations'),lounge=special?.querySelector('.station-lounge'),companion=special?.querySelector('.station-companion'),upgrade=special?.querySelector('.station-upgrade-chip');
-  if(!blueprint||!special||!lounge||!companion||!upgrade)return;
-  const center=document.createElement('div'),support=document.createElement('div');center.className='modern-center-stations';support.className='modern-support-row';layout.classList.add('modern-station-layout');layout.insertBefore(center,blueprint);center.append(blueprint,support);support.append(companion,upgrade);
+  const build=layout.querySelector(':scope>.build-side'),blueprint=layout.querySelector(':scope>.blueprint-side'),special=layout.querySelector(':scope>.special-stations'),lounge=special?.querySelector('.station-lounge'),companion=special?.querySelector('.station-companion'),upgrade=special?.querySelector('.station-upgrade-chip');
+  if(!build||!blueprint||!special||!lounge||!companion||!upgrade)return;
+  const center=document.createElement('div'),support=document.createElement('div'),fuse=document.createElement('div');
+  center.className='modern-center-stations';support.className='modern-support-row';fuse.className='modern-fuse-stations';
+  layout.classList.add('modern-station-layout');
+  // Build and the storage stations share one column so nothing can drift out of
+  // line between them, and the Fusion pair takes the column storage used to own.
+  layout.insertBefore(center,build);center.append(build,blueprint,support);support.append(companion,upgrade);
+  layout.insertBefore(fuse,center.nextSibling);fuse.append(...special.querySelectorAll('.station-fusion,.station-fusion-build'));
   // Whatever is left in the special row comes with the Lounge. Naming the three
   // it knew about and dropping the container took the Fusion stations with it,
   // and would take the next one added here too.
@@ -2801,11 +2808,41 @@ function decorateCommandDeck(path){
   app.querySelectorAll('.toolbar,.dex-toolbar,.variant-tabs,.cantina-tabs').forEach(node=>node.classList.add('command-toolbar'))
   updateModernTimerScroll()
 }
-route=()=>{const path=location.hash.slice(1).split('?')[0]||'/',activeHref=activeNavigationHref(path);document.querySelectorAll('#nav a,.sidebar>a').forEach(link=>{const active=link.getAttribute('href')===activeHref;link.classList.toggle('active',active);if(active)link.setAttribute('aria-current','page');else link.removeAttribute('aria-current')});routeWithoutActiveNavigation();decorateCommandDeck(path);requestAnimationFrame(()=>{modernTimerCompactedAt=0;decorateCommandDeck(path)});setTimeout(()=>decorateCommandDeck(path),120)};
+route=()=>{const path=location.hash.slice(1).split('?')[0]||'/',activeHref=activeNavigationHref(path);document.querySelectorAll('#nav a,.sidebar>a').forEach(link=>{const active=link.getAttribute('href')===activeHref;link.classList.toggle('active',active);if(active)link.setAttribute('aria-current','page');else link.removeAttribute('aria-current')});routeWithoutActiveNavigation();decorateCommandDeck(path);requestAnimationFrame(()=>{modernTimerCompactedAt=0;decorateCommandDeck(path)});setTimeout(()=>decorateCommandDeck(path),120);scheduleHeaderNav(true)};
 function applyTheme(){document.documentElement.dataset.theme=state.theme;document.querySelector('#themeButton').textContent=state.theme==='dark'?'☀':'☾';document.querySelector('#themeButton').title=`Switch to ${state.theme==='dark'?'light':'dark'} mode`}
+// The top nav has to fold into the hamburger the moment its links stop fitting,
+// which is not a width anyone can hard-code: the Slot Lab link only exists for
+// its owner, so the same viewport holds a different number of links for
+// different people. Watch for the overflow itself instead, and leave the media
+// queries as the floor beneath it.
+let navFitFrame=0,navFitWidth=-1;
+function syncHeaderNav(force){
+  const header=document.querySelector('.site-header'),nav=document.querySelector('#nav'),root=document.documentElement;
+  if(!header||!nav)return;
+  // Folding the nav away leaves the header's own width untouched, so comparing
+  // against it both skips redundant work and stops the observer below from
+  // reacting to the fold it just caused.
+  if(!force&&header.clientWidth===navFitWidth)return;
+  navFitWidth=header.clientWidth;
+  // Measure with the nav laid out, or a folded nav reports no width at all and
+  // could never decide it has room to come back.
+  root.dataset.navFit='open';
+  if(getComputedStyle(nav).display==='none'){delete root.dataset.navFit;return}
+  // Two ways the links stop fitting, one per interface: Modern lets the nav be
+  // squashed until it clips its own links, Legacy holds the nav at full width
+  // and pushes the header icons off the edge instead.
+  if(nav.scrollWidth>nav.clientWidth+1||header.scrollWidth>header.clientWidth+1)root.dataset.navFit='collapsed';
+}
+const scheduleHeaderNav=force=>{cancelAnimationFrame(navFitFrame);navFitFrame=requestAnimationFrame(()=>syncHeaderNav(force))};
+// A resize can be handled before the new width has reached layout, and neither
+// a font swap nor a link appearing raises one at all, so the observer is what
+// makes this reliable: it only ever fires once the header has really changed.
+if(window.ResizeObserver)new ResizeObserver(()=>scheduleHeaderNav()).observe(document.querySelector('.site-header'));
+window.addEventListener('resize',()=>scheduleHeaderNav(true));
+document.fonts?.ready.then(()=>scheduleHeaderNav(true));
 const UI_STYLE_KEY='droid-archive-ui-style';
 function applyUiStyle(){const style=localStorage.getItem(UI_STYLE_KEY)==='legacy'?'legacy':'modern',button=document.querySelector('#uiStyleButton');document.documentElement.dataset.uiStyle=style;if(button){button.querySelector('strong').textContent=style==='modern'?'Modern':'Legacy';button.title=`Switch to ${style==='modern'?'Legacy':'Modern'} interface`;button.setAttribute('aria-label',button.title);button.setAttribute('aria-pressed',String(style==='modern'))}}
-applyUiStyle();applyTheme();renderCloudHeader();document.querySelector('#uiStyleButton').onclick=()=>{const next=document.documentElement.dataset.uiStyle==='modern'?'legacy':'modern';localStorage.setItem(UI_STYLE_KEY,next);applyUiStyle();route();requestAnimationFrame(updateTimerDocking);toast(`${next==='modern'?'Modern':'Legacy'} interface enabled`)};document.querySelector('#themeButton').onclick=()=>{state.theme=state.theme==='dark'?'light':'dark';save();applyTheme();renderCloudHeader()};document.querySelector('#menuButton').onclick=()=>{const sidebar=document.querySelector('.sidebar'),dropdown=document.querySelector('#cloudDropdown'),cloudButton=document.querySelector('#cloudMenuButton');if(dropdown){dropdown.hidden=true;cloudButton?.setAttribute('aria-expanded','false')}sidebar.classList.toggle('mobile-open')};document.addEventListener('click',()=>{const dropdown=document.querySelector('#cloudDropdown'),button=document.querySelector('#cloudMenuButton');if(dropdown){dropdown.hidden=true;button?.setAttribute('aria-expanded','false')}});document.querySelector('#globalSearch').addEventListener('keydown',e=>{if(e.key==='Enter'){location.hash='#/droids';setTimeout(()=>{const s=document.querySelector('#droidSearch');if(s){s.value=e.target.value;s.dispatchEvent(new Event('input'))}},20)}});window.addEventListener('hashchange',route);
+applyUiStyle();applyTheme();renderCloudHeader();scheduleHeaderNav(true);document.querySelector('#uiStyleButton').onclick=()=>{const next=document.documentElement.dataset.uiStyle==='modern'?'legacy':'modern';localStorage.setItem(UI_STYLE_KEY,next);applyUiStyle();route();requestAnimationFrame(updateTimerDocking);toast(`${next==='modern'?'Modern':'Legacy'} interface enabled`)};document.querySelector('#themeButton').onclick=()=>{state.theme=state.theme==='dark'?'light':'dark';save();applyTheme();renderCloudHeader()};document.querySelector('#menuButton').onclick=()=>{const sidebar=document.querySelector('.sidebar'),dropdown=document.querySelector('#cloudDropdown'),cloudButton=document.querySelector('#cloudMenuButton');if(dropdown){dropdown.hidden=true;cloudButton?.setAttribute('aria-expanded','false')}sidebar.classList.toggle('mobile-open')};document.addEventListener('click',()=>{const dropdown=document.querySelector('#cloudDropdown'),button=document.querySelector('#cloudMenuButton');if(dropdown){dropdown.hidden=true;button?.setAttribute('aria-expanded','false')}});document.querySelector('#globalSearch').addEventListener('keydown',e=>{if(e.key==='Enter'){location.hash='#/droids';setTimeout(()=>{const s=document.querySelector('#droidSearch');if(s){s.value=e.target.value;s.dispatchEvent(new Event('input'))}},20)}});window.addEventListener('hashchange',route);
 document.querySelector('#copyDiscord').onclick=async()=>{try{await navigator.clipboard.writeText('.saltea');toast('Discord username copied')}catch{toast('Discord: .saltea')}};
 const DATA_VERSION='2026-08-16-nova-crit-2';
 const loadJson=async path=>{const response=await fetch(`${path}${path.includes('?')?'&':'?'}v=${DATA_VERSION}`);if(!response.ok)throw Error(`Unable to load ${path}`);return response.json()};
