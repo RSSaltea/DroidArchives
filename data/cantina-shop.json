@@ -179,10 +179,10 @@
         "1 Level of Fusion Tank",
         "3 Levels of Fusion Efficiency"
       ],
-      "novaUnlocks": [
-        "fusion-tank",
-        "fusion-speed"
-      ]
+      "novaLevels": {
+        "fusion-tank": 1,
+        "fusion-speed": 3
+      }
     },
     {
       "id": "fusion-tank-2",
@@ -194,9 +194,9 @@
       "details": [
         "1 Fusion Tank"
       ],
-      "novaUnlocks": [
-        "fusion-tank"
-      ]
+      "novaLevels": {
+        "fusion-tank": 2
+      }
     }
   ]
 }

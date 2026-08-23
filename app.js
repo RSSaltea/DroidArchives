@@ -147,13 +147,12 @@ const flawlessCount=()=>new Set(state.droidex.filter(x=>x.flawless&&!isIconic(st
 const flawlessCapacity=()=>state.droids.filter(d=>!onlyDefaultVariant(d)).length;
 const effectiveMultiplier=()=>state.multiplier;
 const isIconic=d=>d?.rarity==='ICONIC'||d?.special?.onlyDefaultVariant;
-// Which droids have a DEFAULT square and nothing else. Deliberately separate
-// from isIconic: that also decides what never gets sold and what misses the
-// type-match bonus, and a fusion droid is an ordinary Worker/Astromech/Battle
-// in both of those. It just cannot be upgraded yet, so the Droidex has one
-// square for it rather than seven.
 const isFusion=d=>Boolean(d?.fusion);
-const onlyDefaultVariant=d=>isIconic(d)||isFusion(d);
+// Which droids have a DEFAULT square and nothing else. Fusion droids are NOT
+// among them: they come in every quality like anything else, you just cannot
+// upgrade one quality into the next. Only having a default square is a
+// different thing from only having a default *route in*.
+const onlyDefaultVariant=d=>isIconic(d);
 const droidexCapacity=()=>state.droids.reduce((total,d)=>total+(onlyDefaultVariant(d)?1:VARIANTS.length),0);
 const ICONIC_EFFECTS={'BB-8':'×2 Upgrade Chips on claim','MISTER BONES':'×2 Damage','IG-11 MARSHAL':'Blueprint Shield','DJ R-3X':'×2 World Quest Rewards','CB-23':'Secret Astromech Mission','R2-D2':'15% Astromech Mission Speed','C-3PO':'2× Droid Sell Value'};
 const iconicIncome=d=>isIconic(d)?(d.special?.incomePercent??0.15):0;
