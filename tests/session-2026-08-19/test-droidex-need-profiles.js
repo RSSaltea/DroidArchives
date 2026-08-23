@@ -13,7 +13,9 @@ const sandbox={console,window:{},
   localStorage:{getItem:k=>store.has(k)?store.get(k):null,setItem:(k,v)=>store.set(k,String(v)),removeItem:k=>store.delete(k)},
   VARIANTS:['DEFAULT','GOLD','DIAMOND','RAINBOW','BESKAR','GALACTIC'],
   normalizeDroidRows:rows=>rows.map(r=>({...r})),
-  isIconic:d=>d.name==='CB-23'};
+  // Fusion droids get one square too, by the same rule; CB-23 stands in for
+  // anything with a single Droidex square.
+  onlyDefaultVariant:d=>d.name==='CB-23'};
 sandbox.state={droids:[
     {name:'LEP',rarity:'MYTHIC'},
     {name:'IG',rarity:'MYTHIC'},
