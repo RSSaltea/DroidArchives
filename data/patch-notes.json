@@ -2,6 +2,27 @@
   "version": 1,
   "notes": [
     {
+      "id": "2026-08-23-fusion-lab-and-live-sync",
+      "date": "2026-08-23",
+      "title": "The Fusion room, a DJ Event timer, and one account everywhere",
+      "summary": "Droid Fusion is in: seventeen new droids, a Fusion Lab that tracks what you are building towards, and a Base that fuses them. Plus a timer for the weekly dance party and live sync between your browser and the companion.",
+      "changes": [
+        "Fusion Lab, a new page. Every confirmed combination is there: three droids in, one out. It shows how many of each ingredient you hold against how many the recipe wants, so a recipe wanting two of the same droid tells you whether you have both, not just one.",
+        "Seventeen fusion droids added to the archive with their income and value for every quality, and a Droidex square each. They take one square rather than seven because they cannot be upgraded yet.",
+        "Track the results you are working towards in the Fusion Lab, and a Fusion Outlook appears on your Base listing what each one still needs and which are ready to fuse.",
+        "The droid picker now says what each droid fuses into and what else that recipe wants, in green where you already hold it — so choosing what to put in a Fusion slot does not mean going to look it up.",
+        "Six new Base slots from Rebirth 3: three Fusion slots and three Fusion Build slots. The first Fusion Build slot comes with the room, the second with Fusion Tank 1 and the third with Fusion Tank 2.",
+        "A Fuse button on the Fusion station. It spends the three droids and puts the result into a free Fusion Build slot, which then builds the way any Build slot does.",
+        "Fusing a combination nobody has recorded asks what came out, and every fusion is logged. The Fusion Lab shows what each combination has produced and how often, so the numbers build up as people use it.",
+        "Nova Shop: Fusion Tank 1 and 2 at 300 Nova Crystals each, and Fusion Speed, which adds +1/sec of Droid Fusion per level and runs to level 50.",
+        "Cantina Shop: a Fusion Pack, and Fusion Tank 2 on its own for 800 V-Bucks.",
+        "DJ Event timer for the weekly dance party at the Sandcrawler, beside Stellar, Mythic and Galactic. It counts down in days, hours and minutes, and counts out the window while the event is running.",
+        "Signing in on one device now reaches the other. A change made in your browser shows up in the companion within a second, and the other way round, instead of waiting for a reload.",
+        "The companion's spawn alerts can check every profile you have, not just the one loaded — your own and any shared with you through a group — and say which of them needs the droid.",
+        "Droidex need-hints in the companion: when a spawn alerts, it says which of your profiles are still missing that exact quality."
+      ]
+    },
+    {
       "id": "2026-08-18-battle-floors-and-walking",
       "date": "2026-08-18",
       "title": "Battle floors, and a shorter walk round the Base",
