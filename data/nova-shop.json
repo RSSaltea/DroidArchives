@@ -2217,9 +2217,9 @@
       ]
     },
     {
-      "id": "fusion-tank-1",
-      "sourceId": "FT1",
-      "name": "Fusion Tank 1",
+      "id": "fusion-tank",
+      "sourceId": "FTK",
+      "name": "Fusion Tank",
       "category": "workshop",
       "icon": "assets/nova-shop/T_Icon_FusionTank.png",
       "description": "Unlocks an additional Fusion Tank, which is another Fusion Build slot. Available from Rebirth 3, once the Droid Fusion room is open.",
@@ -2228,21 +2228,11 @@
           "level": 1,
           "cost": 300,
           "reward": "1 Fusion Tank"
-        }
-      ]
-    },
-    {
-      "id": "fusion-tank-2",
-      "sourceId": "FT2",
-      "name": "Fusion Tank 2",
-      "category": "workshop",
-      "icon": "assets/nova-shop/T_Icon_FusionTank.png",
-      "description": "Unlocks an additional Fusion Tank, which is another Fusion Build slot. Available from Rebirth 3, once the Droid Fusion room is open.",
-      "levels": [
+        },
         {
-          "level": 1,
+          "level": 2,
           "cost": 300,
-          "reward": "1 Fusion Tank"
+          "reward": "2 Fusion Tanks"
         }
       ]
     },
@@ -2253,257 +2243,257 @@
       "category": "workshop",
       "uncapped": true,
       "icon": "assets/nova-shop/T_Icon_FusionSpeed.png",
-      "description": "Speeds up every Fusion Build slot by +1/sec per level.",
+      "description": "+1/sec Droid fusion progress per level.",
       "levels": [
         {
           "level": 1,
           "cost": 10,
-          "reward": "+1/sec Droid Fusion"
+          "reward": "+1/sec Droid fusion."
         },
         {
           "level": 2,
           "cost": 35,
-          "reward": "+2/sec Droid Fusion"
+          "reward": "+2/sec Droid fusion."
         },
         {
           "level": 3,
           "cost": 60,
-          "reward": "+3/sec Droid Fusion"
+          "reward": "+3/sec Droid fusion."
         },
         {
           "level": 4,
           "cost": 85,
-          "reward": "+4/sec Droid Fusion"
+          "reward": "+4/sec Droid fusion."
         },
         {
           "level": 5,
           "cost": 110,
-          "reward": "+5/sec Droid Fusion"
+          "reward": "+5/sec Droid fusion."
         },
         {
           "level": 6,
           "cost": 135,
-          "reward": "+6/sec Droid Fusion"
+          "reward": "+6/sec Droid fusion."
         },
         {
           "level": 7,
           "cost": 160,
-          "reward": "+7/sec Droid Fusion"
+          "reward": "+7/sec Droid fusion."
         },
         {
           "level": 8,
           "cost": 185,
-          "reward": "+8/sec Droid Fusion"
+          "reward": "+8/sec Droid fusion."
         },
         {
           "level": 9,
           "cost": 210,
-          "reward": "+9/sec Droid Fusion"
+          "reward": "+9/sec Droid fusion."
         },
         {
           "level": 10,
           "cost": 235,
-          "reward": "+10/sec Droid Fusion"
+          "reward": "+10/sec Droid fusion."
         },
         {
           "level": 11,
           "cost": 260,
-          "reward": "+11/sec Droid Fusion"
+          "reward": "+11/sec Droid fusion."
         },
         {
           "level": 12,
           "cost": 285,
-          "reward": "+12/sec Droid Fusion"
+          "reward": "+12/sec Droid fusion."
         },
         {
           "level": 13,
           "cost": 310,
-          "reward": "+13/sec Droid Fusion"
+          "reward": "+13/sec Droid fusion."
         },
         {
           "level": 14,
           "cost": 335,
-          "reward": "+14/sec Droid Fusion"
+          "reward": "+14/sec Droid fusion."
         },
         {
           "level": 15,
           "cost": 360,
-          "reward": "+15/sec Droid Fusion"
+          "reward": "+15/sec Droid fusion."
         },
         {
           "level": 16,
           "cost": 385,
-          "reward": "+16/sec Droid Fusion"
+          "reward": "+16/sec Droid fusion."
         },
         {
           "level": 17,
           "cost": 410,
-          "reward": "+17/sec Droid Fusion"
+          "reward": "+17/sec Droid fusion."
         },
         {
           "level": 18,
           "cost": 435,
-          "reward": "+18/sec Droid Fusion"
+          "reward": "+18/sec Droid fusion."
         },
         {
           "level": 19,
           "cost": 460,
-          "reward": "+19/sec Droid Fusion"
+          "reward": "+19/sec Droid fusion."
         },
         {
           "level": 20,
           "cost": 485,
-          "reward": "+20/sec Droid Fusion"
+          "reward": "+20/sec Droid fusion."
         },
         {
           "level": 21,
           "cost": 510,
-          "reward": "+21/sec Droid Fusion"
+          "reward": "+21/sec Droid fusion."
         },
         {
           "level": 22,
           "cost": 535,
-          "reward": "+22/sec Droid Fusion"
+          "reward": "+22/sec Droid fusion."
         },
         {
           "level": 23,
           "cost": 560,
-          "reward": "+23/sec Droid Fusion"
+          "reward": "+23/sec Droid fusion."
         },
         {
           "level": 24,
           "cost": 585,
-          "reward": "+24/sec Droid Fusion"
+          "reward": "+24/sec Droid fusion."
         },
         {
           "level": 25,
           "cost": 610,
-          "reward": "+25/sec Droid Fusion"
+          "reward": "+25/sec Droid fusion."
         },
         {
           "level": 26,
           "cost": 635,
-          "reward": "+26/sec Droid Fusion"
+          "reward": "+26/sec Droid fusion."
         },
         {
           "level": 27,
           "cost": 660,
-          "reward": "+27/sec Droid Fusion"
+          "reward": "+27/sec Droid fusion."
         },
         {
           "level": 28,
           "cost": 685,
-          "reward": "+28/sec Droid Fusion"
+          "reward": "+28/sec Droid fusion."
         },
         {
           "level": 29,
           "cost": 710,
-          "reward": "+29/sec Droid Fusion"
+          "reward": "+29/sec Droid fusion."
         },
         {
           "level": 30,
           "cost": 735,
-          "reward": "+30/sec Droid Fusion"
+          "reward": "+30/sec Droid fusion."
         },
         {
           "level": 31,
           "cost": 760,
-          "reward": "+31/sec Droid Fusion"
+          "reward": "+31/sec Droid fusion."
         },
         {
           "level": 32,
           "cost": 785,
-          "reward": "+32/sec Droid Fusion"
+          "reward": "+32/sec Droid fusion."
         },
         {
           "level": 33,
           "cost": 810,
-          "reward": "+33/sec Droid Fusion"
+          "reward": "+33/sec Droid fusion."
         },
         {
           "level": 34,
           "cost": 835,
-          "reward": "+34/sec Droid Fusion"
+          "reward": "+34/sec Droid fusion."
         },
         {
           "level": 35,
           "cost": 860,
-          "reward": "+35/sec Droid Fusion"
+          "reward": "+35/sec Droid fusion."
         },
         {
           "level": 36,
           "cost": 885,
-          "reward": "+36/sec Droid Fusion"
+          "reward": "+36/sec Droid fusion."
         },
         {
           "level": 37,
           "cost": 910,
-          "reward": "+37/sec Droid Fusion"
+          "reward": "+37/sec Droid fusion."
         },
         {
           "level": 38,
           "cost": 935,
-          "reward": "+38/sec Droid Fusion"
+          "reward": "+38/sec Droid fusion."
         },
         {
           "level": 39,
           "cost": 960,
-          "reward": "+39/sec Droid Fusion"
+          "reward": "+39/sec Droid fusion."
         },
         {
           "level": 40,
           "cost": 985,
-          "reward": "+40/sec Droid Fusion"
+          "reward": "+40/sec Droid fusion."
         },
         {
           "level": 41,
           "cost": 1010,
-          "reward": "+41/sec Droid Fusion"
+          "reward": "+41/sec Droid fusion."
         },
         {
           "level": 42,
           "cost": 1035,
-          "reward": "+42/sec Droid Fusion"
+          "reward": "+42/sec Droid fusion."
         },
         {
           "level": 43,
           "cost": 1060,
-          "reward": "+43/sec Droid Fusion"
+          "reward": "+43/sec Droid fusion."
         },
         {
           "level": 44,
           "cost": 1085,
-          "reward": "+44/sec Droid Fusion"
+          "reward": "+44/sec Droid fusion."
         },
         {
           "level": 45,
           "cost": 1110,
-          "reward": "+45/sec Droid Fusion"
+          "reward": "+45/sec Droid fusion."
         },
         {
           "level": 46,
           "cost": 1135,
-          "reward": "+46/sec Droid Fusion"
+          "reward": "+46/sec Droid fusion."
         },
         {
           "level": 47,
           "cost": 1160,
-          "reward": "+47/sec Droid Fusion"
+          "reward": "+47/sec Droid fusion."
         },
         {
           "level": 48,
           "cost": 1185,
-          "reward": "+48/sec Droid Fusion"
+          "reward": "+48/sec Droid fusion."
         },
         {
           "level": 49,
           "cost": 1210,
-          "reward": "+49/sec Droid Fusion"
+          "reward": "+49/sec Droid fusion."
         },
         {
           "level": 50,
           "cost": 1235,
-          "reward": "+50/sec Droid Fusion"
+          "reward": "+50/sec Droid fusion."
         }
       ]
     }

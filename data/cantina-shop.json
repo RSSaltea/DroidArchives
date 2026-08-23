@@ -180,22 +180,22 @@
         "3 Levels of Fusion Efficiency"
       ],
       "novaUnlocks": [
-        "fusion-tank-1",
+        "fusion-tank",
         "fusion-speed"
       ]
     },
     {
       "id": "fusion-tank-2",
-      "name": "Fusion Tank 2",
+      "name": "Fusion Tank (2nd level)",
       "category": "packs",
       "vbucksCost": 800,
       "icon": "assets/nova-shop/T_Icon_FusionTank.png",
-      "description": "A second Fusion Tank, which is another Fusion Build slot.",
+      "description": "The second Fusion Tank level, which is another Fusion Build slot.",
       "details": [
         "1 Fusion Tank"
       ],
       "novaUnlocks": [
-        "fusion-tank-2"
+        "fusion-tank"
       ]
     }
   ]
