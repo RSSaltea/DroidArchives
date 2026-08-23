@@ -644,3 +644,30 @@ html.in-companion #nav a{white-space:nowrap}
 html.in-companion .header-search{flex:1 1 160px;min-width:0}
 html.in-companion .site-header .patch-icon-button,
 html.in-companion .site-header .discord-button{flex:0 0 auto}
+
+/* ---- Fusion Lab ------------------------------------------------------------
+   Three inputs, an equals, one result. Laid out as a row that collapses to a
+   column on a narrow screen rather than shrinking the cards until the names
+   stop being readable. */
+.fusion-list{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.fusion-row{display:flex;align-items:center;gap:14px;padding:12px 14px;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow)}
+.fusion-row[hidden]{display:none}
+.fusion-row.fusion-ready{border-color:#4f9d73}
+.fusion-inputs{display:flex;align-items:center;gap:8px;flex:1 1 auto;min-width:0}
+.fusion-plus,.fusion-equals{flex:0 0 auto;color:var(--muted);font-weight:800;font-size:15px}
+.fusion-result{display:flex;align-items:center;gap:10px;flex:0 0 auto}
+.fusion-card{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 6px;background:rgba(0,0,0,.18);border:1px solid var(--line);border-radius:8px;text-decoration:none;color:var(--ink)}
+.fusion-card:hover{border-color:#5c6b86}
+.fusion-card strong{font-size:11px;font-weight:800;text-align:center;line-height:1.2;overflow-wrap:anywhere}
+.fusion-card img{max-width:46px;max-height:46px;object-fit:contain}
+.fusion-art{display:flex;align-items:center;justify-content:center;height:48px}
+.fusion-blank{display:flex;align-items:center;justify-content:center;width:44px;height:44px;color:var(--muted);font-size:18px;font-weight:800;background:rgba(255,255,255,.04);border:1px dashed var(--line);border-radius:8px}
+.fusion-rarity{font-size:8px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;font-style:normal}
+.fusion-result .fusion-card{min-width:112px;background:rgba(127,209,160,.08);border-color:#3f6b52}
+.fusion-have{color:#7df0a1;font-size:10px;font-weight:800;white-space:nowrap}
+.fusion-card.is-unknown strong{color:var(--muted)}
+@media(max-width:760px){
+  .fusion-row{flex-direction:column;align-items:stretch;gap:8px}
+  .fusion-equals{align-self:center}
+  .fusion-result{justify-content:center}
+}

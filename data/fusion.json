@@ -1,0 +1,22 @@
+{
+  "note": "Fusion Lab recipes. Three droids go in, one comes out. Transcribed from the community sheet; incomes are per second and values are the figures shown beside them. Fusion droids cannot be upgraded yet, so only the variants the sheet lists are recorded.",
+  "recipes": [
+    { "name": "WHL-EX",   "type": "WORKER",    "rarity": "RARE",      "inputs": ["ARG", "MOUSE", "MOUSE"] },
+    { "name": "ZRO-TEC",  "type": "ASTROMECH", "rarity": "RARE",      "inputs": ["ID10", "ID10", "2BB"] },
+    { "name": "BTL-R",    "type": "BATTLE",    "rarity": "RARE",      "inputs": ["BDX EXPLORER", "B1 BATTLE", "R9"] },
+    { "name": "N-UL",     "type": "WORKER",    "rarity": "EPIC",      "inputs": ["B1 HEAVY", "GUNRUNNER", "BB"] },
+    { "name": "SCRP-R",   "type": "ASTROMECH", "rarity": "EPIC",      "inputs": ["GONK", "R6", "GROUNDMECH"] },
+    { "name": "ARM-CORE", "type": "BATTLE",    "rarity": "EPIC",      "inputs": ["ARG", "ARG", "B2 HEAVY"] },
+    { "name": "OPT-AR",   "type": "BATTLE",    "rarity": "EPIC",      "inputs": ["R2", "R2", "B2 SUPER"] },
+    { "name": "RO-TOR",   "type": "WORKER",    "rarity": "LEGENDARY", "inputs": ["BB9", "PIT", "B1 BATTLE"] },
+    { "name": "FUS-3",    "type": "WORKER",    "rarity": "LEGENDARY", "inputs": ["R7", "B-U4D", "B-U4D"] },
+    { "name": "QIK-BIT",  "type": "ASTROMECH", "rarity": "LEGENDARY", "inputs": ["GROUNDMECH", "GROUNDMECH", "BB9"] },
+    { "name": "ORB-XL",   "type": "BATTLE",    "rarity": "LEGENDARY", "inputs": ["CB", "GUNRUNNER", "B2-RP"] },
+    { "name": "RIV-3T",   "type": "WORKER",    "rarity": "MYTHIC",    "inputs": ["KX", "IG", "RIC"] },
+    { "name": "LUG-G",    "type": "WORKER",    "rarity": "MYTHIC",    "inputs": ["LOADLIFTER", "ID10", "R5"] },
+    { "name": "LOW-MO",   "type": "WORKER",    "rarity": "MYTHIC",    "inputs": ["LOADLIFTER", "A-LT", "A-LT"] },
+    { "name": "AXI-POD",  "type": "ASTROMECH", "rarity": "MYTHIC",    "inputs": ["R7", "BDX EXPLORER", "RIC"] },
+    { "name": "SRV-O",    "type": "BATTLE",    "rarity": "MYTHIC",    "inputs": ["RIC-1200", "B1 HEAVY", "B1 HEAVY"] },
+    { "name": "X-ONK",    "type": "BATTLE",    "rarity": "MYTHIC",    "inputs": ["KX", "KX", "GONK"] }
+  ]
+}

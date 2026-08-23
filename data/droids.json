@@ -2564,5 +2564,617 @@
       "maxQuantity": 1,
       "passive": "+50% Crit Chance & Damage"
     }
+  },
+  {
+    "name": "WHL-EX",
+    "rarity": "RARE",
+    "type": "WORKER",
+    "fusion": true,
+    "variants": {
+      "DEFAULT": {
+        "cost": 227500,
+        "income": 72
+      },
+      "GOLD": {
+        "cost": 910000,
+        "income": 144
+      },
+      "DIAMOND": {
+        "cost": 1820000,
+        "income": 288
+      },
+      "RAINBOW": {
+        "cost": 3640000,
+        "income": 576
+      },
+      "BESKAR": {
+        "cost": 14560000,
+        "income": 864
+      },
+      "GALACTIC": {
+        "cost": 4550000000,
+        "income": 1730
+      },
+      "STELLAR": {
+        "cost": 5460000000,
+        "income": 2300
+      }
+    }
+  },
+  {
+    "name": "ZRO-TEC",
+    "rarity": "RARE",
+    "type": "ASTROMECH",
+    "fusion": true,
+    "variants": {
+      "DEFAULT": {
+        "cost": 227500,
+        "income": 72
+      },
+      "GOLD": {
+        "cost": 910000,
+        "income": 144
+      },
+      "DIAMOND": {
+        "cost": 1820000,
+        "income": 288
+      },
+      "RAINBOW": {
+        "cost": 3640000,
+        "income": 576
+      },
+      "BESKAR": {
+        "cost": 14560000,
+        "income": 864
+      },
+      "GALACTIC": {
+        "cost": 4550000000,
+        "income": 1730
+      },
+      "STELLAR": {
+        "cost": 5460000000,
+        "income": 2300
+      }
+    }
+  },
+  {
+    "name": "BTL-R",
+    "rarity": "RARE",
+    "type": "BATTLE",
+    "fusion": true,
+    "variants": {
+      "DEFAULT": {
+        "cost": 227500,
+        "income": 72
+      },
+      "GOLD": {
+        "cost": 910000,
+        "income": 144
+      },
+      "DIAMOND": {
+        "cost": 1820000,
+        "income": 288
+      },
+      "RAINBOW": {
+        "cost": 3640000,
+        "income": 576
+      },
+      "BESKAR": {
+        "cost": 14560000,
+        "income": 864
+      },
+      "GALACTIC": {
+        "cost": 4550000000,
+        "income": 1730
+      },
+      "STELLAR": {
+        "cost": 5460000000,
+        "income": 2300
+      }
+    }
+  },
+  {
+    "name": "N-UL",
+    "rarity": "EPIC",
+    "type": "WORKER",
+    "fusion": true,
+    "variants": {
+      "DEFAULT": {
+        "cost": 9520000,
+        "income": 720
+      },
+      "GOLD": {
+        "cost": 38080000,
+        "income": 1440
+      },
+      "DIAMOND": {
+        "cost": 76160000,
+        "income": 2880
+      },
+      "RAINBOW": {
+        "cost": 152320000,
+        "income": 5760
+      },
+      "BESKAR": {
+        "cost": 1190000000,
+        "income": 24480
+      },
+      "GALACTIC": {
+        "cost": 2860000000,
+        "income": 37440
+      },
+      "STELLAR": {
+        "cost": 7140000000,
+        "income": 57600
+      }
+    }
+  },
+  {
+    "name": "SCRP-R",
+    "rarity": "EPIC",
+    "type": "ASTROMECH",
+    "fusion": true,
+    "variants": {
+      "DEFAULT": {
+        "cost": 9520000,
+        "income": 720
+      },
+      "GOLD": {
+        "cost": 38080000,
+        "income": 1440
+      },
+      "DIAMOND": {
+        "cost": 76160000,
+        "income": 2880
+      },
+      "RAINBOW": {
+        "cost": 152320000,
+        "income": 5760
+      },
+      "BESKAR": {
+        "cost": 1190000000,
+        "income": 24480
+      },
+      "GALACTIC": {
+        "cost": 2860000000,
+        "income": 37440
+      },
+      "STELLAR": {
+        "cost": 7140000000,
+        "income": 57600
+      }
+    }
+  },
+  {
+    "name": "ARM-CORE",
+    "rarity": "EPIC",
+    "type": "BATTLE",
+    "fusion": true,
+    "variants": {
+      "DEFAULT": {
+        "cost": 9200000,
+        "income": 690
+      },
+      "GOLD": {
+        "cost": 36800000,
+        "income": 1380
+      },
+      "DIAMOND": {
+        "cost": 73600000,
+        "income": 2760
+      },
+      "RAINBOW": {
+        "cost": 147200000,
+        "income": 5520
+      },
+      "BESKAR": {
+        "cost": 1150000000,
+        "income": 23460
+      },
+      "GALACTIC": {
+        "cost": 2760000000,
+        "income": 35880
+      },
+      "STELLAR": {
+        "cost": 6900000000,
+        "income": 55200
+      }
+    }
+  },
+  {
+    "name": "OPT-AR",
+    "rarity": "EPIC",
+    "type": "BATTLE",
+    "fusion": true,
+    "variants": {
+      "DEFAULT": {
+        "cost": 9520000,
+        "income": 720
+      },
+      "GOLD": {
+        "cost": 38080000,
+        "income": 1440
+      },
+      "DIAMOND": {
+        "cost": 76160000,
+        "income": 2880
+      },
+      "RAINBOW": {
+        "cost": 152320000,
+        "income": 5760
+      },
+      "BESKAR": {
+        "cost": 1190000000,
+        "income": 24480
+      },
+      "GALACTIC": {
+        "cost": 2860000000,
+        "income": 37440
+      },
+      "STELLAR": {
+        "cost": 7140000000,
+        "income": 57600
+      }
+    }
+  },
+  {
+    "name": "RO-TOR",
+    "rarity": "LEGENDARY",
+    "type": "WORKER",
+    "fusion": true,
+    "variants": {
+      "DEFAULT": {
+        "cost": 50400000,
+        "income": 1500
+      },
+      "GOLD": {
+        "cost": 201600000,
+        "income": 3000
+      },
+      "DIAMOND": {
+        "cost": 403200000,
+        "income": 6000
+      },
+      "RAINBOW": {
+        "cost": 806400000,
+        "income": 12000
+      },
+      "BESKAR": {
+        "cost": 20160000000,
+        "income": 36000
+      },
+      "GALACTIC": {
+        "cost": 120960000000,
+        "income": 90000
+      },
+      "STELLAR": {
+        "cost": 730800000000,
+        "income": 225000
+      }
+    }
+  },
+  {
+    "name": "FUS-3",
+    "rarity": "LEGENDARY",
+    "type": "WORKER",
+    "fusion": true,
+    "variants": {
+      "DEFAULT": {
+        "cost": 56000000,
+        "income": 1600
+      },
+      "GOLD": {
+        "cost": 224000000,
+        "income": 3200
+      },
+      "DIAMOND": {
+        "cost": 448000000,
+        "income": 6400
+      },
+      "RAINBOW": {
+        "cost": 896000000,
+        "income": 12800
+      },
+      "BESKAR": {
+        "cost": 22400000000,
+        "income": 38400
+      },
+      "GALACTIC": {
+        "cost": 134400000000,
+        "income": 96000
+      },
+      "STELLAR": {
+        "cost": 812000000000,
+        "income": 240000
+      }
+    }
+  },
+  {
+    "name": "QIK-BIT",
+    "rarity": "LEGENDARY",
+    "type": "ASTROMECH",
+    "fusion": true,
+    "variants": {
+      "DEFAULT": {
+        "cost": 56000000,
+        "income": 1600
+      },
+      "GOLD": {
+        "cost": 224000000,
+        "income": 3200
+      },
+      "DIAMOND": {
+        "cost": 448000000,
+        "income": 6400
+      },
+      "RAINBOW": {
+        "cost": 896000000,
+        "income": 12800
+      },
+      "BESKAR": {
+        "cost": 22400000000,
+        "income": 38400
+      },
+      "GALACTIC": {
+        "cost": 134400000000,
+        "income": 96000
+      },
+      "STELLAR": {
+        "cost": 812000000000,
+        "income": 240000
+      }
+    }
+  },
+  {
+    "name": "ORB-XL",
+    "rarity": "LEGENDARY",
+    "type": "BATTLE",
+    "fusion": true,
+    "variants": {
+      "DEFAULT": {
+        "cost": 56000000,
+        "income": 1600
+      },
+      "GOLD": {
+        "cost": 224000000,
+        "income": 3200
+      },
+      "DIAMOND": {
+        "cost": 448000000,
+        "income": 6400
+      },
+      "RAINBOW": {
+        "cost": 896000000,
+        "income": 12800
+      },
+      "BESKAR": {
+        "cost": 22400000000,
+        "income": 38400
+      },
+      "GALACTIC": {
+        "cost": 134400000000,
+        "income": 96000
+      },
+      "STELLAR": {
+        "cost": 812000000000,
+        "income": 240000
+      }
+    }
+  },
+  {
+    "name": "RIV-3T",
+    "rarity": "MYTHIC",
+    "type": "WORKER",
+    "fusion": true,
+    "variants": {
+      "DEFAULT": {
+        "cost": 252000000,
+        "income": 8400
+      },
+      "GOLD": {
+        "cost": 1010000000,
+        "income": 16800
+      },
+      "DIAMOND": {
+        "cost": 2020000000,
+        "income": 33600
+      },
+      "RAINBOW": {
+        "cost": 6050000000,
+        "income": 67200
+      },
+      "BESKAR": {
+        "cost": 201600000000,
+        "income": 134400
+      },
+      "GALACTIC": {
+        "cost": 1180000000000,
+        "income": 369600
+      },
+      "STELLAR": {
+        "cost": 7060000000000,
+        "income": 1050000
+      }
+    }
+  },
+  {
+    "name": "LUG-G",
+    "rarity": "MYTHIC",
+    "type": "WORKER",
+    "fusion": true,
+    "variants": {
+      "DEFAULT": {
+        "cost": 224000000,
+        "income": 7600
+      },
+      "GOLD": {
+        "cost": 896000000,
+        "income": 15200
+      },
+      "DIAMOND": {
+        "cost": 1790000000,
+        "income": 30400
+      },
+      "RAINBOW": {
+        "cost": 5380000000,
+        "income": 60800
+      },
+      "BESKAR": {
+        "cost": 179200000000,
+        "income": 121600
+      },
+      "GALACTIC": {
+        "cost": 1050000000000,
+        "income": 334400
+      },
+      "STELLAR": {
+        "cost": 6270000000000,
+        "income": 950000
+      }
+    }
+  },
+  {
+    "name": "LOW-MO",
+    "rarity": "MYTHIC",
+    "type": "WORKER",
+    "fusion": true,
+    "variants": {
+      "DEFAULT": {
+        "cost": 238000000,
+        "income": 7800
+      },
+      "GOLD": {
+        "cost": 952000000,
+        "income": 15600
+      },
+      "DIAMOND": {
+        "cost": 1900000000,
+        "income": 31200
+      },
+      "RAINBOW": {
+        "cost": 5710000000,
+        "income": 62400
+      },
+      "BESKAR": {
+        "cost": 190400000000,
+        "income": 124800
+      },
+      "GALACTIC": {
+        "cost": 1120000000000,
+        "income": 343200
+      },
+      "STELLAR": {
+        "cost": 6660000000000,
+        "income": 975000
+      }
+    }
+  },
+  {
+    "name": "AXI-POD",
+    "rarity": "MYTHIC",
+    "type": "ASTROMECH",
+    "fusion": true,
+    "variants": {
+      "DEFAULT": {
+        "cost": 252000000,
+        "income": 8000
+      },
+      "GOLD": {
+        "cost": 1010000000,
+        "income": 16000
+      },
+      "DIAMOND": {
+        "cost": 2020000000,
+        "income": 32000
+      },
+      "RAINBOW": {
+        "cost": 6050000000,
+        "income": 64000
+      },
+      "BESKAR": {
+        "cost": 201600000000,
+        "income": 128000
+      },
+      "GALACTIC": {
+        "cost": 1180000000000,
+        "income": 352000
+      },
+      "STELLAR": {
+        "cost": 7060000000000,
+        "income": 1000000
+      }
+    }
+  },
+  {
+    "name": "SRV-O",
+    "rarity": "MYTHIC",
+    "type": "BATTLE",
+    "fusion": true,
+    "variants": {
+      "DEFAULT": {
+        "cost": 224000000,
+        "income": 7600
+      },
+      "GOLD": {
+        "cost": 896000000,
+        "income": 15200
+      },
+      "DIAMOND": {
+        "cost": 1790000000,
+        "income": 30400
+      },
+      "RAINBOW": {
+        "cost": 5380000000,
+        "income": 60800
+      },
+      "BESKAR": {
+        "cost": 179200000000,
+        "income": 121600
+      },
+      "GALACTIC": {
+        "cost": 1050000000000,
+        "income": 334400
+      },
+      "STELLAR": {
+        "cost": 6270000000000,
+        "income": 950000
+      }
+    }
+  },
+  {
+    "name": "X-ONK",
+    "rarity": "MYTHIC",
+    "type": "BATTLE",
+    "fusion": true,
+    "variants": {
+      "DEFAULT": {
+        "cost": 252000000,
+        "income": 8000
+      },
+      "GOLD": {
+        "cost": 1010000000,
+        "income": 16000
+      },
+      "DIAMOND": {
+        "cost": 2020000000,
+        "income": 32000
+      },
+      "RAINBOW": {
+        "cost": 6050000000,
+        "income": 64000
+      },
+      "BESKAR": {
+        "cost": 201600000000,
+        "income": 128000
+      },
+      "GALACTIC": {
+        "cost": 1180000000000,
+        "income": 352000
+      },
+      "STELLAR": {
+        "cost": 7060000000000,
+        "income": 1000000
+      }
+    }
   }
 ]
