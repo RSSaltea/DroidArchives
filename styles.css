@@ -51,6 +51,7 @@ body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,system-
 .layout{max-width:1500px;margin:auto;display:grid;grid-template-columns:215px minmax(0,1fr);min-height:calc(100vh - 112px)}
 .sidebar{padding:28px 20px;border-right:1px solid var(--line);background:#f0ece3}
 .sidebar a{display:flex;align-items:center;gap:9px;padding:9px 10px;color:#3d4d41;text-decoration:none;border-radius:3px}
+.side-icon{flex:0 0 22px;width:22px;height:22px;object-fit:contain}
 .sidebar a:hover,.sidebar a.active{background:#e2ddd1;color:var(--green2)}
 .side-title{text-transform:uppercase;letter-spacing:.12em;font-size:10px;font-weight:800;color:#918879;margin:3px 10px 8px}
 .side-rule{border-top:1px solid var(--line);margin:18px 4px}

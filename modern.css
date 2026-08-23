@@ -134,6 +134,10 @@ html[data-ui-style="modern"] .sidebar>a{margin-bottom:4px;text-transform:none}
 html[data-ui-style="modern"] main{padding:18px clamp(24px,2.4vw,40px) 34px}
 html[data-ui-style="modern"] main>.breadcrumbs{display:none}
 html[data-ui-style="modern"] .command-icon{display:block;width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+html[data-ui-style="modern"] .command-art{width:20px;height:20px;object-fit:contain}
+html[data-ui-style="modern"] .btn>.command-art{flex:0 0 20px}
+html[data-ui-style="modern"] .modern-metric-icon .command-art{width:21px;height:21px}
+html[data-ui-style="modern"] .side-icon{flex:0 0 21px;width:21px;height:21px}
 html[data-ui-style="modern"] .btn:has(.command-icon){display:inline-flex;align-items:center;justify-content:center;gap:7px}
 html[data-ui-style="modern"] .btn>.command-icon{flex:0 0 17px}
 
