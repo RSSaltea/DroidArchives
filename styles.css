@@ -707,3 +707,17 @@ html.in-companion .site-header .discord-button{flex:0 0 auto}
 .fusion-use em{font-style:normal;font-weight:700}
 .fusion-use em.is-held{color:#7df0a1}
 .fusion-use em.is-short{color:#c8ceda}
+
+/* Fuse sits on the Fusion station header rather than on a slot: it needs all
+   three, so it does not belong to any one of them. */
+.station-fuse{margin-left:10px;padding:3px 12px;font-size:11px}
+.station-fuse:disabled{opacity:.45;cursor:not-allowed}
+.fusion-log{margin:18px 0 0;padding:16px 18px;background:var(--panel);border:1px solid var(--line);border-left:5px solid #6f7fd0;border-radius:6px;box-shadow:var(--shadow)}
+.fusion-log header{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.fusion-log h2{margin:0 0 4px}
+.fusion-log header p{margin:0;color:var(--muted);font-size:13px}
+.fusion-log ul{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
+.fusion-log li{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;padding-top:6px;border-top:1px solid var(--line);font-size:12px}
+.fusion-log-inputs{color:var(--muted);min-width:220px}
+.fusion-log-results{display:flex;flex-wrap:wrap;gap:8px}
+.fusion-log-results em{font-style:normal;font-weight:800;color:#9fb0ff}
