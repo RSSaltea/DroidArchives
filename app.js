@@ -284,10 +284,13 @@ const loungeDivider=index=>index===5?'<div class="upper-level-divider"><span>Upp
 // does not tell you which one to walk to. Everything that names a Battle slot
 // says the floor as well.
 const BATTLE_UPSTAIRS_FROM=5;
+// The eleven Worker slots stand in two places: eight on the round worker
+// platform and, from the ninth unlocked onwards, three on the main platform.
+const WORKER_MAIN_PLATFORM_FROM=8;
 const slotFloor=(station,index)=>station==='BATTLE'?(index>=BATTLE_UPSTAIRS_FROM?'upstairs':'downstairs'):'';
 const floorNote=(station,index)=>{const floor=slotFloor(station,index);return floor?` (${floor})`:''};
 const stationSlotLabel=(station,index)=>`${stationName(station)} ${index+1}${floorNote(station,index)}`;
-const slotDivider=(type,index)=>type==='LOUNGE'?loungeDivider(index):type==='BATTLE'&&index===BATTLE_UPSTAIRS_FROM?'<div class="upper-level-divider"><span>Second Floor</span></div>':'';
+const slotDivider=(type,index)=>type==='LOUNGE'?loungeDivider(index):type==='BATTLE'&&index===BATTLE_UPSTAIRS_FROM?'<div class="upper-level-divider"><span>Second Floor</span></div>':type==='WORKER'&&index===WORKER_MAIN_PLATFORM_FROM?'<div class="upper-level-divider"><span>Main Platform</span></div>':'';
 const slotPurchaseKey=(type,index)=>`${type}:${index}`;
 function slotUnlockRebirth(type,index){if(type==='LOUNGE'){const meta=loungeSlotMeta(index);return meta.kind==='rebirth'?meta.rebirth:null}
   // A Fusion Build slot that a tank opens is not waiting on a rebirth at all,
@@ -466,23 +469,29 @@ function runFusion(onDone){
     for(const index of rows)removeOwnedUnit(index);
     commitOwned(result.name,result.variant||'DEFAULT',1,'FUSION_BUILD',free);
     fusionLogAdd({inputs:units.map(unit=>({name:unit.name,variant:unit.variant})),
-      result:{name:result.name,rarity:result.rarity||state.droids.find(d=>d.name===result.name)?.rarity||''},
+      result:{name:result.name,variant:result.variant||'DEFAULT',rarity:result.rarity||state.droids.find(d=>d.name===result.name)?.rarity||''},
       matched:Boolean(recipe)});
     save();
-    toast(`Fused into ${result.name}`);
+    toast(`Fused into ${variantLabel(result.variant||'DEFAULT')} ${result.name}`);
     onDone?.();
   };
-  if(recipe)return finish({name:recipe.name,variant:'DEFAULT',rarity:recipe.rarity});
-  showFusionResultPrompt(names,finish);
+  const outcome=fusionOutcome(units);
+  if(outcome&&outcome.kind==='capped')return toast(`${outcome.name} is already ${variantLabel(outcome.variant)}, the top quality`);
+  if(outcome&&(outcome.kind==='recipe'||outcome.kind==='quality'))return finish({name:outcome.name,variant:outcome.variant,rarity:outcome.rarity});
+  showFusionResultPrompt(names,finish,outcome);
 }
 // No recipe matched, so the game made something ordinary. Which one is the
 // measurement, so it is asked rather than guessed.
-function showFusionResultPrompt(names,onPick){
+function showFusionResultPrompt(names,onPick,outcome){
   const root=document.querySelector('#modalRoot');
-  const choices=state.droids.filter(d=>!isFusion(d)).sort((a,b)=>a.name.localeCompare(b.name));
+  // A rarity step fixes the rarity and the quality but not which droid, so
+  // only that rarity is worth offering.
+  const stepped=outcome&&outcome.kind==='rarity';
+  const variant=outcome?.variant||'DEFAULT';
+  const choices=state.droids.filter(d=>!isFusion(d)&&(!stepped||d.rarity===outcome.rarity)).sort((a,b)=>a.name.localeCompare(b.name));
   root.innerHTML=`<div class="modal-backdrop"><section class="modal slot-picker" role="dialog" aria-modal="true">
     <p class="eyebrow">Droid Fusion</p><h2>What came out?</h2>
-    <p class="picker-hint">${names.map(escapeAttr).join(' + ')} is not a combination anyone has recorded. Pick what it produced and it goes in the log, so the next person knows.</p>
+    <p class="picker-hint">${names.map(escapeAttr).join(' + ')} ${stepped?`rolls a ${rarityLabel(outcome.rarity)} at ${variantLabel(variant)} — the rarity and the quality are settled, the droid is not. Pick which one came out`:'is not a combination anyone has recorded. Pick what it produced'} and it goes in the log, so the next person knows.</p>
     <input id="fusionResultSearch" class="form-control picker-search" placeholder="Search droids…" autofocus>
     <div id="fusionResultList" class="picker-results"></div>
     <div class="modal-actions"><button class="btn ghost" id="fusionResultCancel" type="button">Cancel</button></div></section></div>`;
@@ -493,7 +502,7 @@ function showFusionResultPrompt(names,onPick){
     root.querySelectorAll('[data-result]').forEach(button=>button.onclick=()=>{
       const d=state.droids.find(x=>x.name===button.dataset.result);
       root.innerHTML='';
-      onPick({name:d.name,variant:'DEFAULT',rarity:d.rarity});
+      onPick({name:d.name,variant,rarity:d.rarity});
     });
   };
   root.querySelector('#fusionResultSearch').oninput=draw;
@@ -501,28 +510,181 @@ function showFusionResultPrompt(names,onPick){
   draw();
 }
 
+// ---- What a fusion produces ----------------------------------------------
+// Quality is decided by the worst droid in the room: two Stellar and a Rainbow
+// come out Rainbow. That is the whole reason a Fusion droid has to be fused at
+// the quality you want - unlike every other droid it cannot be upgraded after.
+const RARITY_LADDER=['COMMON','RARE','EPIC','LEGENDARY','MYTHIC'];
+const rarityStep=rarity=>RARITY_LADDER.indexOf(String(rarity||'').toUpperCase());
+const nextRarity=rarity=>RARITY_LADDER[rarityStep(rarity)+1]||'';
+const variantStep=variant=>Math.max(0,VARIANTS.indexOf(variant));
+const lowestVariant=variants=>variants.reduce((low,variant)=>variantStep(variant)<variantStep(low)?variant:low,variants[0]||'DEFAULT');
+const droidRarity=name=>fusionDroid(name)?.rarity||'';
+// Three droids in, one out. A recorded recipe wins and names its result: those
+// are the combinations that make the Fusion droids, and the game special cases
+// them - three different Epics normally step up to a Legendary, but the three
+// N-UL wants make N-UL, which is itself an Epic.
+// Everything else follows the ladder. Three of one droid at one quality give
+// that same droid back a quality higher, which is the one step you can aim at.
+// Three that merely share a rarity step the rarity up and hold the quality, and
+// there the droid itself is a roll - only the rarity and the quality are settled.
+function fusionOutcome(units){
+  const rows=(units||[]).slice(0,3).map(row=>({name:row.name,variant:row.variant||'DEFAULT'}));
+  if(rows.length<3)return null;
+  const variant=lowestVariant(rows.map(row=>row.variant));
+  const mixedQuality=rows.some(row=>row.variant!==rows[0].variant);
+  const recipe=fusionRecipeFor(rows.map(row=>row.name));
+  if(recipe)return{kind:'recipe',name:recipe.name,rarity:recipe.rarity,variant,mixedQuality,recipe};
+  const names=[...new Set(rows.map(row=>row.name))];
+  if(names.length===1){
+    const d=fusionDroid(names[0]);
+    // Three of one droid at three different qualities is not something anyone
+    // has written down, so it is asked rather than guessed at.
+    if(mixedQuality)return{kind:'unknown',variant,mixedQuality};
+    if(d&&isIconic(d))return{kind:'unknown',variant,mixedQuality};
+    return nextVariant(variant)
+      ?{kind:'quality',name:names[0],rarity:droidRarity(names[0]),variant:nextVariant(variant),from:variant,mixedQuality}
+      :{kind:'capped',name:names[0],rarity:droidRarity(names[0]),variant,mixedQuality};
+  }
+  const rarities=[...new Set(rows.map(row=>droidRarity(row.name)))];
+  if(rarities.length===1&&rarities[0]&&nextRarity(rarities[0]))
+    return{kind:'rarity',rarity:nextRarity(rarities[0]),from:rarities[0],variant,mixedQuality};
+  return{kind:'unknown',variant,mixedQuality};
+}
+// One line saying what the three in the slots are about to become.
+function fusionOutcomeText(outcome){
+  if(!outcome)return'';
+  const q=variantText(outcome.variant);
+  if(outcome.kind==='recipe')return `<strong>${escapeAttr(outcome.name)}</strong> &middot; ${rarityText(outcome.rarity)} &middot; ${q}`;
+  if(outcome.kind==='quality')return `<strong>${escapeAttr(outcome.name)}</strong> &middot; ${rarityText(outcome.rarity)} &middot; ${q} <em>(a quality up from ${variantLabel(outcome.from)})</em>`;
+  if(outcome.kind==='capped')return `<strong>${escapeAttr(outcome.name)}</strong> is already ${variantLabel(outcome.variant)}, the top quality`;
+  if(outcome.kind==='rarity')return `a random ${rarityText(outcome.rarity)} droid &middot; ${q} <em>(a rarity up from ${rarityLabel(outcome.from)})</em>`;
+  return `<em>No recorded result for this combination${outcome.mixedQuality?' at mixed qualities':''}. Fusing it records what comes out.</em>`;
+}
+
+// ---- What your base could fuse --------------------------------------------
+// Everything you own, counted by droid and by quality, because a fusion cares
+// about both.
+function fusionStock(){
+  const stock=new Map();
+  for(const row of state.owned||[]){
+    const variant=row.variant||'DEFAULT';
+    if(!stock.has(row.name))stock.set(row.name,new Map());
+    const byVariant=stock.get(row.name);
+    byVariant.set(variant,(byVariant.get(variant)||0)+(Number(row.qty)||1));
+  }
+  return stock;
+}
+// Copies held at this quality or better. Putting a Stellar into a Gold fusion
+// is allowed, just wasteful, so a better copy still counts as cover.
+function fusionCountFrom(byVariant,variant){
+  if(!byVariant)return 0;
+  const floor=variantStep(variant);
+  let total=0;
+  for(const [held,count] of byVariant)if(variantStep(held)>=floor)total+=count;
+  return total;
+}
+const fusionRecipeWants=recipe=>{const wanted=new Map();for(const input of recipe.inputs)wanted.set(input,(wanted.get(input)||0)+1);return wanted};
+// The best quality a recipe could come out at: the highest one where every
+// ingredient is covered at that quality or better.
+function fusionBestVariant(recipe,stock){
+  const wanted=fusionRecipeWants(recipe);
+  for(let i=VARIANTS.length-1;i>=0;i--){
+    const variant=VARIANTS[i];
+    if([...wanted].every(([name,need])=>fusionCountFrom(stock.get(name),variant)>=need))return variant;
+  }
+  return'';
+}
+// Three of one droid at one quality make that droid a quality higher.
+function fusionQualitySteps(stock){
+  const steps=[];
+  for(const [name,byVariant] of stock){
+    const d=fusionDroid(name);
+    if(!d||isIconic(d))continue;
+    for(const [variant,count] of byVariant){
+      const up=nextVariant(variant);
+      if(count<3||!up)continue;
+      steps.push({name,rarity:d.rarity,from:variant,to:up,sets:Math.floor(count/3),have:count});
+    }
+  }
+  return steps.sort((a,b)=>variantStep(b.to)-variantStep(a.to)||a.name.localeCompare(b.name));
+}
+// Three droids that are not the same but share a rarity and a quality step the
+// rarity up and keep the quality.
+function fusionRaritySteps(stock){
+  const groups=new Map();
+  for(const [name,byVariant] of stock){
+    const d=fusionDroid(name);
+    if(!d||isIconic(d)||!nextRarity(d.rarity))continue;
+    for(const [variant] of byVariant){
+      const key=`${d.rarity}|${variant}`;
+      const group=groups.get(key)||{rarity:d.rarity,variant,names:[]};
+      group.names.push(name);
+      groups.set(key,group);
+    }
+  }
+  return [...groups.values()].filter(group=>group.names.length>=3&&!(group.names.length===3&&fusionRecipeFor(group.names)))
+    .map(group=>({...group,to:nextRarity(group.rarity),sets:Math.floor(group.names.length/3),names:group.names.sort()}))
+    .sort((a,b)=>rarityStep(b.rarity)-rarityStep(a.rarity)||variantStep(b.variant)-variantStep(a.variant));
+}
+// A Fusion droid is fused at the quality you want or not at all, so the useful
+// question on the Base is not just "can I make this" but "how good a one".
+// The Fusion station on the Base, saying what the three in the slots are about
+// to become while they can still be swapped out.
+function fusionPreviewHtml(){
+  const units=fusionSlotUnits();
+  if(!units.length)return'';
+  const held=units.map(unit=>`<span class="fusion-preview-in">${escapeAttr(unit.name)} ${variantText(unit.variant)}</span>`).join('');
+  if(units.length<3)return `<div class="fusion-preview is-waiting"><span class="fusion-preview-inputs">${held}</span><em class="fusion-preview-out">Fill all three slots to see what they make.</em></div>`;
+  const outcome=fusionOutcome(units);
+  return `<div class="fusion-preview is-${outcome?.kind||'unknown'}"><span class="fusion-preview-inputs">${held}</span><span class="fusion-preview-out"><b>Makes</b> ${fusionOutcomeText(outcome)}</span></div>`;
+}
 function fusionOutlookHtml(){
-  const wanted=fusionWanted();
   const all=fusionRecipes();
   if(!all.length)return'';
-  const recipes=all.filter(recipe=>wanted.has(recipe.name));
-  if(!recipes.length)return`<section class="fusion-outlook"><header><div><p class="eyebrow">Droid Fusion</p><h2>Fusion Outlook</h2><p>Nothing tracked yet. Pick the droids you are working towards in the <a href="#/fusion-lab">Fusion Lab</a> and what they still need shows up here.</p></div></header></section>`;
-  const rows=recipes.map(recipe=>{
-    const need=fusionNeed(recipe);
+  const wanted=fusionWanted(),stock=fusionStock();
+  const best=new Map(all.map(recipe=>[recipe.name,fusionBestVariant(recipe,stock)]));
+  const tracked=all.filter(recipe=>wanted.has(recipe.name));
+  const spare=all.filter(recipe=>!wanted.has(recipe.name)&&best.get(recipe.name));
+  const quality=fusionQualitySteps(stock),rarity=fusionRaritySteps(stock);
+  const recipeRow=recipe=>{
+    const need=fusionNeed(recipe),at=best.get(recipe.name);
     const parts=need.parts.map(part=>`<span class="fusion-outlook-part ${part.short?'is-short':'is-held'}">${escapeAttr(part.name)} <em>${part.have}/${part.need}</em></span>`).join('');
-    return `<li class="${need.ready?'is-ready':''}"><a href="#/fusion-lab"><strong>${escapeAttr(recipe.name)}</strong></a>
+    return `<li class="${at?'is-ready':''}"><a href="#/fusion-lab"><strong>${escapeAttr(recipe.name)}</strong></a> ${rarityText(recipe.rarity)}
       <span class="fusion-outlook-parts">${parts}</span>
-      <em class="fusion-outlook-state">${need.ready?'Ready to fuse':`Short ${need.missing.reduce((total,part)=>total+part.short,0)}`}</em></li>`;
-  }).join('');
-  const ready=recipes.filter(recipe=>fusionNeed(recipe).ready).length;
-  return `<section class="fusion-outlook"><header><div><p class="eyebrow">Droid Fusion</p><h2>Fusion Outlook</h2><p>What the droids you are tracking still need. Pick them in the <a href="#/fusion-lab">Fusion Lab</a>.</p></div><span class="fusion-outlook-count">${ready}/${recipes.length} ready</span></header><ul>${rows}</ul></section>`;
+      <em class="fusion-outlook-state">${at?`Ready &middot; best at ${variantText(at)}`:`Short ${need.missing.reduce((total,part)=>total+part.short,0)}`}</em></li>`;
+  };
+  const trackedBlock=tracked.length
+    ?`<ul>${tracked.map(recipeRow).join('')}</ul>`
+    :`<p class="fusion-outlook-empty">Nothing tracked yet. Pick the droids you are working towards in the <a href="#/fusion-lab">Fusion Lab</a> and what they still need shows up here.</p>`;
+  const spareBlock=spare.length?`<div class="fusion-outlook-block"><h3>Also ready from what you hold</h3>
+    <ul>${spare.map(recipeRow).join('')}</ul></div>`:'';
+  const qualityBlock=quality.length?`<div class="fusion-outlook-block"><h3>Quality steps you could take</h3>
+    <p>Three of one droid at one quality come out as that same droid, a quality higher. This is the one step where you know exactly what you get.</p>
+    <ul class="fusion-ladder">${quality.map(step=>`<li><span class="fusion-ladder-spend">3 &times; <a href="#/droid/${slug(step.name)}"><strong>${escapeAttr(step.name)}</strong></a></span> ${rarityText(step.rarity)}
+      <span class="fusion-ladder-step">${variantText(step.from)} <b>&rarr;</b> ${variantText(step.to)}</span>
+      <em class="fusion-outlook-state">${step.have} held${step.sets>1?` &middot; ${step.sets} sets`:''}</em></li>`).join('')}</ul></div>`:'';
+  const rarityBlock=rarity.length?`<div class="fusion-outlook-block"><h3>Rarity steps you could take</h3>
+    <p>Three droids that are not the same but share a rarity and a quality come out one rarity higher, at that same quality. Which droid you get is a roll. If the three you pick happen to be a recorded combination, that recipe wins instead and names its result.</p>
+    <ul class="fusion-ladder">${rarity.map(group=>`<li><span class="fusion-ladder-step">${rarityText(group.rarity)} <b>&rarr;</b> ${rarityText(group.to)}</span> at ${variantText(group.variant)}
+      <span class="fusion-outlook-parts">${group.names.slice(0,6).map(name=>`<span class="fusion-outlook-part is-held">${escapeAttr(name)}</span>`).join('')}${group.names.length>6?`<span class="fusion-outlook-part is-held">+${group.names.length-6} more</span>`:''}</span>
+      <em class="fusion-outlook-state">${group.sets} set${group.sets===1?'':'s'} of three</em></li>`).join('')}</ul></div>`:'';
+  const ready=all.filter(recipe=>best.get(recipe.name)).length;
+  return `<section class="fusion-outlook"><header><div><p class="eyebrow">Droid Fusion</p><h2>Fusion Outlook</h2>
+    <p>What your base could fuse right now. A Fusion droid comes out at the worst quality that went in and cannot be upgraded afterwards, so the quality shown is the best you could manage today. <a href="#/fusion-lab">How fusion works</a>.</p></div>
+    <span class="fusion-outlook-count">${ready}/${all.length} ready</span></header>
+    ${trackedBlock}${spareBlock}${qualityBlock}${rarityBlock}</section>`;
 }
 
 function fusionLabPage(){
   const recipes=fusionRecipes();
   const wanted=fusionWanted();
+  const held=fusionStock();
   const rows=recipes.map(recipe=>{
     const need=fusionNeed(recipe);
+    // Holding the three is only half of it: which quality they are decides
+    // which quality the result is stuck at for good.
+    const at=fusionBestVariant(recipe,held);
     const stock=new Map(need.parts.map(part=>[part.name,part]));
     const seen=new Map();
     const inputs=recipe.inputs.map((input,index)=>{
@@ -536,7 +698,7 @@ function fusionLabPage(){
       <div class="fusion-inputs">${inputs}</div>
       <span class="fusion-equals" aria-hidden="true">=</span>
       <div class="fusion-result">${fusionCardHtml(recipe.name,'result')}
-        <div class="fusion-state">${need.ready?'<em class="fusion-have">Ready to fuse</em>':`<em class="fusion-short">Need ${short}</em>`}
+        <div class="fusion-state">${at?`<em class="fusion-have">Ready to fuse &middot; best at ${variantText(at)}</em>`:`<em class="fusion-short">Need ${short}</em>`}
         <button class="btn secondary fusion-track" type="button" data-fusion-want="${escapeAttr(recipe.name)}">${isWanted?'Tracking':'Track'}</button></div>
       </div>
     </article>`;
@@ -551,6 +713,17 @@ function fusionLabPage(){
       <div class="dex-filters"><label class="dex-switch"><input id="fusionReadyOnly" type="checkbox"><span class="dex-switch-track" aria-hidden="true"></span><span>Ready only</span></label>
       <label class="dex-switch"><input id="fusionTrackedOnly" type="checkbox"><span class="dex-switch-track" aria-hidden="true"></span><span>Tracked only</span></label></div>
       <span id="fusionCount">${recipes.length} shown</span></div>
+<section class="fusion-rules"><header><p class="eyebrow">The ladder</p><h2>How fusion works</h2></header>
+      <ol>
+        <li><b>Three go in, one comes out.</b> The three are spent whatever the result is.</li>
+        <li><b>The quality that comes out is the worst that went in.</b> Two Stellar and a Rainbow make a Rainbow, not a Stellar.</li>
+        <li><b>A Fusion droid cannot be upgraded afterwards</b> the way an ordinary droid can. The quality you fuse it at is the quality it stays, so fuse it at the one you actually want.</li>
+        <li><b>Three of the same droid at the same quality</b> come out as that same droid, one quality higher — three Gold R6 make a Diamond R6.</li>
+        <li><b>Three droids that are not the same but share a rarity</b> come out one rarity higher, at the worst quality that went in — three different Epics at Beskar make a Legendary at Beskar.</li>
+        <li><b>Otherwise the droid is a roll.</b> Three of one droid hand that droid back, but where the three are not the same the fusion settles the rarity and the quality and nothing else — which droid of that rarity arrives is chance.</li>
+        <li><b>A recorded combination below beats the ladder.</b> Those are the ones that make the Fusion droids: the three N-UL wants are all Epic, and they make N-UL, which is itself an Epic rather than a Legendary.</li>
+      </ol>
+      <p class="fusion-rules-note">Anything not covered here has not been recorded yet. Fusing it asks what came out and adds it to the log at the foot of this page.</p></section>
     <div class="fusion-list" id="fusionList">${rows||'<div class="empty">No fusion recipes are loaded.</div>'}</div>${logHtml}`;
   const search=document.querySelector('#fusionSearch'),readyOnly=document.querySelector('#fusionReadyOnly'),trackedOnly=document.querySelector('#fusionTrackedOnly');
   const draw=()=>{
@@ -1353,8 +1526,8 @@ function optimisePanel(plan){const open=localStorage.getItem('droid-archive-opti
 function basePageV2(){
  const render=()=>{const p=placements(),future=futureRequirements(),replacementProtected=replacementSettings().protect?rebirthProtectedKeys(p):new Set(),rebirthPick=p.placed.reduce((map,x)=>{const previous=map.get(x.name);if(!previous||VARIANTS.indexOf(x.variant)>VARIANTS.indexOf(previous.variant))map.set(x.name,{variant:x.variant,key:`${x.source}:${x.unit}`});return map},new Map()),productive=p.placed.filter(x=>PRODUCTIVE_STATIONS.includes(x.station)),baseIncome=productive.reduce((sum,x)=>{const d=state.droids.find(y=>y.name===x.name);return sum+(d?.variants[x.variant]?.income||0)},0),stationIncome=productive.reduce((sum,x)=>{const d=state.droids.find(y=>y.name===x.name),match=!isIconic(d)&&x.station===d.type;return sum+(d?.variants[x.variant]?.income||0)*(match?1.1:1)},0),iconicIncomeTotal=[...new Set(productive.map(x=>x.name))].reduce((sum,name)=>sum+iconicIncome(state.droids.find(d=>d.name===name)),0),income=(stationIncome+baseIncome*iconicIncomeTotal)*effectiveMultiplier();
   const slot=(type,index)=>{const occupant=p.placed.find(x=>x.station===type&&x.slot===index);if(occupant){const d=state.droids.find(x=>x.name===occupant.name),cycleStatus=droidCycleStatus(d,occupant.variant,rebirthPick.get(d.name)?.key===`${occupant.source}:${occupant.unit}`),match=!isIconic(d)&&type===d.type,production=slotProductionHtml(d,occupant.variant,type,baseIncome,p.placed),productive=PRODUCTIVE_STATIONS.includes(type),locked=Boolean(occupant.lockedSlot),building=isBuilding(occupant);return `<div class="base-slot occupied ${match?'matched-slot':''} ${locked?'slot-pinned':''} ${building?'slot-building':''} cycle-${cycleStatus.kind}" draggable="${DRAG_AND_DROP_ENABLED&&!building?'true':'false'}" data-slot-station="${type}" data-slot-index="${index}" data-source="${occupant.source}" data-unit="${occupant.unit}"><a href="#/droid/${slug(d.name)}"><div>${picture(d,occupant.variant)}</div><strong class="slot-droid-name variant-${occupant.variant.toLowerCase()}">${d.name}</strong><small class="slot-production">${production}</small>${match?'<em class="match-bonus">+10% match</em>':''}${locked?'<em class="lock-status">Locked for Optimise</em>':''}${building?'<em class="build-status">Still building · Optimise will not move it</em>':''}<em class="cycle-status cycle-${cycleStatus.kind}">${cycleStatus.label}</em></a>${building?`<button class="slot-complete" data-complete-source="${occupant.source}" data-complete-unit="${occupant.unit}" title="Mark ${d.name} as finished building" aria-label="Mark ${d.name} as finished building">✓ Complete</button>`:''}${isIconic(d)?'':`<button class="slot-variant" data-source="${occupant.source}" data-name="${d.name}" data-variant="${occupant.variant}" data-station="${type}" data-slot="${index}" title="Change ${d.name} quality" aria-label="Change ${d.name} quality">◆</button>`}${productive?`<button class="slot-replacement-target" data-replacement-key="${replacementKey(occupant)}" title="Use ${d.name} as replacement target" aria-label="Use ${d.name} as replacement target">⌖</button>`:''}<button class="slot-lock ${locked?'active':''}" data-source="${occupant.source}" data-unit="${occupant.unit}" title="${locked?'Unlock this droid slot':'Lock this droid slot for Optimise'}" aria-label="${locked?'Unlock this droid slot':'Lock this droid slot for Optimise'}">${locked?'🔒':'🔓'}</button><button class="slot-swap" data-source="${occupant.source}" data-unit="${occupant.unit}" title="Swap ${d.name}" aria-label="Swap ${d.name}">⇄</button><button class="slot-delete" data-source="${occupant.source}" title="Remove ${d.name}" aria-label="Remove ${d.name}">×</button></div>`}const unlock=slotUnlockRebirth(type,index),eligible=isSlotEligible(type,index),purchased=isSlotPurchased(type,index),locked=!eligible||!purchased;if(eligible&&!purchased)return `<button class="base-slot locked purchasable" data-purchase-station="${type}" data-purchase-slot="${index}"><span class="slot-icon">${stationIcon(type)}</span><strong class="slot-purchase-title">Purchase slot</strong><small>${Number(unlock)>0&&Number(unlock)<50?`Unlocked at Rebirth ${unlock}`:'Available now'}</small></button>`;const label=locked?lockedSlotLabel(type,index):`Add to ${stationName(type)} slot`;return `<button class="base-slot ${locked?'locked':'open'}" ${locked?'disabled':''} ${locked?'':`data-station="${type}"`} data-slot-index="${index}"><span class="slot-icon">${stationIcon(type)}</span><small>${label}</small></button>`};
-  const station=type=>{const total=SLOT_RULES[type].initial+SLOT_RULES[type].unlocks.length,active=capacity(type),eligible=Array.from({length:total},(_,i)=>i).filter(i=>isSlotEligible(type,i)).length,toPurchase=eligible-active,future=total-eligible,used=p.placed.filter(x=>x.station===type).length,slots=Array.from({length:total},(_,i)=>`${slotDivider(type,i)}${slot(type,i)}`).join('');const fuseControl=type==='FUSION'?`<button class="btn secondary station-fuse" id="runFusion" type="button" ${used<3?'disabled':''} title="${used<3?'Fill all three Fusion slots first':'Fuse these three droids'}">Fuse</button>`:'';
-    return `<section class="station station-${type.toLowerCase().replaceAll('_','-')}"><header><span>${stationIcon(type)}<strong>${stationName(type)}</strong>${fuseControl}</span><small>${used}/${active} slots${toPurchase?` · ${toPurchase} to purchase`:''}${future?` · ${future} locked`:''}</small></header><div class="slot-grid">${slots}</div></section>`};
+  const station=type=>{const total=SLOT_RULES[type].initial+SLOT_RULES[type].unlocks.length,active=capacity(type),eligible=Array.from({length:total},(_,i)=>i).filter(i=>isSlotEligible(type,i)).length,toPurchase=eligible-active,future=total-eligible,used=p.placed.filter(x=>x.station===type).length,slots=Array.from({length:total},(_,i)=>`${slotDivider(type,i)}${slot(type,i)}`).join('');const fusePreview=type==='FUSION'?fusionPreviewHtml():'';const fuseControl=type==='FUSION'?`<button class="btn secondary station-fuse" id="runFusion" type="button" ${used<3?'disabled':''} title="${used<3?'Fill all three Fusion slots first':'Fuse these three droids'}">Fuse</button>`:'';
+    return `<section class="station station-${type.toLowerCase().replaceAll('_','-')}"><header><span>${stationIcon(type)}<strong>${stationName(type)}</strong>${fuseControl}</span><small>${used}/${active} slots${toPurchase?` · ${toPurchase} to purchase`:''}${future?` · ${future} locked`:''}</small></header><div class="slot-grid">${slots}</div>${fusePreview}</section>`};
   const roster=state.owned.map((x,i)=>{const d=state.droids.find(y=>y.name===x.name);return `<div class="roster-card" data-roster-name="${d.name.toLowerCase()}"><a href="#/droid/${slug(d.name)}">${picture(d,x.variant)}<span><strong>${d.name}</strong><small>${variantText(x.variant)} &middot; &times;${x.qty}</small></span></a><button class="icon-btn roster-remove" data-i="${i}" title="Remove">×</button></div>`}).join('');
   const located=requirementLocations();
   const needed=[...new Set(future.map(x=>x.at))].map(rebirth=>{const rebirthInfo=(state.rebirths[state.cycle]||[]).find(r=>r.to===rebirth);return `<section class="rebirth-group" data-rebirth="${rebirth}"><h3><span>Rebirth: ${rebirth}</span>${rebirthInfo?creditAmount(rebirthInfo.creditsCost):''}</h3><div class="needed-grid">${future.filter(x=>x.at===rebirth).map(req=>{const d=state.droids.find(x=>x.name===req.droidName),status=requirementStatus(req,located);return `<a class="needed-card ${status.ready?'have':status.needsUpgrade?'upgrade':'missing'}" data-needed-name="${d.name.toLowerCase()}" href="#/droid/${slug(d.name)}"><div>${picture(d,req.variant)}</div><span><strong>${d.name}</strong><small>${variantText(req.variant)}</small>${requirementWhere(status)}</span><b>${requirementNote(status)}</b></a>`}).join('')}</div></section>`}).join('');
