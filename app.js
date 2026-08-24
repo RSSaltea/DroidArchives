@@ -285,12 +285,12 @@ const loungeDivider=index=>index===5?'<div class="upper-level-divider"><span>Upp
 // says the floor as well.
 const BATTLE_UPSTAIRS_FROM=5;
 // The eleven Worker slots stand in two places: eight on the round worker
-// platform and, from the ninth unlocked onwards, three on the main platform.
+// platform and, from the ninth unlocked onwards, three outside the main one.
 const WORKER_MAIN_PLATFORM_FROM=8;
 const slotFloor=(station,index)=>station==='BATTLE'?(index>=BATTLE_UPSTAIRS_FROM?'upstairs':'downstairs'):'';
 const floorNote=(station,index)=>{const floor=slotFloor(station,index);return floor?` (${floor})`:''};
 const stationSlotLabel=(station,index)=>`${stationName(station)} ${index+1}${floorNote(station,index)}`;
-const slotDivider=(type,index)=>type==='LOUNGE'?loungeDivider(index):type==='BATTLE'&&index===BATTLE_UPSTAIRS_FROM?'<div class="upper-level-divider"><span>Second Floor</span></div>':type==='WORKER'&&index===WORKER_MAIN_PLATFORM_FROM?'<div class="upper-level-divider"><span>Main Platform</span></div>':'';
+const slotDivider=(type,index)=>type==='LOUNGE'?loungeDivider(index):type==='BATTLE'&&index===BATTLE_UPSTAIRS_FROM?'<div class="upper-level-divider"><span>Second Floor</span></div>':type==='WORKER'&&index===WORKER_MAIN_PLATFORM_FROM?'<div class="upper-level-divider"><span>Outside Main Platform</span></div>':'';
 const slotPurchaseKey=(type,index)=>`${type}:${index}`;
 function slotUnlockRebirth(type,index){if(type==='LOUNGE'){const meta=loungeSlotMeta(index);return meta.kind==='rebirth'?meta.rebirth:null}
   // A Fusion Build slot that a tank opens is not waiting on a rebirth at all,
