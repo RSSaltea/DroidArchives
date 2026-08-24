@@ -629,6 +629,97 @@ function fusionRaritySteps(stock){
 }
 // A Fusion droid is fused at the quality you want or not at all, so the useful
 // question on the Base is not just "can I make this" but "how good a one".
+// ---- Fusing what you no longer need ---------------------------------------
+const droidIncomeAt=(name,variant)=>fusionDroid(name)?.variants?.[variant]?.income||0;
+// A roll does not say which droid arrives, so the middle earner of that rarity
+// and quality is the honest guess at what one is worth.
+function typicalIncomeFor(rarity,variant){
+  const rows=state.droids.filter(d=>d.rarity===rarity&&!isIconic(d)&&d.variants?.[variant]?.income>0)
+    .map(d=>d.variants[variant].income).sort((a,b)=>a-b);
+  return rows.length?rows[Math.floor(rows.length/2)]:0;
+}
+// Copies you can spend without costing yourself a rebirth: everything of a droid
+// the rest of the cycle never asks for, and the duplicates of one it does. The
+// best copy of anything still wanted is held back, even when it is too low a
+// quality yet, because that is the copy you would be upgrading.
+function fusionSpareStock(){
+  const wanted=new Set(futureRequirements().map(req=>req.droidName));
+  const spare=new Map();
+  for(const [name,byVariant] of fusionStock()){
+    let held=!wanted.has(name);
+    for(const [variant,count] of [...byVariant].sort((a,b)=>variantStep(b[0])-variantStep(a[0]))){
+      let free=count;
+      if(!held){free--;held=true}
+      if(free>0){if(!spare.has(name))spare.set(name,new Map());spare.get(name).set(variant,free)}
+    }
+  }
+  return spare;
+}
+// Ways to reach a droid the cycle still wants and you cannot field. A recipe or
+// three of the droid itself is a certainty; three of the rarity below is a roll
+// that could land on it, which is worth knowing before those three are sold.
+function fusionRoutesToNeeded(){
+  const spare=fusionSpareStock(),stock=fusionStock(),routes=[];
+  const wanted=new Map();
+  for(const req of futureRequirements()){
+    if(hasRequirement(req))continue;
+    const prev=wanted.get(req.droidName);
+    if(!prev||variantStep(req.variant)>variantStep(prev.variant))wanted.set(req.droidName,req);
+  }
+  for(const [name,req] of wanted){
+    const d=fusionDroid(name);
+    if(!d||isIconic(d))continue;
+    const at=req.variant;
+    const recipe=fusionRecipes().find(entry=>entry.name===name);
+    if(recipe){
+      const best=fusionBestVariant(recipe,stock);
+      if(best&&variantStep(best)>=variantStep(at))routes.push({name,at,rebirth:req.at,kind:'recipe',sure:true,inputs:recipe.inputs});
+    }
+    const below=VARIANTS[variantStep(at)-1];
+    if(below&&(stock.get(name)?.get(below)||0)>=3)routes.push({name,at,rebirth:req.at,kind:'quality',sure:true,from:below});
+    const under=RARITY_LADDER[rarityStep(d.rarity)-1];
+    if(under){
+      const pool=[];
+      for(const [other,byVariant] of spare){
+        const od=fusionDroid(other);
+        if(od&&!isIconic(od)&&od.rarity===under&&fusionCountFrom(byVariant,at)>0)pool.push(other);
+      }
+      if(pool.length>=3)routes.push({name,at,rebirth:req.at,kind:'roll',sure:false,pool:pool.sort(),rarity:d.rarity,from:under});
+    }
+  }
+  return routes.sort((a,b)=>a.rebirth-b.rebirth||a.name.localeCompare(b.name)||(b.sure?1:0)-(a.sure?1:0));
+}
+// Fusions that can be made out of nothing but droids the optimiser is about to
+// sell, judged against the weakest droid actually earning in the layout - or
+// against nothing at all when a productive slot is still empty.
+function fusionsWorthMaking(spares,placed){
+  const stock=new Map();
+  for(const unit of spares||[]){
+    const variant=unit.variant||'DEFAULT';
+    if(!stock.has(unit.name))stock.set(unit.name,new Map());
+    stock.get(unit.name).set(variant,(stock.get(unit.name).get(variant)||0)+(Number(unit.qty)||1));
+  }
+  if(!stock.size)return[];
+  const earning=(placed||[]).filter(x=>PRODUCTIVE_STATIONS.includes(x.station)).map(x=>droidIncomeAt(x.name,x.variant));
+  const slots=PRODUCTIVE_STATIONS.reduce((total,type)=>total+capacity(type),0);
+  const floor=earning.length<slots?0:Math.min(...earning);
+  const out=[];
+  for(const recipe of fusionRecipes()){
+    const at=fusionBestVariant(recipe,stock);
+    if(!at)continue;
+    const income=droidIncomeAt(recipe.name,at);
+    if(income>floor)out.push({kind:'recipe',name:recipe.name,variant:at,inputs:recipe.inputs,income,gain:income-floor,sure:true});
+  }
+  for(const step of fusionQualitySteps(stock)){
+    const income=droidIncomeAt(step.name,step.to);
+    if(income>floor)out.push({kind:'quality',name:step.name,variant:step.to,from:step.from,income,gain:income-floor,sure:true});
+  }
+  for(const group of fusionRaritySteps(stock)){
+    const income=typicalIncomeFor(group.to,group.variant);
+    if(income>floor)out.push({kind:'rarity',rarity:group.to,variant:group.variant,from:group.rarity,pool:group.names,income,gain:income-floor,sure:false});
+  }
+  return out.sort((a,b)=>b.gain-a.gain).slice(0,8);
+}
 // The Fusion station on the Base, saying what the three in the slots are about
 // to become while they can still be swapped out.
 function fusionPreviewHtml(){
@@ -646,7 +737,7 @@ function fusionOutlookHtml(){
   const best=new Map(all.map(recipe=>[recipe.name,fusionBestVariant(recipe,stock)]));
   const tracked=all.filter(recipe=>wanted.has(recipe.name));
   const spare=all.filter(recipe=>!wanted.has(recipe.name)&&best.get(recipe.name));
-  const quality=fusionQualitySteps(stock),rarity=fusionRaritySteps(stock);
+  const quality=fusionQualitySteps(stock),rarity=fusionRaritySteps(stock),routes=fusionRoutesToNeeded();
   const recipeRow=recipe=>{
     const need=fusionNeed(recipe),at=best.get(recipe.name);
     const parts=need.parts.map(part=>`<span class="fusion-outlook-part ${part.short?'is-short':'is-held'}">${escapeAttr(part.name)} <em>${part.have}/${part.need}</em></span>`).join('');
@@ -669,11 +760,18 @@ function fusionOutlookHtml(){
     <ul class="fusion-ladder">${rarity.map(group=>`<li><span class="fusion-ladder-step">${rarityText(group.rarity)} <b>&rarr;</b> ${rarityText(group.to)}</span> at ${variantText(group.variant)}
       <span class="fusion-outlook-parts">${group.names.slice(0,6).map(name=>`<span class="fusion-outlook-part is-held">${escapeAttr(name)}</span>`).join('')}${group.names.length>6?`<span class="fusion-outlook-part is-held">+${group.names.length-6} more</span>`:''}</span>
       <em class="fusion-outlook-state">${group.sets} set${group.sets===1?'':'s'} of three</em></li>`).join('')}</ul></div>`:'';
+  const routeBlock=routes.length?`<div class="fusion-outlook-block"><h3>Fusion routes to a droid you still need</h3>
+    <p>Rebirth wants these and you cannot field them. Spending droids the rest of the cycle never asks for is free; a roll is not a promise, but it is better than selling the three.</p>
+    <ul class="fusion-ladder">${routes.map(route=>`<li class="${route.sure?'is-ready':''}"><a href="#/droid/${slug(route.name)}"><strong>${escapeAttr(route.name)}</strong></a> ${variantText(route.at)}
+      <span class="fusion-outlook-parts">${route.kind==='recipe'?`<span class="fusion-outlook-part is-held">fuse ${route.inputs.map(escapeAttr).join(' + ')}</span>`
+        :route.kind==='quality'?`<span class="fusion-outlook-part is-held">fuse 3 &times; ${escapeAttr(route.name)} at ${variantLabel(route.from)}</span>`
+        :`<span class="fusion-outlook-part is-held">roll 3 spare ${rarityLabel(route.from)}s at ${variantLabel(route.at)} or better</span>${route.pool.slice(0,5).map(name=>`<span class="fusion-outlook-part is-held">${escapeAttr(name)}</span>`).join('')}${route.pool.length>5?`<span class="fusion-outlook-part is-held">+${route.pool.length-5} more</span>`:''}`}</span>
+      <em class="fusion-outlook-state">R${route.rebirth} &middot; ${route.sure?'certain':'a roll'}</em></li>`).join('')}</ul></div>`:'';
   const ready=all.filter(recipe=>best.get(recipe.name)).length;
   return `<section class="fusion-outlook"><header><div><p class="eyebrow">Droid Fusion</p><h2>Fusion Outlook</h2>
     <p>What your base could fuse right now. A Fusion droid comes out at the worst quality that went in and cannot be upgraded afterwards, so the quality shown is the best you could manage today. <a href="#/fusion-lab">How fusion works</a>.</p></div>
     <span class="fusion-outlook-count">${ready}/${all.length} ready</span></header>
-    ${trackedBlock}${spareBlock}${qualityBlock}${rarityBlock}</section>`;
+    ${trackedBlock}${routeBlock}${spareBlock}${qualityBlock}${rarityBlock}</section>`;
 }
 
 function fusionLabPage(){
@@ -2144,8 +2242,17 @@ function optimisePage(){
   const station=type=>{const total=SLOT_RULES[type].initial+SLOT_RULES[type].unlocks.length,active=capacity(type),eligible=Array.from({length:total},(_,i)=>i).filter(i=>isSlotEligible(type,i)).length,toPurchase=eligible-active,future=total-eligible,used=p.placed.filter(x=>x.station===type).length,slots=Array.from({length:total},(_,i)=>`${slotDivider(type,i)}${slot(type,i)}`).join('');const fuseControl=type==='FUSION'?`<button class="btn secondary station-fuse" id="runFusion" type="button" ${used<3?'disabled':''} title="${used<3?'Fill all three Fusion slots first':'Fuse these three droids'}">Fuse</button>`:'';
     return `<section class="station station-${type.toLowerCase().replaceAll('_','-')}"><header><span>${stationIcon(type)}<strong>${stationName(type)}</strong>${fuseControl}</span><small>${used}/${active} slots${toPurchase?` · ${toPurchase} not purchased`:''}${future?` · ${future} locked`:''}</small></header><div class="slot-grid">${slots}</div></section>`};
   const overflow=p.overflow.map(x=>{const d=state.droids.find(y=>y.name===x.name);return `<div class="roster-card"><a href="#/droid/${slug(d.name)}">${picture(d,x.variant)}<span><strong>${d.name}</strong><small>${variantText(x.variant)} &middot; not placed</small></span></a></div>`}).join('');
+  const worthFusing=fusionsWorthMaking(p.sell,p.placed);
+  const fuseFirst=worthFusing.length?`<section class="sell-wide fuse-first"><header><div><strong>Fuse before you sell</strong><span>${worthFusing.length} fusion${worthFusing.length===1?'':'s'} you could make out of the Sell list alone</span></div></header>
+    <ul class="fuse-first-list">${worthFusing.map(item=>`<li class="${item.sure?'is-sure':'is-roll'}">
+      <span class="fuse-first-out">${item.kind==='rarity'?`a ${rarityText(item.rarity)} droid`:`<strong>${escapeAttr(item.name)}</strong>`} &middot; ${variantText(item.variant)}</span>
+      <span class="fuse-first-in">${item.kind==='recipe'?`from ${item.inputs.map(escapeAttr).join(' + ')}`
+        :item.kind==='quality'?`from 3 &times; ${escapeAttr(item.name)} at ${variantLabel(item.from)}`
+        :`from any 3 of ${item.pool.slice(0,5).map(escapeAttr).join(', ')}${item.pool.length>5?` +${item.pool.length-5} more`:''} at ${variantLabel(item.variant)}`}</span>
+      <em class="fuse-first-gain">${item.sure?'':'about '}+${fmt(item.gain*3600)}/hr</em></li>`).join('')}</ul>
+    <p class="fuse-first-note">Measured against the weakest droid earning in the layout above. A rarity roll does not say which droid arrives, so its figure is the middle earner of that rarity and quality.</p></section>`:'';
   const sell=p.sell.map(x=>{const d=state.droids.find(y=>y.name===x.name);return `<div class="sell-card cycle-unused"><a href="#/droid/${slug(d.name)}"><div>${picture(d,x.variant)}</div><span><strong>${d.name}</strong><small>${variantText(x.variant)} · From: ${originLabel(x)}</small><em>${x.sellReason||'No rebirth use'}</em></span></a></div>`}).join('');
-  app.innerHTML=`<div class="breadcrumbs"><a href="#/">Homepage</a> / Optimise</div><div class="base-heading"><div><p class="eyebrow">Credit optimiser</p><h1>Optimise</h1><p class="lead">A preview of your Base rearranged for the best estimated credits per hour.</p></div>${nothingToDo?'<p class="optimise-settled">Already optimal.</p>':'<button class="btn" id="applyOptimised">Apply optimised layout</button>'}</div><div class="base-top optimise-stats"><div class="stat"><small>Current / hour</small><strong>${fmt(currentIncome*3600)}</strong></div><div class="stat"><small>Optimised / hour</small><strong>${fmt(income*3600)}</strong></div><div class="stat"><small>Estimated gain / hour</small><strong>${gain?`+${fmt(gain*3600)}`:'—'}</strong></div><div class="stat scrap-stat"><small>Optimised scrap / hit</small><strong>${optimisedScrap.hit?fmt(optimisedScrap.hit):'—'}</strong><em>${scrapGain.hit?`+${fmt(scrapGain.hit)} per hit`:'No change'}</em></div><div class="stat scrap-stat"><small>Optimised scrap / break</small><strong>${optimisedScrap.break?fmt(optimisedScrap.break):'—'}</strong><em>${scrapGain.break?`+${fmt(scrapGain.break)} per break`:'No change'}</em></div><div class="stat"><small>Droids owned</small><strong>${state.owned.reduce((s,x)=>s+x.qty,0)}</strong></div></div>${nothingToDo?'':'<div class="notice">This page does not change your Base until you click <strong>Apply optimised layout</strong>. Droids in Sell are excluded from the applied layout.</div>'}${missingPreferredCompanions().length?`<div class="notice companion-wanted"><strong>Buy for a Companion slot:</strong> ${missingPreferredCompanions().map(name=>`<a href="#/droid/${slug(name)}">${name}</a>`).join(', ')} — you picked ${missingPreferredCompanions().length===1?'this':'these'} as a preferred companion but ${missingPreferredCompanions().length===1?'do not':'do not'} own ${missingPreferredCompanions().length===1?'it':'them'} yet.</div>`:''}${steps.length?`<section class="optimise-steps ${stepsCollapsed?'collapsed':''}"><header><div><p class="eyebrow">${stepsEyebrow}</p><h2>Step-by-step moves</h2></div><div class="optimise-steps-actions">${trackToggle}${stepsStyleToggle}<button class="icon-btn optimise-steps-toggle" id="toggleOptimiseSteps" title="${stepsCollapsed?'Show':'Minimise'} steps">${stepsCollapsed?'+' :'−'}</button></div></header>${stepsList}</section>`:''}<div class="base-layout-v2 optimise-layout"><div class="typed-stations">${['WORKER','ASTROMECH','BATTLE'].map(station).join('')}</div><div class="build-side">${station('BUILD')}</div>${overflow?`<section class="roster-wide"><header><div><strong>Unplaced</strong><span>${p.overflow.length} over capacity</span></div></header><div id="rosterCards">${overflow}</div></section>`:''}${sell?`<section class="sell-wide"><header><div><strong>Sell</strong><span>${p.sell.length} unused or duplicate rebirth droid${p.sell.length===1?'':'s'}</span></div></header><div class="sell-grid">${sell}</div></section>`:''}</div>`;
+  app.innerHTML=`<div class="breadcrumbs"><a href="#/">Homepage</a> / Optimise</div><div class="base-heading"><div><p class="eyebrow">Credit optimiser</p><h1>Optimise</h1><p class="lead">A preview of your Base rearranged for the best estimated credits per hour.</p></div>${nothingToDo?'<p class="optimise-settled">Already optimal.</p>':'<button class="btn" id="applyOptimised">Apply optimised layout</button>'}</div><div class="base-top optimise-stats"><div class="stat"><small>Current / hour</small><strong>${fmt(currentIncome*3600)}</strong></div><div class="stat"><small>Optimised / hour</small><strong>${fmt(income*3600)}</strong></div><div class="stat"><small>Estimated gain / hour</small><strong>${gain?`+${fmt(gain*3600)}`:'—'}</strong></div><div class="stat scrap-stat"><small>Optimised scrap / hit</small><strong>${optimisedScrap.hit?fmt(optimisedScrap.hit):'—'}</strong><em>${scrapGain.hit?`+${fmt(scrapGain.hit)} per hit`:'No change'}</em></div><div class="stat scrap-stat"><small>Optimised scrap / break</small><strong>${optimisedScrap.break?fmt(optimisedScrap.break):'—'}</strong><em>${scrapGain.break?`+${fmt(scrapGain.break)} per break`:'No change'}</em></div><div class="stat"><small>Droids owned</small><strong>${state.owned.reduce((s,x)=>s+x.qty,0)}</strong></div></div>${nothingToDo?'':'<div class="notice">This page does not change your Base until you click <strong>Apply optimised layout</strong>. Droids in Sell are excluded from the applied layout.</div>'}${missingPreferredCompanions().length?`<div class="notice companion-wanted"><strong>Buy for a Companion slot:</strong> ${missingPreferredCompanions().map(name=>`<a href="#/droid/${slug(name)}">${name}</a>`).join(', ')} — you picked ${missingPreferredCompanions().length===1?'this':'these'} as a preferred companion but ${missingPreferredCompanions().length===1?'do not':'do not'} own ${missingPreferredCompanions().length===1?'it':'them'} yet.</div>`:''}${steps.length?`<section class="optimise-steps ${stepsCollapsed?'collapsed':''}"><header><div><p class="eyebrow">${stepsEyebrow}</p><h2>Step-by-step moves</h2></div><div class="optimise-steps-actions">${trackToggle}${stepsStyleToggle}<button class="icon-btn optimise-steps-toggle" id="toggleOptimiseSteps" title="${stepsCollapsed?'Show':'Minimise'} steps">${stepsCollapsed?'+' :'−'}</button></div></header>${stepsList}</section>`:''}<div class="base-layout-v2 optimise-layout"><div class="typed-stations">${['WORKER','ASTROMECH','BATTLE'].map(station).join('')}</div><div class="build-side">${station('BUILD')}</div>${overflow?`<section class="roster-wide"><header><div><strong>Unplaced</strong><span>${p.overflow.length} over capacity</span></div></header><div id="rosterCards">${overflow}</div></section>`:''}${fuseFirst}${sell?`<section class="sell-wide"><header><div><strong>Sell</strong><span>${p.sell.length} unused or duplicate rebirth droid${p.sell.length===1?'':'s'}</span></div></header><div class="sell-grid">${sell}</div></section>`:''}</div>`;
   document.querySelector('.build-side').insertAdjacentHTML('afterend',`<div class="special-stations">${station('LOUNGE')}${station('COMPANION')}${station('UPGRADE_CHIP')}${station('FUSION')}${station('FUSION_BUILD')}</div>`);
   document.querySelector('#toggleOptimiseSteps')?.addEventListener('click',()=>{localStorage.setItem('droid-archive-optimise-steps-collapsed',stepsCollapsed?'0':'1');optimisePage()});
   document.querySelector('#toggleStepStyle')?.addEventListener('click',()=>{localStorage.setItem('droid-archive-optimise-step-style',classicSteps?'route':'classic');optimisePage();toast(classicSteps?'Using the route plan':'Using the classic slot-by-slot plan')});

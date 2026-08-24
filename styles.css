@@ -734,6 +734,17 @@ html.in-companion .site-header .discord-button{flex:0 0 auto}
 .fusion-ladder-step{font-size:11px;font-weight:800;white-space:nowrap}
 .fusion-ladder-step b{margin:0 3px;color:#9fb0ff}
 .fusion-ladder .fusion-outlook-state{color:#7df0a1}
+/* Fusions worth making out of the Optimise Sell list, before it is acted on. */
+.fuse-first{border-left:5px solid #6f7fd0}
+.fuse-first-list{list-style:none;margin:0;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.fuse-first-list li{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-top:8px;border-top:1px solid var(--line)}
+.fuse-first-list li:first-child{padding-top:0;border-top:0}
+.fuse-first-out{min-width:190px;font-size:12px;color:var(--ink)}
+.fuse-first-in{flex:1 1 auto;color:var(--muted);font-size:11px}
+.fuse-first-gain{color:#7df0a1;font-size:11px;font-weight:800;font-style:normal;white-space:nowrap}
+.fuse-first-list li.is-roll .fuse-first-gain{color:#9fb0ff}
+.fuse-first-note{margin:0;padding:0 14px 13px;color:var(--muted);font-size:11px;font-style:italic}
+
 
 
 /* What a droid fuses into, shown on its card in the slot picker. Green is an
