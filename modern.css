@@ -378,3 +378,7 @@ html[data-ui-style="modern"] .deck-stepper input[type=number]::-webkit-outer-spi
 html[data-ui-style="modern"] .deck-stepper-arrows{display:flex;flex:0 0 auto;flex-direction:column;gap:2px}
 html[data-ui-style="modern"] .deck-stepper-arrows button{display:grid;width:22px;height:15px;padding:0;place-items:center;border:1px solid var(--line);border-radius:3px;background:#0b121c;color:#93a5bd;font-size:7px;line-height:1;cursor:pointer;transition:color .15s,border-color .15s,background .15s}
 html[data-ui-style="modern"] .deck-stepper-arrows button:hover{border-color:var(--green);background:#111c28;color:#eaf1f8}
+
+/* Two arrow columns need the field narrower so the cell still fits its badge. */
+html[data-ui-style="modern"] .deck-stepper.is-dual{gap:4px}
+html[data-ui-style="modern"] .deck-stepper.is-dual input[type=number]{max-width:60px;text-align:center}
