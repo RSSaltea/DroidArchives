@@ -2,6 +2,24 @@
   "version": 1,
   "notes": [
     {
+      "id": "2026-08-25-tidier-panels-and-two-events",
+      "date": "2026-08-25",
+      "title": "A tidier Base, a fuller Fusion Outlook, and the D-O Event",
+      "summary": "Ten small things: duplicates counted once, the fusion panels given room, and two events put right.",
+      "changes": [
+        "The Roster counts duplicates. Two of the same droid at the same quality are one card with a count instead of two entries. The remove button takes one copy off.",
+        "The fusion note in the droid picker is much smaller and no longer swallows the card, and it can be switched off.",
+        "Optimise settings is now Advanced settings, and the switch for that fusion note lives there.",
+        "The timer clock sits centred when the strip shrinks on scroll.",
+        "Base multiplier and Current rebirth have up and down arrows beside the box, so nothing is cut off.",
+        "The buttons on a droid's page are one tidy row instead of a scattered line.",
+        "Fusion Outlook lists every droid you could use rather than stopping at five and saying \"+2 more\".",
+        "Fusion Outlook rows expand, showing each droid's portrait, the quality you hold it at, and the slot it is standing in.",
+        "The DJ R3X mini event's morning run moved to 10am Eastern. The evening run is unchanged.",
+        "Added the D-O Event, opening on 29 August for 24 hours."
+      ]
+    },
+    {
       "id": "2026-08-23-fusion-lab-and-live-sync",
       "date": "2026-08-23",
       "title": "The Fusion room, a DJ Event timer, and one account everywhere",
