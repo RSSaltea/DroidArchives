@@ -1,0 +1,11 @@
+{
+  "id": "d-o-event",
+  "name": "D-O Event",
+  "category": "Limited event",
+  "description": "A 24 hour Droid Tycoon event. This is your chance to unlock D-O.",
+  "startsAt": "2026-08-29T20:00:00Z",
+  "durationHours": 24,
+  "endedRetentionHours": 2,
+  "homepage": true,
+  "image": "assets/events/D-O_Event.png"
+}
