@@ -19,7 +19,8 @@ const droids=[
   {name:'BAL-CORE',rarity:'RARE',variants:{DEFAULT:{income:55}}}
 ];
 const sandbox={console,
-  state:{droids,owned:[],cycle:0,rebirth:1,rebirths:{0:[
+  // An empty Droidex: the chain may fuse for a square as well as for income.
+  state:{droids,droidex:[],owned:[],cycle:0,rebirth:1,rebirths:{0:[
     {to:1,requiredDroids:[{droidName:'CB',variant:'DEFAULT'}]},
     {to:2,requiredDroids:[{droidName:'2BB',variant:'DEFAULT'},{droidName:'BAL-CORE',variant:'DEFAULT'}]},
     {to:4,requiredDroids:[{droidName:'ARG',variant:'GOLD'}]}]},
@@ -36,7 +37,8 @@ for(const chunk of [line('const VARIANTS='),line('const isIconic='),line('const 
   grab('function fusionStock('),grab('function fusionCountFrom('),line('const fusionRecipeWants='),
   grab('function fusionBestVariant('),grab('function fusionQualitySteps('),grab('function fusionRaritySteps('),
   grab('function typicalIncomeFor('),grab('function fusionSpareStock('),grab('function fusionRoutesToNeeded('),
-  grab('function fusionsWorthMaking(')])
+  grab('function droidexEntry('),line('const droidexGapFor='),grab('function fusionSpendFrom('),
+  grab('function fusionBestFrom('),grab('function fusionChainFromSpares(')])
   vm.runInContext(chunk,sandbox);
 const run=e=>vm.runInContext(e,sandbox);
 const own=rows=>{sandbox.state.owned=rows};
@@ -67,14 +69,14 @@ const spares=[{name:'CB',variant:'DEFAULT'},{name:'PIT',variant:'DEFAULT'},{name
 const placed=[{name:'CB',variant:'DEFAULT',station:'WORKER'},{name:'PIT',variant:'DEFAULT',station:'WORKER'},
   {name:'GONK',variant:'DEFAULT',station:'ASTROMECH'},{name:'MOUSE',variant:'DEFAULT',station:'ASTROMECH'},
   {name:'CB',variant:'DEFAULT',station:'BATTLE'},{name:'PIT',variant:'DEFAULT',station:'BATTLE'}];
-let worth=run('fusionsWorthMaking('+JSON.stringify(spares)+','+JSON.stringify(placed)+')');
+let worth=run('fusionChainFromSpares('+JSON.stringify(spares)+','+JSON.stringify(placed)+')');
 ok('three spare Commons are worth rolling into a Rare',worth.some(w=>w.kind==='rarity'&&w.rarity==='RARE'),JSON.stringify(worth));
 ok('and that suggestion is flagged as a roll',worth.filter(w=>w.kind==='rarity').every(w=>w.sure===false),JSON.stringify(worth));
 ok('the gain is measured against the weakest earner, not against nothing',worth[0].gain>0&&worth[0].gain<worth[0].income,JSON.stringify(worth[0]));
-ok('nothing to spare means nothing to suggest',run('fusionsWorthMaking([],[])').length===0,'');
+ok('nothing to spare means nothing to suggest',run('fusionChainFromSpares([],[])').length===0,'');
 const three=[{name:'MOUSE',variant:'DEFAULT'},{name:'MOUSE',variant:'DEFAULT'},{name:'MOUSE',variant:'DEFAULT'}];
-worth=run('fusionsWorthMaking('+JSON.stringify(three)+','+JSON.stringify(placed)+')');
-ok('three of one spare droid offer the certain quality step',worth.some(w=>w.kind==='quality'&&w.name==='MOUSE'&&w.variant==='GOLD'&&w.sure),JSON.stringify(worth));
+worth=run('fusionChainFromSpares('+JSON.stringify(three)+','+JSON.stringify(placed)+')');
+ok('three of one spare droid offer the certain quality step',worth.some(w=>w.kind==='quality'&&w.out.name==='MOUSE'&&w.out.variant==='GOLD'&&w.sure),JSON.stringify(worth));
 
 console.log(fails?'\n'+fails+' FAILED':'\nall passed');
 process.exit(fails?1:0);

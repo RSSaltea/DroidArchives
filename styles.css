@@ -789,3 +789,26 @@ html.in-companion .site-header .discord-button{flex:0 0 auto}
 .fusion-log-inputs{color:var(--muted);min-width:220px}
 .fusion-log-results{display:flex;flex-wrap:wrap;gap:8px}
 .fusion-log-results em{font-style:normal;font-weight:800;color:#9fb0ff}
+
+/* The fuse-before-you-sell chain. Each row reads left to right: what it costs,
+   what it makes, and why it beats selling. */
+.fuse-first>header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.fuse-first-switch{display:inline-flex;align-items:center;gap:7px;color:var(--muted);font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap}
+.fuse-first-switch input{width:15px;height:15px;accent-color:#7df0a1;cursor:pointer}
+.fuse-first.is-off .fuse-first-note{margin-top:10px}
+.fuse-first-list{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:8px;counter-reset:fuse}
+.fuse-first-list>li{display:grid;grid-template-columns:24px minmax(0,1.1fr) minmax(0,1fr) auto;align-items:center;gap:6px 12px;padding:9px 0 0;border-top:1px solid var(--line)}
+.fuse-first-no{display:grid;width:22px;height:22px;place-items:center;border-radius:50%;background:#1b2740;color:#9fb0ff;font-size:10px;font-weight:900}
+.fuse-first-list>li.is-roll .fuse-first-no{background:#2b2437;color:#d2a8ff}
+.fuse-first-in{color:var(--muted);font-size:11px}
+.fuse-first-out{font-size:12px;font-weight:800}
+.fuse-first-out:before{content:"92";margin-right:7px;color:#7df0a1;font-weight:900}
+.fuse-first-why{color:#7df0a1;font-size:11px;font-style:normal;font-weight:800;text-align:right;white-space:nowrap}
+.fuse-first-why b{color:#ffd45a;font-weight:900}
+.fuse-first-after{grid-column:2/-1;color:#8fa2bb;font-size:10px}
+.fuse-first-note{margin:12px 0 0;color:var(--muted);font-size:11px}
+.sell-card.to-fusion{border-color:#5f7fd8;box-shadow:inset 3px 0 #7d9bff}
+.sell-card.to-fusion em{color:#9fb0ff;font-weight:800}
+@media(max-width:760px){.fuse-first-list>li{grid-template-columns:24px minmax(0,1fr)}.fuse-first-why{grid-column:2;text-align:left}}
+:root:not([data-theme="dark"]) .fuse-first-no{background:#e4e9f6;color:#3c4a7a}
+:root:not([data-theme="dark"]) .sell-card.to-fusion{border-color:#8098d8}

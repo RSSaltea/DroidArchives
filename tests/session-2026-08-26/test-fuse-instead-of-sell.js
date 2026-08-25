@@ -1,0 +1,158 @@
+// Fusing the Sell list instead of selling it. The point of the chain is that a
+// fusion puts a droid back into the pool, so a later step can spend what an
+// earlier one made - three spare Diamonds and two spare Rainbows are a Beskar,
+// not two dead ends.
+const fs=require('fs'),vm=require('vm'),path=require('path');
+const ROOT=path.resolve(__dirname,'..','..')+'/';
+const src=fs.readFileSync(ROOT+'app.js','utf8'),LINES=src.split(/\r?\n/);
+let fails=0;const ok=(l,c,x='')=>{if(!c)fails++;console.log('  '+(c?'ok  ':'FAIL')+' '+l+(c?'':'  -> '+x))};
+const pick=k=>{const l=LINES.find(x=>x.trimStart().startsWith(k));if(!l)throw Error('missing '+k);return l};
+const grab=k=>{const i=src.indexOf(k);if(i<0)throw Error('missing '+k);let d=0,j=src.indexOf('{',i),st=false;
+  for(;j<src.length;j++){if(src[j]==='{'){d++;st=true}else if(src[j]==='}'){d--;if(st&&d===0){j++;break}}}return src.slice(i,j)};
+
+const VARIANTS=['DEFAULT','GOLD','DIAMOND','RAINBOW','BESKAR','GALACTIC','STELLAR'];
+const sb={};vm.createContext(sb);
+vm.runInContext('const VARIANTS='+JSON.stringify(VARIANTS)+';',sb);
+vm.runInContext(pick('const RARITY_LADDER='),sb);
+for(const k of ['const variantStep=','const rarityStep=','const nextVariant=','const nextRarity=','const isIconic=',
+  'const fusionDroid=','const fusionRecipes=','const fusionRecipeWants=','const fusionKey=','const fusionRecipeFor=',
+  'const droidIncomeAt=','const droidexGapFor=','const PRODUCTIVE_STATIONS=']) vm.runInContext(pick(k),sb);
+for(const k of ['function fusionCountFrom(','function fusionBestVariant(','function fusionQualitySteps(',
+  'function fusionRaritySteps(','function typicalIncomeFor(','function fusionSpendFrom(','function fusionBestFrom(',
+  'function fusionChainFromSpares(','function droidexEntry(']) vm.runInContext(grab(k),sb);
+vm.runInContext('function capacity(){return 5}',sb);   // only feeds the "are all productive slots full" test
+
+const droids=JSON.parse(fs.readFileSync(ROOT+'data/droids.json','utf8'));
+const fusion=JSON.parse(fs.readFileSync(ROOT+'data/fusion.json','utf8'));
+const everySquare=[];for(const d of droids)for(const v of VARIANTS)everySquare.push({name:d.name,variant:v});
+const chain=(spares,placed,droidex)=>{sb.state={droids,fusion,droidex:droidex||[],owned:[]};sb.s=spares;sb.p=placed||[];
+  return vm.runInContext('fusionChainFromSpares(s,p)',sb)};
+const MYTH=droids.find(d=>d.rarity==='MYTHIC'&&!d.fusion).name;
+
+console.log('=== the chain spends what it just made ===');
+{
+  const steps=chain([{name:MYTH,variant:'DIAMOND',qty:3},{name:MYTH,variant:'RAINBOW',qty:2}]);
+  ok('three Diamonds and two Rainbows make two steps',steps.length===2,steps.length+' steps');
+  ok('the first turns three Diamonds into a Rainbow',
+    steps[0].out.variant==='RAINBOW'&&steps[0].spend[0].variant==='DIAMOND'&&steps[0].spend[0].count===3);
+  ok('the second reaches Beskar',steps[1].out.variant==='BESKAR');
+  ok('and it knows it is spending the first step\u2019s result',steps[1].after.includes(0),JSON.stringify(steps[1].after));
+  ok('the two spare Rainbows are what made that possible',steps[1].spend[0].count===3);
+}
+
+console.log('');
+console.log('=== a Droidex square is reason enough on its own ===');
+{
+  const empty=chain([{name:MYTH,variant:'DIAMOND',qty:3}]);
+  ok('an empty Droidex fuses for the square',empty.length===1&&empty[0].fills===true);
+  const done=chain([{name:MYTH,variant:'DIAMOND',qty:3}],[],everySquare);
+  ok('with the square already filled it is judged on income alone',done.every(s=>s.fills===false));
+  ok('and here income still justifies it',done.length===1,'a Rainbow out-earns a Diamond');
+}
+
+console.log('');
+console.log('=== nothing worth doing ===');
+{
+  ok('one droid is not a fusion',chain([{name:MYTH,variant:'DIAMOND',qty:1}]).length===0);
+  ok('an empty sell list gives an empty chain',chain([]).length===0);
+  const rich=[{name:MYTH,variant:'STELLAR',qty:5}];
+  ok('the top quality has no step above it',chain(rich).every(s=>s.kind!=='quality'));
+}
+
+console.log('');
+console.log('=== a recipe beats a plain rarity roll ===');
+{
+  const recipe=fusionRecipes_first();
+  const steps=chain(recipe.inputs.map(n=>({name:n,variant:'GOLD',qty:1})));
+  ok('the recipe is found from its exact inputs',steps.length===1&&steps[0].kind==='recipe');
+  ok('it names what comes out',steps[0].out.name===recipe.name,steps[0].out&&steps[0].out.name);
+  ok('at the worst quality that went in',steps[0].out.variant==='GOLD');
+  ok('and a fusion droid is new to the Droidex',steps[0].fills===true);
+}
+function fusionRecipes_first(){sb.state={droids,fusion,droidex:[],owned:[]};return vm.runInContext('fusionRecipes()[0]',sb)}
+
+console.log('');
+console.log('=== a roll is offered but never promises a droid ===');
+{
+  const epics=droids.filter(d=>d.rarity==='EPIC'&&!d.fusion).slice(0,3).map(d=>d.name);
+  const steps=chain(epics.map(n=>({name:n,variant:'BESKAR',qty:1})),[],everySquare);
+  const roll=steps.find(s=>s.kind==='rarity');
+  if(roll){
+    ok('a roll carries no named result',roll.out===null);
+    ok('and is marked uncertain',roll.sure===false);
+    ok('it still says which rarity it lands in',Boolean(roll.rarity));
+  } else ok('three different Epics offer a rarity roll',false,'no roll produced');
+}
+
+console.log('');
+console.log('=== the pool cannot be spent twice ===');
+{
+  const steps=chain([{name:MYTH,variant:'DIAMOND',qty:3},{name:MYTH,variant:'RAINBOW',qty:2}]);
+  const spentDiamond=steps.flatMap(s=>s.spend).filter(p=>p.variant==='DIAMOND').reduce((t,p)=>t+p.count,0);
+  const spentRainbow=steps.flatMap(s=>s.spend).filter(p=>p.variant==='RAINBOW').reduce((t,p)=>t+p.count,0);
+  ok('it spends the three Diamonds it had',spentDiamond===3,'spent '+spentDiamond);
+  ok('and three Rainbows: the two spare plus the one it made',spentRainbow===3,'spent '+spentRainbow);
+  ok('the chain terminates',steps.length<12);
+}
+
+console.log('');
+console.log('=== the rows say what they cost, make, and why ===');
+{
+  const ui={};vm.createContext(ui);
+  ui.console=console;
+  vm.runInContext('const VARIANTS='+JSON.stringify(VARIANTS)+';',ui);
+  for(const k of ['const escapeAttr=','const variantStep=','const variantLabel=','const variantText=',
+    'const rarityClass=','const rarityLabel=','const rarityText=','const fmt=']) vm.runInContext(pick(k),ui);
+  const at=src.indexOf('const fuseStep=step=>{');
+  vm.runInContext(src.slice(at,src.indexOf('\n  };',at)+5),ui);
+  const render=step=>{ui.step=step;return vm.runInContext('fuseStep(step)',ui)};
+  const plain=h=>h.replace(/<[^>]+>/g,' ').replace(/&times;/g,'x').replace(/&middot;/g,'.').replace(/\s+/g,' ').trim();
+
+  const first=render({step:1,sure:true,fills:true,gain:120,spend:[{name:'SNOW MOUSE',variant:'DIAMOND',count:3}],
+    out:{name:'SNOW MOUSE',variant:'RAINBOW'},after:[]});
+  ok('a step names what it spends',plain(first).includes('3 x SNOW MOUSE Diamond'),plain(first));
+  ok('and what it makes',plain(first).includes('SNOW MOUSE Rainbow'));
+  ok('a Droidex square is called out',first.includes('fills a Droidex square'));
+  ok('it is marked certain',first.includes('is-sure'));
+
+  const second=render({step:2,sure:true,fills:false,gain:340,spend:[{name:'SNOW MOUSE',variant:'RAINBOW',count:3}],
+    out:{name:'SNOW MOUSE',variant:'BESKAR'},after:[0]});
+  ok('a step that waits on another says so',second.includes('Waits for step 1'),plain(second));
+  ok('and explains why it waits',second.includes('spends what that one makes'));
+
+  const roll=render({step:3,sure:false,fills:false,gain:90,out:null,rarity:'LEGENDARY',variant:'BESKAR',after:[],
+    spend:[{name:'LO',variant:'BESKAR',count:1},{name:'GROUNDMECH',variant:'BESKAR',count:1},{name:'AMP WALKER',variant:'BESKAR',count:1}]});
+  ok('a roll is marked as one',roll.includes('is-roll'));
+  ok('it promises a rarity, not a droid',plain(roll).includes('Legendary droid')&&!roll.includes('<strong>'),plain(roll));
+  ok('and its figure is hedged',plain(roll).includes('about +'));
+}
+
+console.log('');
+console.log('=== Fusion slots become storage only when asked ===');
+{
+  const st={state:{fusionAsLounge:false}};vm.createContext(st);
+  vm.runInContext(pick('const loungeLikeStations='),st);
+  ok('off, the Lounge and Companion are the storage',vm.runInContext("loungeLikeStations().join(',')",st)==='LOUNGE,COMPANION');
+  st.state.fusionAsLounge=true;
+  ok('on, Fusion joins them',vm.runInContext("loungeLikeStations().join(',')",st)==='LOUNGE,COMPANION,FUSION');
+  // The helper itself is the one place the pair is allowed to be written out.
+  const literals=LINES.filter(l=>l.includes("['LOUNGE','COMPANION']")&&!l.includes('const loungeLikeStations='));
+  ok('no caller still hard-codes the pair',literals.length===0,literals.join(' | ').slice(0,120));
+  ok('and the optimiser asks the helper instead',(src.match(/loungeLikeStations\(\)/g)||[]).length>=6);
+}
+
+console.log('');
+console.log('=== both switches are wired at both ends ===');
+{
+  for(const [id,what] of [['toggleFuseFirst','fuse instead of selling'],['commandFusionAsLounge','Fusion as Lounge (deck)'],['sideFusionAsLounge','Fusion as Lounge (sidebar)']]){
+    ok(what+' has a control',src.includes('id="'+id+'"'),id);
+    ok(what+' has a handler',src.includes("'#"+id+"'"),id);
+  }
+  ok('the switch defaults to on',src.includes("localStorage.getItem('droid-archive-optimise-fuse-first')!=='0'"));
+  ok('storing in Fusion defaults to off',src.includes("localStorage.getItem('droid-archive-fusion-as-lounge')==='1'"));
+  ok('both ride along with a saved profile',src.includes('optimiseFuseFirst:state.optimiseFuseFirst')&&src.includes('fusionAsLounge:state.fusionAsLounge'));
+}
+
+console.log('');
+console.log(fails?fails+' failed':'all passed');
+process.exit(fails?1:0);
