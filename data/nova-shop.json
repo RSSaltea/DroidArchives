@@ -51,32 +51,32 @@
           "id": "default",
           "name": "Default",
           "multipliers": [
-            1.027,
-            20.546
+            1,
+            20
           ]
         },
         {
           "id": "gold",
           "name": "Gold",
           "multipliers": [
-            2.053,
-            41.094
+            2,
+            40
           ]
         },
         {
           "id": "diamond",
           "name": "Diamond",
           "multipliers": [
-            3.425,
-            82.192
+            3.333,
+            80
           ]
         },
         {
           "id": "rainbow",
           "name": "Rainbow",
           "multipliers": [
-            6.847,
-            205.46
+            6.667,
+            200
           ]
         }
       ]
