@@ -1,7 +1,7 @@
 // What a fusion produces: the quality that comes out, the quality ladder for
 // three of one droid, and the rarity ladder for three that merely share one.
 const fs=require('fs'),vm=require('vm');
-const ROOT='c:/Users/andre/Desktop/DroidArchives/';
+const ROOT=require('path').resolve(__dirname,'..','..')+'/';
 const src=fs.readFileSync(ROOT+'app.js','utf8');
 let fails=0;const ok=(l,c,x='')=>{if(!c)fails++;console.log(`  ${c?'ok  ':'FAIL'} ${l}${c?'':'  -> '+x}`)};
 const grab=k=>{const i=src.indexOf(k);if(i<0)throw Error('missing '+k);let d=0,j=i,started=false;

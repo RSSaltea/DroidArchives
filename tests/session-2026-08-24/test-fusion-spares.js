@@ -1,7 +1,7 @@
 // Fusing what the cycle no longer wants: which copies are really spare, which
 // routes reach a droid you still need, and which fusions beat selling the parts.
 const fs=require('fs'),vm=require('vm');
-const ROOT='c:/Users/andre/Desktop/DroidArchives/';
+const ROOT=require('path').resolve(__dirname,'..','..')+'/';
 const src=fs.readFileSync(ROOT+'app.js','utf8');
 let fails=0;const ok=(l,c,x='')=>{if(!c)fails++;console.log('  '+(c?'ok  ':'FAIL')+' '+l+(c?'':'  -> '+x))};
 const grab=k=>{const i=src.indexOf(k);if(i<0)throw Error('missing '+k);let d=0,j=i,started=false;
