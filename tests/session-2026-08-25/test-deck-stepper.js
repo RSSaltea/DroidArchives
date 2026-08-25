@@ -52,5 +52,17 @@ ok('the other by 0.1',markup.includes('data-step-by="0.1"'));
 ok('and the whole-number pair comes first',markup.indexOf('data-step-by="1"')<markup.indexOf('id="commandMultiplier"'));
 
 console.log('');
+console.log('=== the arrows belong to themselves, not to the whole cell ===');
+// A <label> with no for= binds to its first labelable descendant, and a button
+// is labelable, so hovering or clicking anywhere in the cell was landing on the
+// up arrow. Naming the input explicitly is what keeps the arrows separate.
+for(const id of ['commandMultiplier','commandRebirth']){
+  const at=src.indexOf('id="'+id+'"');
+  const label=src.slice(src.lastIndexOf('<label',at),at);
+  ok(id+' sits in a label that names its input',label.includes('for="'+id+'"'),label.slice(0,70));
+}
+ok('neither field is left to bind by position',!/<label><small>(Base multiplier|Current rebirth)/.test(src));
+
+console.log('');
 console.log(fails?fails+' failed':'all passed');
 process.exit(fails?1:0);
