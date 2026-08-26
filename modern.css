@@ -382,3 +382,8 @@ html[data-ui-style="modern"] .deck-stepper-arrows button:hover{border-color:var(
 /* Two arrow columns need the field narrower so the cell still fits its badge. */
 html[data-ui-style="modern"] .deck-stepper.is-dual{gap:4px}
 html[data-ui-style="modern"] .deck-stepper.is-dual input[type=number]{max-width:60px;text-align:center}
+
+/* While the strip is being put back after a re-render it must not animate:
+   the shrink already happened, the element is just new. */
+html[data-ui-style="modern"] .archive-timers.timers-settling,
+html[data-ui-style="modern"] .archive-timers.timers-settling *{transition:none!important;animation:none!important}

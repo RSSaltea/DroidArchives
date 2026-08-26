@@ -121,7 +121,7 @@ function updateTimerDocking(){const root=app.querySelector('.archive-timers');if
   const mark=timerDock.at,release=mark-root.offsetHeight-24;
   const docked=wasDocked?scrollY>release:scrollY>mark;
   if(docked!==wasDocked){timerDock.docked=docked;root.classList.toggle('timers-docked',docked)}if(!docked){root.style.left='';return}const content=[...app.children].filter(x=>!x.classList.contains('archive-timers')&&!x.classList.contains('event-card')),contentRight=Math.max(0,...content.map(x=>x.getBoundingClientRect().right).filter(Boolean)),viewportRight=document.documentElement.clientWidth,timerWidth=root.offsetWidth,gutter=Math.max(0,viewportRight-contentRight),left=contentRight+Math.max(12,(gutter-timerWidth)/2);root.style.left=`${Math.min(left,viewportRight-timerWidth-12)}px`}
-function mountArchiveTimers(){const path=location.hash.slice(1).split('?')[0]||'/';if(path==='/todo'||path==='/donate'||path==='/groups'){app.querySelector('.archive-timers')?.remove();return}if(!state.droids.length||app.querySelector('.archive-timers'))return;app.insertAdjacentHTML('afterbegin',timerShell());const toggle=app.querySelector('.timer-toggle');if(toggle)toggle.onclick=()=>{const root=app.querySelector('.archive-timers'),collapsed=!root.classList.contains('timers-collapsed');root.classList.toggle('timers-collapsed',collapsed);localStorage.setItem('droid-archive-timers-collapsed',collapsed?'1':'0');toggle.textContent=collapsed?'Show timers':'Hide timers';toggle.setAttribute('aria-expanded',collapsed?'false':'true');updateTimerDocking()};updateArchiveTimers();updateTimerDocking()}
+function mountArchiveTimers(){const path=location.hash.slice(1).split('?')[0]||'/';if(path==='/todo'||path==='/donate'||path==='/groups'){app.querySelector('.archive-timers')?.remove();return}if(!state.droids.length||app.querySelector('.archive-timers'))return;app.insertAdjacentHTML('afterbegin',timerShell());const toggle=app.querySelector('.timer-toggle');if(toggle)toggle.onclick=()=>{const root=app.querySelector('.archive-timers'),collapsed=!root.classList.contains('timers-collapsed');root.classList.toggle('timers-collapsed',collapsed);localStorage.setItem('droid-archive-timers-collapsed',collapsed?'1':'0');toggle.textContent=collapsed?'Show timers':'Hide timers';toggle.setAttribute('aria-expanded',collapsed?'false':'true');updateTimerDocking()};updateArchiveTimers();updateTimerDocking();settleModernTimerScroll()}
 setInterval(updateArchiveTimers,1000);
 addEventListener('scroll',updateTimerDocking,{passive:true});
 addEventListener('resize',updateTimerDocking);
@@ -1818,9 +1818,9 @@ function optimisedPlacements(baseP,plan){
     const d=state.droids.find(x=>x.name===unit.name),cycleStatus=d?droidCycleStatus(d,unit.variant,bestFuture.get(unit.name)?.key===key):{kind:'unused'};
     if(cycleStatus.kind==='unused'&&!isIconic(d)){
       // You pressed Keep on this one in the plan, so it is stored rather than sold.
-      if(spared.includes(key)&&[...loungeLikeStations(),'BUILD'].some(station=>free(station)>=0)){
+      if(spared.includes(key)){
         keptByHand.set(key,'Kept by you · you chose not to sell this one');
-        candidates.push({unit,fallbacks:loungeLikeStations(),old:current.get(key),betterStorageOpen:false,kept:false});
+        candidates.push({unit,fallbacks:loungeLikeStations(),old:current.get(key),betterStorageOpen:false,kept:false,spared:true});
         continue;
       }
       // Not needed for a rebirth, but upgrading it could still complete Droidex
@@ -1849,7 +1849,7 @@ function optimisedPlacements(baseP,plan){
     const {unit,fallbacks,old}=item;
     let station='',slot=-1;
     for(const fallback of fallbacks){if(fallback==='BUILD'&&old?.station!=='BUILD')continue;slot=free(fallback,old);if(slot>=0){claim(unit,fallback,slot);station=fallback;break}}
-    if(!station){const d=state.droids.find(x=>x.name===unit.name);if(strictKeepBuild&&!isIconic(d))sell.push({...unit,sellReason:`Sold to keep Build slots open · ${optimiseFreeBuildModeLabel(optimiseFreeBuildMode()).toLowerCase()} priority`});else overflow.push(unit)}
+    if(!station){const d=state.droids.find(x=>x.name===unit.name);if(item.spared)overflow.push(unit);else if(strictKeepBuild&&!isIconic(d))sell.push({...unit,sellReason:`Sold to keep Build slots open · ${optimiseFreeBuildModeLabel(optimiseFreeBuildMode()).toLowerCase()} priority`});else overflow.push(unit)}
   }
   const stablePlaced=stabiliseProjectedPlacements(baseP,placed),rebirthPick=stablePlaced.reduce((map,x)=>{const previous=map.get(x.name),key=`${x.source}:${x.unit}`;if(!previous||VARIANTS.indexOf(x.variant)>VARIANTS.indexOf(previous.variant))map.set(x.name,{variant:x.variant,key});return map},new Map()),finalPlaced=[],finalSell=[...sell];
   // Upgrade Chip counts as producing here: a droid making chips is earning its
@@ -3201,6 +3201,21 @@ function modernDroidCardActions(){
   })
 }
 let modernTimerScrollFrame=0,modernTimerCompactedAt=0;
+// Any render replaces app.innerHTML, and the observer rebuilds the timer strip
+// from scratch - at full height, whatever the page is scrolled to. The scroll
+// handler then shrinks it, so the animation replays on every re-render even
+// though nothing was scrolled. Setting the state before the first paint, with
+// transitions suppressed for that frame, makes a rebuild invisible.
+function settleModernTimerScroll(){
+  const timers=app.querySelector('.archive-timers');if(!timers)return;
+  const compact=document.documentElement.dataset.uiStyle==='modern'&&scrollY>110;
+  if(compact===timers.classList.contains('timers-scrolled'))return;
+  timers.classList.add('timers-settling');
+  timers.classList.toggle('timers-scrolled',compact);
+  if(compact)modernTimerCompactedAt=performance.now();
+  // One frame to paint the new state, a second to hand animation back to CSS.
+  requestAnimationFrame(()=>requestAnimationFrame(()=>timers.classList.remove('timers-settling')));
+}
 function updateModernTimerScroll(){
   const timers=app.querySelector('.archive-timers');if(!timers)return;
   if(document.documentElement.dataset.uiStyle!=='modern'){timers.classList.remove('timers-scrolled');modernTimerCompactedAt=0;return}
