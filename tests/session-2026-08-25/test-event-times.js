@@ -58,5 +58,45 @@ ok('its art is the file that was added for it',doEvent.image==='assets/events/D-
 ok('and that file is actually on disk',fs.existsSync(ROOT+doEvent.image));
 
 console.log('');
+console.log('=== a live window counts in hours, minutes and seconds ===');
+{
+  vm.runInContext(grab('function clockDuration('),sb);
+  const shown=iso=>{sb.now=new Date(iso);
+    const s=vm.runInContext('windowState({windows:DJ_EVENT_WINDOWS},now)',sb);
+    return {active:s.active,text:vm.runInContext(s.active?'clockDuration('+s.ms+')':'windowClock('+s.ms+')',sb)}};
+  const before=shown('2026-08-25T23:59:30Z');
+  ok('before it opens it is still days:hours:minutes',before.active===false&&before.text==='00:00:00',before.text);
+  const open=shown('2026-08-26T00:00:30Z');
+  ok('the moment it opens it switches',open.active===true&&open.text==='02:59:30',open.text);
+  // The in-game sign read 02:39:25 with the event live; the site should agree.
+  const mid=shown('2026-08-26T00:20:35Z');
+  ok('mid-event it matches the game\u2019s own sign',mid.text==='02:39:25',mid.text);
+  const late=shown('2026-08-26T02:59:00Z');
+  ok('it counts down to the close, not the next opening',late.text==='00:01:00',late.text);
+  const after=shown('2026-08-26T03:00:30Z');
+  ok('and switches back once the event ends',after.active===false&&after.text==='06:10:59',after.text);
+  ok('the site only ever shows seconds while a window is open',
+    /card\.textContent=s\.active\?clockDuration\(s\.ms\):windowClock\(s\.ms\)/.test(src));
+}
+
+console.log('');
+console.log('=== the overlay does the same ===');
+{
+  const overlay=fs.readFileSync(ROOT+'desktop/renderer/overlay.js','utf8');
+  const at=overlay.indexOf('const liveClock =');
+  ok('the overlay has an hours:minutes:seconds clock',at>=0);
+  if(at>=0){
+    const ov={};vm.createContext(ov);
+    vm.runInContext(overlay.slice(at,overlay.indexOf('};',at)+2),ov);
+    ov.ms=2*3600000+39*60000+25000;
+    ok('and it renders the same 02:39:25',vm.runInContext('liveClock(ms)',ov)==='02:39:25');
+    ov.ms=1000;
+    ok('padding holds at one second',vm.runInContext('liveClock(ms)',ov)==='00:00:01');
+  }
+  ok('the overlay picks it only while the window is open',
+    /info\.active \? liveClock\(info\.until - now\) : longClock\(info\.until - now\)/.test(overlay));
+}
+
+console.log('');
 console.log(fails?fails+' failed':'all passed');
 process.exit(fails?1:0);
