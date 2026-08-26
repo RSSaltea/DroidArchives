@@ -1489,14 +1489,17 @@ function chosenNeedProfiles(keys){
 // of it. Everything the requirement test reads is swapped and put back, so the
 // loaded profile is untouched even if the body throws.
 function withProfileData(data,fn){
-  const saved={owned:state.owned,cycle:state.cycle,rebirth:state.rebirth,droidex:state.droidex};
+  const saved={owned:state.owned,cycle:state.cycle,rebirth:state.rebirth,droidex:state.droidex,superRebirthGoal:state.superRebirthGoal};
   try{
     state.owned=normalizeDroidRows(data?.owned||[]);
     state.droidex=normalizeDroidRows(data?.droidex||[]);
     state.cycle=Number(data?.cycle)||0;
     state.rebirth=Number(data?.rebirth)||0;
+    // Each profile stops recommending at its own goal, so the goal is part of
+    // the save being read, not of whichever profile is open in the tab.
+    state.superRebirthGoal=data?.superRebirthGoal;
     return fn();
-  }finally{state.owned=saved.owned;state.cycle=saved.cycle;state.rebirth=saved.rebirth;state.droidex=saved.droidex}
+  }finally{state.owned=saved.owned;state.cycle=saved.cycle;state.rebirth=saved.rebirth;state.droidex=saved.droidex;state.superRebirthGoal=saved.superRebirthGoal}
 }
 // The companion holds the selection now; this only has to say what exists.
 window.__companionRebirthNeedProfiles=()=>rebirthNeedProfiles().map(profile=>({key:profile.key,name:profile.name,owner:profile.owner}));
@@ -3364,7 +3367,7 @@ if(companionMode){
       // still fill for it, and how soon each is wanted.
       const wantedBy=()=>{
         const cycle=state.rebirths?.[state.cycle]||[],found=new Map();
-        for(const rb of cycle.filter(x=>x.to>state.rebirth))for(const req of (rb.requiredDroids||[])){
+        for(const rb of cycle.filter(x=>x.to>state.rebirth&&x.to<=rebirthGoal()))for(const req of (rb.requiredDroids||[])){
           const d=state.droids.find(x=>x.name===req.droidName);
           if(!d||String(d.rarity).toUpperCase()!==r)continue;      // rarity must match the spawn
           if(VARIANTS.indexOf(req.variant)>qi)continue;            // this quality can satisfy the requirement

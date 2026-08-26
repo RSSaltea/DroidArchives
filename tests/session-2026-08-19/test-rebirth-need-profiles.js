@@ -23,6 +23,9 @@ sandbox.state={droids:[
 vm.createContext(sandbox);
 for(const k of ['function bestOwnedVariant(','function hasRequirement('])
   vm.runInContext(k.startsWith('function')?grabFn(k):line(k),sandbox);
+// A need hint stops at the profile's own Super Rebirth goal, so both of those
+// have to be in scope for it to be worked out at all.
+for(const k of ['const maxRebirth=','const rebirthGoal='])vm.runInContext(line(k),sandbox);
 vm.runInContext(grabFn('function rebirthNeedProfiles('),sandbox);
 vm.runInContext(grabFn('function chosenNeedProfiles('),sandbox);
 vm.runInContext(grabFn('function withProfileData('),sandbox);
@@ -67,6 +70,42 @@ ok('a rarity that does not match returns nothing',
    run(`window.__companionRebirthNeed('GOLD','COMMON',KEYS)`).length===0);
 ok('a quality too low to satisfy returns nothing',
    run(`window.__companionRebirthNeed('DEFAULT','LEGENDARY',KEYS)`).every(x=>x.variant==='DEFAULT'));
+
+console.log('=== a hint stops at the profile\u2019s own Super Rebirth goal ===');
+{
+  // A droid nothing wants until Rebirth 20, and two profiles: one aiming past
+  // it, one stopping at 12.
+  sandbox.state.droids.push({name:'LATE-BLOOMER',rarity:'MYTHIC'});
+  sandbox.state.rebirths[0].push({to:20,requiredDroids:[{droidName:'LATE-BLOOMER',variant:'DEFAULT'}]});
+  const withGoal=(id,name,goal)=>({id,name,data:{owned:[],cycle:0,rebirth:0,superRebirthGoal:goal}});
+  sandbox.activeProfileDoc=()=>({profiles:[withGoal('far','Going all the way',30),withGoal('near','Stopping at 12',12)]});
+  sandbox.availableGroupOutlookProfiles=()=>[];
+  KEYS=[];
+  const hits=run(`window.__companionRebirthNeed('DEFAULT','MYTHIC',KEYS)`);
+  ok('the droid is still hinted for the profile that gets that far',hits.length===1,JSON.stringify(hits));
+  const named=(hits[0]&&hits[0].profiles||[]).map(p=>p.key||p.name);
+  ok('and only that profile is named',named.length===1,JSON.stringify(named));
+  ok('the profile stopping at 12 is not asked to chase it',!JSON.stringify(hits).includes('Stopping at 12'),JSON.stringify(hits));
+
+  KEYS=[];
+  sandbox.activeProfileDoc=()=>({profiles:[withGoal('near','Stopping at 12',12)]});
+  ok('with only that profile, the spawn is not a need at all',
+    run(`window.__companionRebirthNeed('DEFAULT','MYTHIC',KEYS)`).length===0);
+
+  KEYS=[];
+  sandbox.activeProfileDoc=()=>({profiles:[withGoal('far','Going all the way',30)]});
+  ok('and it is a need again once the goal reaches it',
+    run(`window.__companionRebirthNeed('DEFAULT','MYTHIC',KEYS)`).length===1);
+
+  // A goal set on the open tab must not leak into another profile's answer.
+  sandbox.state.superRebirthGoal=12;
+  KEYS=[];
+  ok('the tab\u2019s own goal does not override the profile being read',
+    run(`window.__companionRebirthNeed('DEFAULT','MYTHIC',KEYS)`).length===1);
+  ok('and the tab\u2019s goal is put back afterwards',sandbox.state.superRebirthGoal===12);
+  sandbox.state.superRebirthGoal=undefined;
+}
+
 
 console.log(fails?`\n${fails} FAILED`:'\nall passed');
 process.exit(fails?1:0);
