@@ -2240,7 +2240,40 @@ const OPTIMISE_STEP_STYLES=["route","classic"];
 // missing localStorage would trip safeOptimiseStepPlan's catch and drop the
 // entire step list instead of just the preference.
 const optimiseStepStyle=()=>{try{const saved=localStorage.getItem("droid-archive-optimise-step-style");return OPTIMISE_STEP_STYLES.includes(saved)?saved:"route"}catch(e){return"route"}};
-function safeOptimiseStepPlan(baseP,projected){try{return optimiseStepStyle()==="classic"?optimiseStepPlan(baseP,projected):optimiseRoutePlan(baseP,projected)}catch(e){console.warn("Optimise step plan unavailable",e);return[]}}
+// The Sell list and the step plan have to agree. Marking a card "going to
+// Fusion" while the walkthrough still says "Sell it" is worse than saying
+// nothing, so the sell steps for droids the chain claims are rewritten, and the
+// fusions themselves are added after them.
+function withFusionSteps(steps,projected){
+  if(state.optimiseFuseFirst===false)return steps;
+  const chain=fusionChainFromSpares(projected?.sell,projected?.placed);
+  if(!chain.length)return steps;
+  const owed=new Map();
+  for(const step of chain)for(const part of step.spend){
+    const key=`${part.name}|${part.variant}`;
+    owed.set(key,(owed.get(key)||0)+part.count);
+  }
+  const out=steps.map(step=>{
+    if(step.type!=='sell'||!step.unit)return step;
+    const key=`${step.unit.name}|${step.unit.variant}`,left=owed.get(key)||0;
+    if(left<=0)return step;
+    owed.set(key,left-1);
+    // Keep the origin the sell step worked out; only the destination changes.
+    return {...step,type:'fuse-in',kind:'fuse-in',
+      text:`${step.text.replace(/^Sell /,'Send ').replace(/\.\s*$/,'')} to the Fusion room instead of selling.`};
+  });
+  chain.forEach(step=>{
+    const spend=step.spend.map(part=>`${part.count} \u00d7 ${part.name} ${variantLabel(part.variant)}`).join(' + ');
+    const makes=step.out?`${step.out.name} ${variantLabel(step.out.variant)}`:`a ${rarityLabel(step.rarity)} droid at ${variantLabel(step.variant)}`;
+    const why=step.fills?' It is a Droidex square you do not have.':step.gain>0?` It out-earns the weakest droid working, by about ${fmt(step.gain*3600)}/hr.`:'';
+    const waits=step.after.length?' Do this one after the fusion above, which makes the copy it needs.':'';
+    const roll=step.sure?'':' Which droid arrives is a roll.';
+    out.push({type:'fuse',kind:'fuse',unit:step.out?{name:step.out.name,variant:step.out.variant}:null,
+      text:`Fuse ${spend}. This makes ${makes}.${why}${roll}${waits}`});
+  });
+  return out;
+}
+function safeOptimiseStepPlan(baseP,projected){try{return withFusionSteps(optimiseStepStyle()==="classic"?optimiseStepPlan(baseP,projected):optimiseRoutePlan(baseP,projected),projected)}catch(e){console.warn("Optimise step plan unavailable",e);return[]}}
 function critCalcPage(){
   const render=()=>{
     const placed=placements().placed;

@@ -154,5 +154,42 @@ console.log('=== both switches are wired at both ends ===');
 }
 
 console.log('');
+console.log('=== the walkthrough agrees with the Sell list ===');
+{
+  for(const k of ['const variantLabel=','const rarityLabel=','const fmt=']) vm.runInContext(pick(k),sb);
+  vm.runInContext(grab('function withFusionSteps('),sb);
+  sb.state={droids,fusion,droidex:[],owned:[],optimiseFuseFirst:true};
+  sb.projected={sell:[{name:MYTH,variant:'DIAMOND',qty:3},{name:MYTH,variant:'RAINBOW',qty:2}],placed:[]};
+  const input=[
+    {type:'sell',unit:{name:MYTH,variant:'DIAMOND'},text:'Sell '+MYTH+' Diamond from Battle (upstairs).'},
+    {type:'sell',unit:{name:MYTH,variant:'DIAMOND'},text:'Sell '+MYTH+' Diamond from Worker.'},
+    {type:'sell',unit:{name:MYTH,variant:'DIAMOND'},text:'Sell '+MYTH+' Diamond in Lounge.'},
+    {type:'sell',unit:{name:MYTH,variant:'RAINBOW'},text:'Sell '+MYTH+' Rainbow from Battle.'},
+    {type:'sell',unit:{name:MYTH,variant:'RAINBOW'},text:'Sell '+MYTH+' Rainbow from Worker.'},
+    {type:'sell',unit:{name:'GONK',variant:'DEFAULT'},text:'Sell GONK Default from Worker.'},
+    {type:'move',text:'Send B2-RP Beskar to the Lounge.'}];
+  sb.steps=input;
+  const out=vm.runInContext('withFusionSteps(steps,projected)',sb);
+  const fuseIn=out.filter(s=>s.type==='fuse-in'), fuses=out.filter(s=>s.type==='fuse');
+  ok('the five droids the chain wants stop being sold',fuseIn.length===5,fuseIn.length+' rewritten');
+  ok('and are sent to the Fusion room instead',fuseIn.every(s=>s.text.includes('to the Fusion room instead of selling')));
+  ok('their origin survives the rewrite',fuseIn[0].text.includes('from Battle (upstairs)'),fuseIn[0].text);
+  ok('a droid the chain does not want is still sold',out.some(s=>s.type==='sell'&&s.text.includes('GONK')));
+  ok('steps that were never sells are untouched',out.some(s=>s.type==='move'));
+  ok('both fusions are added',fuses.length===2,fuses.length+' fuse steps');
+  ok('the first says what it makes',fuses[0].text.includes('This makes '+MYTH+' Rainbow'),fuses[0].text);
+  ok('a Droidex square is given as the reason',fuses[0].text.includes('Droidex square you do not have'));
+  ok('the dependent one says it must wait',fuses[1].text.includes('after the fusion above'),fuses[1].text);
+  ok('a fuse step carries the droid it makes, for its thumbnail',fuses[0].unit&&fuses[0].unit.name===MYTH);
+  sb.state.optimiseFuseFirst=false;
+  sb.steps=input;
+  const off=vm.runInContext('withFusionSteps(steps,projected)',sb);
+  ok('with the switch off the plan is left exactly alone',off.length===input.length&&off.every(s=>s.type!=='fuse'&&s.type!=='fuse-in'));
+  sb.state.optimiseFuseFirst=true;
+  sb.projected={sell:[],placed:[]};sb.steps=input;
+  ok('an empty Sell list changes nothing',vm.runInContext('withFusionSteps(steps,projected)',sb).length===input.length);
+}
+
+console.log('');
 console.log(fails?fails+' failed':'all passed');
 process.exit(fails?1:0);
