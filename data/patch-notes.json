@@ -4,21 +4,21 @@
     {
       "id": "2026-08-30-needed-lists-and-rebirth-perks",
       "date": "2026-08-30",
-      "title": "Add a droid from the list you are already reading",
-      "summary": "The needed lists answer the questions people were leaving the page to answer: add it, upgrade it, is it safe to sell, and what does this rebirth actually pay.",
+      "title": "Add and upgrade droids straight from the needed lists",
+      "summary": "Buttons on every requirement card, sell and upgrade hints, rebirth rewards on the headings, and D-O.",
       "changes": [
-        "Every card in \"Needed later\" and on the Rebirth page has an Add button. Getting a droid no longer means scrolling to the top and searching for it.",
-        "Once you own it the Add button becomes the quality button, so a Gold you have just found can be corrected where you are standing.",
-        "A green $ on a card means nothing after that rebirth needs the droid, so the slot can be freed once the rebirth is done.",
-        "Cards say when a later rebirth wants a higher quality: \"Beskar → Galactic later\". Upgrading once is cheaper than upgrading twice.",
-        "A \"What is still left\" panel above the list: every outstanding droid once, at the highest quality it is ever asked for, and the droids in your Base that nothing in the cycle needs any more.",
-        "Rebirth headings show what reaching them pays: Nova Crystals, the credit multiplier, and any crit perk.",
-        "Rebirths 23, 26 and 29 give +5% crit chance and 24, 27 and 30 give +10% crit amount. They stack, and the Critical Calculator now counts them.",
-        "A floating rebirth bar appears on the Base once the settings box has scrolled away, so a rebirth can be stepped without the trip back to the top.",
-        "Hold Ctrl while dragging a droid to drop a copy into an empty slot instead of moving it.",
-        "Max rebirth can be set on the Rebirth page instead of only in Base settings.",
-        "Not using Base: a summary of what you have ticked, which of them still need upgrading for a later rebirth and what that costs, and which are safe to sell.",
-        "Added D-O, the Iconic worker from the D-O Event. Half Fusion Time, 15%/s."
+        "Added an Add button to every card in \"Needed later\" and on the Rebirth page.",
+        "Once you own the droid that button becomes the change quality button.",
+        "Added a green $ to cards for droids that nothing after that rebirth needs.",
+        "Cards now say when a later rebirth wants a higher quality, such as \"Beskar → Galactic later\".",
+        "Added a \"What is still left\" panel to the Base: each outstanding droid listed once at its highest needed quality, plus the droids in your Base that nothing needs any more.",
+        "Rebirth headings now show the Nova Crystals, credit multiplier and crit perk you get for reaching them.",
+        "Added the rebirth crit perks: +5% crit chance at 23, 26 and 29, and +10% crit amount at 24, 27 and 30. They stack and the Critical Calculator counts them.",
+        "Added a floating rebirth bar to the Base that appears once the settings box scrolls out of view.",
+        "Hold Ctrl while dragging a droid to copy it into an empty slot instead of moving it.",
+        "Added a Max rebirth setting to the Rebirth page.",
+        "Not using Base now summarises the droids you have ticked, what they cost to upgrade for later rebirths, and which are safe to sell.",
+        "Added D-O, the Iconic worker from the D-O Event: 15%/s, Half Fusion Time. No portrait yet."
       ]
     },
     {
