@@ -2569,13 +2569,15 @@
       "rebirth": 23,
       "novaCrystals": 121,
       "creditMultPercent": 242,
-      "xpMultPercent": 1210
+      "xpMultPercent": 1210,
+      "critChancePercent": 5
     },
     {
       "rebirth": 24,
       "novaCrystals": 137,
       "creditMultPercent": 274,
-      "xpMultPercent": 1370
+      "xpMultPercent": 1370,
+      "critAmountPercent": 10
     },
     {
       "rebirth": 25,
@@ -2587,13 +2589,15 @@
       "rebirth": 26,
       "novaCrystals": 172,
       "creditMultPercent": 344,
-      "xpMultPercent": 1720
+      "xpMultPercent": 1720,
+      "critChancePercent": 5
     },
     {
       "rebirth": 27,
       "novaCrystals": 191,
       "creditMultPercent": 382,
-      "xpMultPercent": 1910
+      "xpMultPercent": 1910,
+      "critAmountPercent": 10
     },
     {
       "rebirth": 28,
@@ -2605,13 +2609,15 @@
       "rebirth": 29,
       "novaCrystals": 232,
       "creditMultPercent": 464,
-      "xpMultPercent": 2320
+      "xpMultPercent": 2320,
+      "critChancePercent": 5
     },
     {
       "rebirth": 30,
       "novaCrystals": 254,
       "creditMultPercent": 508,
-      "xpMultPercent": 2540
+      "xpMultPercent": 2540,
+      "critAmountPercent": 10
     }
   ]
 }

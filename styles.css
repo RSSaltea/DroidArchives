@@ -812,3 +812,113 @@ html.in-companion .site-header .discord-button{flex:0 0 auto}
 @media(max-width:760px){.fuse-first-list>li{grid-template-columns:24px minmax(0,1fr)}.fuse-first-why{grid-column:2;text-align:left}}
 :root:not([data-theme="dark"]) .fuse-first-no{background:#e4e9f6;color:#3c4a7a}
 :root:not([data-theme="dark"]) .sell-card.to-fusion{border-color:#8098d8}
+
+/* --- Needed cards ------------------------------------------------------
+   A needed card is an article rather than a link now, so the add and quality
+   buttons have somewhere to sit. The link inside goes display:contents to keep
+   the card's grid, the same trick the manual tracker card already uses. */
+.needed-card{position:relative}
+.needed-card-link{display:contents;color:inherit;text-decoration:none}
+.needed-card-link>div{grid-row:1/3;width:56px;height:56px}
+.needed-card-link>b{font-size:10px;color:#ff8585}
+.needed-card.have .needed-card-link>b{color:#75e39a}
+.needed-card.upgrade .needed-card-link>b{color:#e0a75c}
+/* The action button sits over the top-right corner, so the cards need enough
+   room for a droid name beside it. Below this the name was being clipped to
+   "PROT..." and the list stopped being scannable, which is the whole point. */
+.needed-grid{grid-template-columns:repeat(auto-fill,minmax(258px,1fr))}
+.needed-card .needed-card-link>span>strong{padding-right:52px}
+.needed-peak{color:#e0a75c;font-weight:800}
+.needed-action{position:absolute;top:6px;right:6px;z-index:2;display:inline-flex;align-items:center;gap:3px;padding:3px 6px;font:800 9px/1.4 Inter,system-ui,sans-serif;text-transform:uppercase;letter-spacing:.02em;white-space:nowrap;border-radius:4px;cursor:pointer;transition:background .12s,color .12s,border-color .12s}
+.needed-add{color:#8fe3ad;background:rgba(60,150,95,.16);border:1px solid rgba(90,190,130,.45)}
+.needed-add:hover{background:rgba(70,175,110,.3);color:#d6ffe4;border-color:#5fcf86}
+.needed-variant{color:#9fc4ff;background:rgba(70,110,190,.18);border:1px solid rgba(110,150,225,.45)}
+.needed-variant:hover{background:rgba(85,130,215,.32);color:#e2edff;border-color:#7ba4ff}
+.needed-sell{position:absolute;right:7px;bottom:6px;z-index:2;width:19px;height:19px;display:grid;place-items:center;font:900 11px/1 Inter,system-ui,sans-serif;color:#0d2116;background:#5fcf86;border-radius:50%;cursor:help}
+.needed-card.sell-after{border-right:3px solid rgba(95,207,134,.5)}
+.manual-later{color:var(--muted)}
+.manual-later.short{color:#e0a75c;font-weight:700}
+/* The label is what makes the button obvious, but it would sit over the droid
+   name once the grid packs the cards down to their narrowest. */
+@media(max-width:520px){.needed-action>span{display:none}.needed-card .needed-card-link>span>strong{padding-right:30px}}
+
+/* Rebirth group rewards: what reaching this rebirth actually pays out, so the
+   Super Rebirth call can be made without leaving the page. */
+.rebirth-group-rewards{display:inline-flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.rebirth-reward{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}
+.nova-amount{display:inline-flex;align-items:center;gap:5px;font:800 12px/1 Inter,system-ui,sans-serif;color:#b9a6ff;white-space:nowrap}
+.nova-amount img{width:15px;height:15px;object-fit:contain}
+.rebirth-reward-mult{font:800 11px/1 Inter,system-ui,sans-serif;color:#ffd45a;white-space:nowrap}
+.rebirth-reward-perk{padding:2px 7px;font:800 10px/1.4 Inter,system-ui,sans-serif;color:#ff9f7d;background:rgba(255,125,80,.13);border:1px solid rgba(255,145,105,.35);border-radius:99px;white-space:nowrap}
+.rebirth-group>h3{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+/* --- Floating rebirth quick access ------------------------------------
+   People keep the Base scrolled to the bottom. Once the settings box has gone
+   past the top this takes over the one control they reach for after a rebirth. */
+.rebirth-quick-bar{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:60;display:flex;align-items:center;gap:14px;padding:8px 8px 8px 16px;background:var(--panel);border:1px solid var(--line);border-radius:999px;box-shadow:0 12px 34px #0006;color:var(--ink)}
+.rebirth-quick-bar[hidden]{display:none}
+/* The bar floats over the page, so the last row of cards needs somewhere to go. */
+body.has-rebirth-quick-bar #app{padding-bottom:74px}
+.rebirth-quick-bar .quick-eyebrow{font:800 10px/1 Inter,system-ui,sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.rebirth-quick-bar .quick-step{display:flex;align-items:center;gap:6px}
+.rebirth-quick-bar .quick-step button{width:25px;height:25px;display:grid;place-items:center;font-size:9px;color:inherit;background:transparent;border:1px solid var(--line);border-radius:7px;cursor:pointer}
+.rebirth-quick-bar .quick-step button:hover:not(:disabled){border-color:var(--green);color:var(--green)}
+.rebirth-quick-bar .quick-step button:disabled{opacity:.3;cursor:default}
+.rebirth-quick-bar .quick-step b{min-width:56px;text-align:center;font:900 16px/1 'Roboto Slab',Georgia,serif}
+.rebirth-quick-bar .quick-goal,.rebirth-quick-bar .quick-next{font:700 11px/1 Inter,system-ui,sans-serif;color:var(--muted);white-space:nowrap}
+.rebirth-quick-bar .quick-next b{color:#ff8585}
+.rebirth-quick-bar .quick-next b.ready{color:#75e39a}
+.rebirth-quick-bar .quick-top{padding:6px 12px;font:800 10px/1 Inter,system-ui,sans-serif;text-transform:uppercase;letter-spacing:.05em;color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:999px;cursor:pointer}
+.rebirth-quick-bar .quick-top:hover{border-color:var(--green);color:var(--green)}
+@media(max-width:620px){.rebirth-quick-bar{gap:9px;padding:7px 7px 7px 12px}.rebirth-quick-bar .quick-eyebrow,.rebirth-quick-bar .quick-next{display:none}}
+
+/* --- What is still left -----------------------------------------------
+   The per-rebirth list repeats a droid for every rebirth that wants it. This is
+   the same data folded the other way: once per droid, plus what nothing needs. */
+.outstanding-panel{margin:0 0 22px;background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.outstanding-panel>summary{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;list-style:none}
+.outstanding-panel>summary::-webkit-details-marker{display:none}
+.outstanding-panel>summary::before{content:'\25B8';width:15px;font:900 13px/1 Inter,system-ui,sans-serif;color:var(--muted)}
+.outstanding-panel[open]>summary::before{content:'\25BE'}
+.outstanding-panel>summary strong{display:block;font:700 14px/1.2 'Roboto Slab',Georgia,serif;color:var(--ink)}
+.outstanding-panel>summary small{display:block;margin-top:3px;font-size:11px;color:var(--muted)}
+.outstanding-body{padding:0 14px 14px;display:grid;gap:16px}
+.outstanding-body h4{margin:0 0 8px;font:800 11px/1 Inter,system-ui,sans-serif;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.outstanding-note{display:block;margin-top:7px;font-size:11px;color:var(--muted)}
+.outstanding-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(258px,1fr));gap:8px}
+.outstanding-card{display:grid;grid-template-columns:40px minmax(0,1fr);align-items:center;gap:9px;padding:7px 9px;background:var(--paper);border:1px solid var(--line);border-left:3px solid #b95f59;border-radius:5px;text-decoration:none;color:var(--ink)}
+.outstanding-card img{width:40px;height:40px;object-fit:contain}
+.outstanding-card span{min-width:0}
+.outstanding-card strong{display:block;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.outstanding-card small,.outstanding-card em{display:block;font-size:10px;font-style:normal;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.outstanding-card em{margin-top:2px;color:#e0a75c}
+.outstanding-card.upgrade{border-left-color:#d88421}
+.outstanding-card.spare{border-left-color:#5fcf86}
+.outstanding-card.spare em{color:#75e39a}
+.outstanding-card.have{border-left-color:#55a572}
+.outstanding-card.have em{color:var(--muted)}
+.empty-tracked{padding:14px}
+.empty-tracked .empty{margin:0}
+
+/* Ctrl-drag duplicates instead of moving, so the target has to say which. */
+.base-slot.drag-target.drag-copy,.map-pin.drag-target.drag-copy{outline:2px dashed #5fcf86;outline-offset:2px}
+
+:root:not([data-theme="dark"]) .needed-card-link>b{color:#a93636}
+:root:not([data-theme="dark"]) .needed-card.have .needed-card-link>b{color:#287443}
+:root:not([data-theme="dark"]) .needed-card.upgrade .needed-card-link>b{color:#9a6413}
+:root:not([data-theme="dark"]) .needed-peak,:root:not([data-theme="dark"]) .manual-later.short{color:#9a6413}
+:root:not([data-theme="dark"]) .needed-add{color:#27683d;background:#dceee0;border-color:#8dbd9e}
+:root:not([data-theme="dark"]) .needed-add:hover{background:#c8e5d1;color:#1c5330}
+:root:not([data-theme="dark"]) .needed-variant{color:#2f5488;background:#dde7f6;border-color:#94b0d6}
+:root:not([data-theme="dark"]) .needed-variant:hover{background:#cbdcf1;color:#22406b}
+:root:not([data-theme="dark"]) .needed-sell{color:#f4fff8;background:#2f8a54}
+:root:not([data-theme="dark"]) .nova-amount{color:#5a41b8}
+:root:not([data-theme="dark"]) .rebirth-reward-mult{color:#8a6412}
+:root:not([data-theme="dark"]) .rebirth-reward-perk{color:#9c4520;background:#f7e3da;border-color:#dcae97}
+:root:not([data-theme="dark"]) .outstanding-panel{background:#fffdf8;border-color:#d8d0c2}
+:root:not([data-theme="dark"]) .outstanding-card{background:#faf7f0;border-color:#d8d0c2;border-left-color:#bd615a}
+:root:not([data-theme="dark"]) .outstanding-card.upgrade{border-left-color:#c2761d}
+:root:not([data-theme="dark"]) .outstanding-card.spare{border-left-color:#559165}
+:root:not([data-theme="dark"]) .outstanding-card.spare em{color:#287443}
+:root:not([data-theme="dark"]) .outstanding-card em{color:#8a6412}
+:root:not([data-theme="dark"]) .rebirth-quick-bar{box-shadow:0 12px 30px #332b2033}
